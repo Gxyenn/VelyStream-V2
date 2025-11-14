@@ -9,18 +9,24 @@ interface AnimeCardProps {
 }
 
 export const AnimeCard = ({ anime, className }: AnimeCardProps) => {
+  // Jika karena suatu alasan data anime tidak ada, jangan render apapun untuk mencegah error.
+  if (!anime) {
+    return null;
+  }
+
   return (
     <Link
       to={`/anime/${anime.slug}`}
       className={cn(
-        'group relative overflow-hidden rounded-xl border border-border bg-gradient-card transition-all hover:scale-105 hover:shadow-glow-purple',
+        'group relative flex flex-col overflow-hidden rounded-xl border border-border bg-gradient-card transition-all hover:scale-105 hover:shadow-glow-purple',
         className
       )}
     >
       {/* Poster */}
       <div className="relative aspect-[2/3] overflow-hidden">
         <img
-          src={anime.poster}
+          // Gunakan placeholder jika poster tidak ada
+          src={anime.poster || `https://via.placeholder.com/400x600/020817/FFFFFF?text=No+Image`}
           alt={anime.title}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
           loading="lazy"
@@ -34,7 +40,7 @@ export const AnimeCard = ({ anime, className }: AnimeCardProps) => {
           </div>
         </div>
 
-        {/* Rating Badge */}
+        {/* Rating Badge (aman jika rating tidak ada) */}
         {anime.rating && (
           <div className="absolute right-2 top-2 flex items-center gap-1 rounded-lg bg-black/70 px-2 py-1 text-xs font-semibold backdrop-blur-sm">
             <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
@@ -42,7 +48,7 @@ export const AnimeCard = ({ anime, className }: AnimeCardProps) => {
           </div>
         )}
 
-        {/* Episode/Status Badge */}
+        {/* Episode/Status Badge (aman jika tidak ada) */}
         {(anime.current_episode || anime.episode_count) && (
           <div className="absolute left-2 top-2 rounded-lg bg-primary/90 px-2 py-1 text-xs font-semibold backdrop-blur-sm">
             {anime.current_episode || `${anime.episode_count} Eps`}
@@ -51,12 +57,13 @@ export const AnimeCard = ({ anime, className }: AnimeCardProps) => {
       </div>
 
       {/* Info */}
-      <div className="p-3">
-        <h3 className="mb-2 line-clamp-2 text-sm font-semibold leading-tight">
+      <div className="flex flex-1 flex-col p-3">
+        <h3 className="mb-2 line-clamp-2 flex-grow text-sm font-semibold leading-tight">
           {anime.title}
         </h3>
         
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          {/* Release Info (aman jika tidak ada) */}
           {anime.release_day && (
             <div className="flex items-center gap-1">
               <Calendar className="h-3 w-3" />
@@ -71,8 +78,8 @@ export const AnimeCard = ({ anime, className }: AnimeCardProps) => {
           )}
         </div>
 
-        {/* Genres */}
-        {anime.genres && anime.genres.length > 0 && (
+        {/* Genres (aman jika tidak ada) */}
+        {anime.genres?.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1">
             {anime.genres.slice(0, 3).map((genre) => (
               <span
