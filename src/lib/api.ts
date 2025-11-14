@@ -1,5 +1,6 @@
 const BASE_URL = 'https://www.sankavollerei.com/anime';
 
+// Interface dasar untuk item anime di banyak endpoint
 export interface Anime {
   title: string;
   slug: string;
@@ -24,6 +25,7 @@ export interface Genre {
   otakudesu_url: string;
 }
 
+// Interface untuk Halaman Detail Anime
 export interface AnimeDetail {
   title: string;
   slug: string;
@@ -48,26 +50,6 @@ export interface AnimeDetail {
   recommendations: Anime[];
 }
 
-export interface BatchDetail {
-    title: string;
-    animeId: string;
-    poster: string;
-    downloadUrl: {
-      formats: {
-        title: string;
-        qualities: {
-          title: string;
-          size: string;
-          urls: {
-            title: string;
-            url: string;
-          }[];
-        }[];
-      }[];
-    };
-}
-
-
 export interface Episode {
   episode: string;
   episode_number: number;
@@ -75,6 +57,7 @@ export interface Episode {
   otakudesu_url: string;
 }
 
+// Interface untuk Halaman Nonton (Watch)
 export interface EpisodeDetail {
   episode: string;
   anime: {
@@ -82,18 +65,15 @@ export interface EpisodeDetail {
     otakudesu_url: string;
   };
   has_next_episode: boolean;
-  next_episode: {
-    slug: string;
-    otakudesu_url: string;
-  } | null;
+  next_episode: { slug: string; otakudesu_url: string } | null;
   has_previous_episode: boolean;
-  previous_episode: {
-    slug: string;
-    otakudesu_url: string;
-  } | null;
+  previous_episode: { slug: string; otakudesu_url: string } | null;
   stream_url: string;
   stream_servers: StreamServer[];
-  download_urls: DownloadUrls;
+  download_urls: {
+    mp4: DownloadQuality[];
+    mkv: DownloadQuality[];
+  };
 }
 
 export interface StreamServer {
@@ -104,11 +84,6 @@ export interface StreamServer {
   }[];
 }
 
-export interface DownloadUrls {
-  mp4: DownloadQuality[];
-  mkv: DownloadQuality[];
-}
-
 export interface DownloadQuality {
   resolution: string;
   urls: {
@@ -117,76 +92,118 @@ export interface DownloadQuality {
   }[];
 }
 
+// --- INTERFACE BARU & PERBAIKAN ---
+
+// Untuk endpoint /complete-anime dan /ongoing-anime
+interface PaginatedAnimeResponse<T> {
+  paginationData: {
+    current_page: number;
+    last_visible_page: number;
+    has_next_page: boolean;
+    next_page: number | null;
+    has_previous_page: boolean;
+    previous_page: number | null;
+  };
+  // Nama key-nya berbeda di API
+  ongoingAnimeData?: T;
+  completeAnimeData?: T;
+  anime?: T; // Untuk genre
+}
+
+// Untuk endpoint /schedule
+export interface ScheduleAnime {
+    anime_name: string;
+    url: string;
+    slug: string;
+    poster: string;
+}
+
+export interface ScheduleDay {
+    day: string;
+    anime_list: ScheduleAnime[];
+}
+
+// Untuk endpoint /unlimited
+export interface AllAnimeItem {
+  title: string;
+  animeId: string; // Perhatikan, namanya 'animeId' bukan 'slug'
+  href: string;
+  otakudesuUrl: string;
+}
+
+export interface AllAnimeResponse {
+  list: {
+    startWith: string;
+    animeList: AllAnimeItem[];
+  }[];
+}
+
+
 export const api = {
-  async getHome() {
+  async getHome(): Promise<{ ongoing_anime: Anime[] }> {
     const res = await fetch(`${BASE_URL}/home`);
     const data = await res.json();
     return data.data;
   },
 
-  async getSchedule() {
+  async getSchedule(): Promise<ScheduleDay[]> {
     const res = await fetch(`${BASE_URL}/schedule`);
     const data = await res.json();
     return data.data;
   },
 
-  async getAnimeDetail(slug: string) {
+  async getAnimeDetail(slug: string): Promise<AnimeDetail> {
     const res = await fetch(`${BASE_URL}/anime/${slug}`);
     const data = await res.json();
-    return data.data as AnimeDetail;
+    return data.data;
   },
 
-  async getCompleteAnime(page: number = 1) {
+  async getCompleteAnime(page: number = 1): Promise<PaginatedAnimeResponse<Anime[]>> {
     const res = await fetch(`${BASE_URL}/complete-anime/${page}`);
     const data = await res.json();
     return data.data;
   },
 
-  async getOngoingAnime(page: number = 1) {
+  async getOngoingAnime(page: number = 1): Promise<PaginatedAnimeResponse<Anime[]>> {
     const res = await fetch(`${BASE_URL}/ongoing-anime?page=${page}`);
     const data = await res.json();
     return data.data;
   },
 
-  async getGenres() {
+  async getGenres(): Promise<Genre[]> {
     const res = await fetch(`${BASE_URL}/genre`);
     const data = await res.json();
-    return data.data as Genre[];
+    return data.data;
   },
 
-  async getAnimeByGenre(genre: string, page: number = 1) {
+  async getAnimeByGenre(genre: string, page: number = 1): Promise<PaginatedAnimeResponse<Anime[]>> {
     const res = await fetch(`${BASE_URL}/genre/${genre}?page=${page}`);
     const data = await res.json();
     return data.data;
   },
 
-  async getEpisodeDetail(slug: string) {
+  async getEpisodeDetail(slug: string): Promise<EpisodeDetail> {
     const res = await fetch(`${BASE_URL}/episode/${slug}`);
     const data = await res.json();
-    return data.data as EpisodeDetail;
+    return data.data;
   },
 
-  async searchAnime(query: string) {
+  async searchAnime(query: string): Promise<Anime[]> {
     const res = await fetch(`${BASE_URL}/search/${encodeURIComponent(query)}`);
     const data = await res.json();
     return data.data as Anime[];
   },
 
-  async getServerUrl(serverId: string) {
+  async getServerUrl(serverId: string): Promise<string> {
     const res = await fetch(`${BASE_URL}/server${serverId}`);
     const data = await res.json();
     return data.url;
   },
 
-  async getAllAnime() {
+  async getAllAnime(): Promise<AllAnimeResponse> {
     const res = await fetch(`${BASE_URL}/unlimited`);
     const data = await res.json();
     return data.data;
   },
-
-  async getBatchDetail(slug: string): Promise<BatchDetail> {
-    const res = await fetch(`${BASE_URL}/batch/${slug}`);
-    const data = await res.json();
-    return data.data;
-  }
+  // Fungsi getBatchDetail tidak saya sertakan karena belum digunakan, tapi biarkan saja jika sudah ada.
 };
