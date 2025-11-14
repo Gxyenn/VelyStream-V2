@@ -7,14 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Download, 
-  Monitor,
-  Loader2,
-  ListVideo
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, Monitor, Loader2, ListVideo } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const Watch = () => {
@@ -24,11 +17,10 @@ const Watch = () => {
   const [currentStreamUrl, setCurrentStreamUrl] = useState<string>('');
   const [loadingServer, setLoadingServer] = useState(false);
 
-  const { data: episode, isLoading } = useQuery({
+  const { data: episode, isLoading, isError } = useQuery({
     queryKey: ['episode', slug],
     queryFn: () => api.getEpisodeDetail(slug!),
     enabled: !!slug,
-    refetchOnWindowFocus: false,
   });
 
   const { data: animeDetail } = useQuery({
@@ -54,7 +46,7 @@ const Watch = () => {
   useEffect(() => {
     if (episode?.stream_url) {
       setCurrentStreamUrl(episode.stream_url);
-      setSelectedServer('Default'); 
+      setSelectedServer('Default');
     }
   }, [episode]);
 
@@ -72,7 +64,7 @@ const Watch = () => {
   };
 
   const handleDownload = (provider: string, resolution: string, url: string) => {
-    if (window.confirm(`Are you sure you want to download ${episode?.episode} (${resolution}) from ${provider}?`)) {
+    if (window.confirm(`Download ${episode?.episode} (${resolution}) from ${provider}?`)) {
       window.open(url, '_blank');
     }
   };
@@ -96,23 +88,26 @@ const Watch = () => {
     );
   }
 
-  if (!episode) {
-    return <div className="flex min-h-screen items-center justify-center"><p>Episode not found</p></div>;
+  if (isError || !episode) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p>Episode not found or failed to load.</p>
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-gradient-primary">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-4">
-          <h1 className="truncate text-2xl font-bold">{episode.episode}</h1>
+          <h1 className="truncate text-xl font-bold">{episode.episode}</h1>
           {animeDetail && (
-            <Button variant="link" asChild className="p-0 h-auto">
+            <Button variant="link" asChild className="h-auto p-0 text-muted-foreground hover:text-primary">
                 <Link to={`/anime/${animeDetail.slug}`}>← Back to {animeDetail.title}</Link>
             </Button>
           )}
         </div>
 
-        {/* Video Player */}
         <div className="relative mb-4 w-full overflow-hidden rounded-xl border border-border bg-black" style={{ aspectRatio: '16/9' }}>
           {loadingServer && (
             <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -126,14 +121,13 @@ const Watch = () => {
             allowFullScreen
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           />
-          
-          {/* Player Controls Overlay */}
-          <div className="absolute bottom-0 left-0 right-0 z-10 flex items-center justify-between p-4 bg-gradient-to-t from-black/70 to-transparent">
+        </div>
+        
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-                {/* Tombol Ganti Server/Resolusi */}
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button variant="secondary" size="sm" className="gap-2"><Monitor/>Server</Button>
+                        <Button variant="outline" size="sm" className="gap-2"><Monitor/>Server: {selectedServer}</Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-64 p-2">
                         <ScrollArea className="h-64">
@@ -158,17 +152,15 @@ const Watch = () => {
                         </ScrollArea>
                     </PopoverContent>
                 </Popover>
-            </div>
-            <div className="flex items-center gap-2">
-                {/* Tombol Download */}
+
                 <Popover>
                     <PopoverTrigger asChild>
-                         <Button variant="secondary" size="sm" className="gap-2"><Download/>Download</Button>
+                         <Button variant="outline" size="sm" className="gap-2"><Download/>Download</Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-72 p-2">
                         <ScrollArea className="h-64">
                             {['mp4', 'mkv'].map(format => (
-                                episode.download_urls[format as 'mp4' | 'mkv'].length > 0 && (
+                                episode.download_urls[format as 'mp4' | 'mkv']?.length > 0 && (
                                 <div key={format}>
                                     <h3 className="px-2 py-1.5 text-sm font-semibold uppercase">{format}</h3>
                                     {episode.download_urls[format as 'mp4' | 'mkv'].map((quality: DownloadQuality) => (
@@ -194,25 +186,10 @@ const Watch = () => {
                     </PopoverContent>
                 </Popover>
             </div>
-          </div>
-        </div>
-        
-        {/* Navigasi & All Episodes */}
-        <div className="flex gap-2">
-          {episode.has_previous_episode && episode.previous_episode && (
-            <Button variant="outline" onClick={() => navigate(`/watch/${episode.previous_episode!.slug}`)} className="gap-2">
-              <ChevronLeft /> Previous
-            </Button>
-          )}
-          {episode.has_next_episode && episode.next_episode && (
-            <Button onClick={() => navigate(`/watch/${episode.next_episode!.slug}`)} className="ml-auto gap-2">
-              Next <ChevronRight />
-            </Button>
-          )}
-          {animeDetail && (
+            {animeDetail && (
             <Sheet>
                 <SheetTrigger asChild>
-                    <Button variant="outline" className="gap-2"><ListVideo/> All Episodes</Button>
+                    <Button variant="outline" size="sm" className="gap-2"><ListVideo/> All Episodes</Button>
                 </SheetTrigger>
                 <SheetContent side="right">
                     <SheetHeader><SheetTitle>All Episodes</SheetTitle></SheetHeader>
@@ -227,6 +204,19 @@ const Watch = () => {
                     </ScrollArea>
                 </SheetContent>
             </Sheet>
+          )}
+        </div>
+        
+        <div className="flex gap-2">
+          {episode.has_previous_episode && episode.previous_episode && (
+            <Button variant="secondary" onClick={() => navigate(`/watch/${episode.previous_episode!.slug}`)} className="gap-2">
+              <ChevronLeft /> Previous
+            </Button>
+          )}
+          {episode.has_next_episode && episode.next_episode && (
+            <Button variant="secondary" onClick={() => navigate(`/watch/${episode.next_episode!.slug}`)} className="ml-auto gap-2">
+              Next <ChevronRight />
+            </Button>
           )}
         </div>
       </div>
