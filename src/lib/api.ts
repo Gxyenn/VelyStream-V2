@@ -92,8 +92,6 @@ export interface DownloadQuality {
   }[];
 }
 
-// --- INTERFACE BARU & PERBAIKAN ---
-
 // Untuk endpoint /complete-anime dan /ongoing-anime
 interface PaginatedAnimeResponse<T> {
   paginationData: {
@@ -104,7 +102,6 @@ interface PaginatedAnimeResponse<T> {
     has_previous_page: boolean;
     previous_page: number | null;
   };
-  // Nama key-nya berbeda di API
   ongoingAnimeData?: T;
   completeAnimeData?: T;
   anime?: T; // Untuk genre
@@ -126,7 +123,7 @@ export interface ScheduleDay {
 // Untuk endpoint /unlimited
 export interface AllAnimeItem {
   title: string;
-  animeId: string; // Perhatikan, namanya 'animeId' bukan 'slug'
+  animeId: string;
   href: string;
   otakudesuUrl: string;
 }
@@ -137,7 +134,6 @@ export interface AllAnimeResponse {
     animeList: AllAnimeItem[];
   }[];
 }
-
 
 export const api = {
   async getHome(): Promise<{ ongoing_anime: Anime[] }> {
@@ -195,7 +191,8 @@ export const api = {
   },
 
   async getServerUrl(serverId: string): Promise<string> {
-    const res = await fetch(`${BASE_URL}/server${serverId}`);
+    // PERBAIKAN KRITIS: URL server dibentuk dari root domain
+    const res = await fetch(`https://www.sankavollerei.com${serverId}`);
     const data = await res.json();
     return data.url;
   },
@@ -205,5 +202,4 @@ export const api = {
     const data = await res.json();
     return data.data;
   },
-  // Fungsi getBatchDetail tidak saya sertakan karena belum digunakan, tapi biarkan saja jika sudah ada.
 };
