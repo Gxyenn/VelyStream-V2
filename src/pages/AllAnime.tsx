@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { AnimeCard } from '@/components/AnimeCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const AllAnime = () => {
   const [activeTab, setActiveTab] = useState<string>('#');
@@ -13,7 +13,7 @@ const AllAnime = () => {
     queryFn: api.getAllAnime
   });
 
-  const alphabets = ['#', ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))];
+  const alphabets = ['#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
   return (
     <div className="min-h-screen bg-gradient-primary">
@@ -24,10 +24,9 @@ const AllAnime = () => {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
-            {[...Array(28)].map((_, i) => (
-              <Skeleton key={i} className="aspect-[2/3]" />
-            ))}
+          <div className="space-y-4">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-48 w-full" />
           </div>
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -52,20 +51,15 @@ const AllAnime = () => {
               return (
                 <TabsContent key={letter} value={letter}>
                   {group?.animeList && group.animeList.length > 0 ? (
-                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                       {group.animeList.map((anime) => (
-                        <AnimeCard 
-                          key={anime.animeId} 
-                          anime={{
-                            title: anime.title,
-                            slug: anime.animeId,
-                            // NOTE: The /unlimited API does not provide a poster. We need to handle this gracefully.
-                            // We can use a placeholder or try to find a poster from another source if needed.
-                            // For now, a placeholder is used in AnimeCard if poster is missing.
-                            poster: anime.poster || `https://via.placeholder.com/300x450?text=${encodeURIComponent(anime.title)}`,
-                            otakudesu_url: anime.otakudesuUrl
-                          }} 
-                        />
+                        <Link
+                          key={anime.animeId}
+                          to={`/anime/${anime.animeId}`}
+                          className="block rounded-md p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-primary"
+                        >
+                          {anime.title}
+                        </Link>
                       ))}
                     </div>
                   ) : (
@@ -78,13 +72,6 @@ const AllAnime = () => {
             })}
           </Tabs>
         )}
-
-        {/* Credit */}
-        <div className="mt-16 border-t border-border pt-8 text-center">
-          <p className="text-sm text-muted-foreground">
-            Created by <span className="font-semibold text-primary">Gxyenn 正式</span>
-          </p>
-        </div>
       </div>
     </div>
   );
