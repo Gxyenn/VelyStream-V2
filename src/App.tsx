@@ -13,6 +13,7 @@ import History from "./pages/History";
 import AnimeDetail from "./pages/AnimeDetail";
 import Watch from "./pages/Watch";
 import AllAnime from "./pages/AllAnime";
+import Schedule from "./pages/Schedule";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/genres" element={<Genres />} />
             <Route path="/genre/:slug" element={<GenreDetail />} />
             <Route path="/all-anime" element={<AllAnime />} />
+            <Route path="/schedule" element={<Schedule />} />
             <Route path="/mylist" element={<MyList />} />
             <Route path="/history" element={<History />} />
             <Route path="/anime/:slug" element={<AnimeDetail />} />
