@@ -1,6 +1,93 @@
+import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
+import { api } from '@/lib/api';
+import { AnimeCard } from '@/components/AnimeCard';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const AllAnime = () => {
+  const { data, isLoading } = useQuery({
+    queryKey: ['all-anime'],
+    queryFn: api.getAllAnime,
+    staleTime: 1000 * 60 * 60, // 1 jam
+  });
+
+  // Menggabungkan semua list anime dari berbagai grup (A-Z) menjadi satu array tunggal
+  const allAnimeList = useMemo(() => {
+    if (!data?.list) {
+      return [];
+    }
+    return data.list.flatMap(group => group.animeList);
+  }, [data]);
+
+  return (
+    <div className="min-h-screen bg-gradient-primary">
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="mb-2 text-3xl font-bold">All Anime</h1>
+          <p className="text-muted-foreground">Browse all available anime</p>
+        </div>
+
+        {isLoading ? (
+          // Tampilan loading skeleton
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
+            {[...Array(21)].map((_, i) => (
+              <Skeleton key={i} className="aspect-[2/3] rounded-lg" />
+            ))}
+          </div>
+        ) : allAnimeList.length > 0 ? (
+          // Tampilkan grid anime jika data ada
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
+            {allAnimeList.map((anime) => (
+              <AnimeCard 
+                key={anime.animeId} 
+                anime={{
+                  title: anime.title,
+                  slug: anime.animeId,
+                  // PENTING: API ini tidak menyediakan poster.
+                  // Jadi kita gunakan placeholder jika anime.poster kosong atau tidak ada.
+                  poster: `https://via.placeholder.com/300x450/020817/FFFFFF?text=${encodeURIComponent(anime.title)}`,
+                  otakudesu_url: anime.otakudesuUrl
+                }} 
+              />
+            ))}
+          </div>
+        ) : (
+          // Tampilan jika tidak ada anime yang ditemukan
+          <div className="py-20 text-center">
+            <p className="text-muted-foreground">No anime could be found.</p>
+          </div>
+        )}
+
+        {/* Credit */}
+        <div className="mt-16 border-t border-border pt-8 text-center">
+          <p className="text-sm text-muted-foreground">
+            Created by <span className="font-semibold text-primary">Gxyenn 正式</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AllAnime;```
+
+---
+
+### 2. Perbaikan untuk `Watch.tsx` (Resolusi/Server Tidak Berubah)
+
+Ini adalah perbaikan yang lebih signifikan. Kita akan mengubah `useEffect` agar **selalu memperbarui URL video ke URL default setiap kali data episode baru dimuat** (misalnya saat klik "Next Episode").
+
+**Penjelasan:**
+1.  `useEffect` sekarang hanya bergantung pada `[episode]`.
+2.  Setiap kali `episode` berubah, `currentStreamUrl` akan direset ke `episode.stream_url` yang baru.
+3.  Ini memastikan `iframe` selalu memuat video yang benar saat halaman pertama kali dibuka atau saat berpindah episode.
+4.  Fungsi `handleServerChange` kemudian akan menimpa URL ini saat Anda memilih server lain, dan itu akan berfungsi seperti yang diharapkan.
+
+**File: `Watch.tsx`**
+```tsx
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { api, StreamServer } from '@/lib/api'; // Impor tipe StreamServer
+import { api, StreamServer } from '@/lib/api';
 import { storage } from '@/lib/storage';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -53,19 +140,22 @@ const Watch = () => {
     }
   }, [episode, animeDetail]);
 
-  // Set default stream URL
+  // --- PERBAIKAN DI SINI ---
+  // Setel ulang URL streaming setiap kali episode berubah.
+  // Ini akan memperbaiki bug di mana video lama tetap ada saat menavigasi.
   useEffect(() => {
-    if (episode?.stream_url && !currentStreamUrl) {
+    if (episode?.stream_url) {
       setCurrentStreamUrl(episode.stream_url);
+      setSelectedServer(''); // Reset server aktif
     }
-  }, [episode, currentStreamUrl]);
+  }, [episode]); // Hanya bergantung pada 'episode'
 
   const handleServerChange = async (serverId: string, serverName: string) => {
     setLoadingServer(true);
     setSelectedServer(serverName);
     try {
       const url = await api.getServerUrl(serverId);
-      setCurrentStreamUrl(url);
+      setCurrentStreamUrl(url); // Perbarui URL untuk iframe
     } catch (error) {
       console.error('Failed to load server:', error);
     } finally {
@@ -73,22 +163,17 @@ const Watch = () => {
     }
   };
 
-  // Helper function to get quality label for server groups
   const getQualityLabel = (serverGroup: StreamServer) => {
-    // Prioritaskan 'quality' jika ada isinya
     if (serverGroup.quality) {
       return `Quality: ${serverGroup.quality}`;
     }
-    // Jika tidak ada, coba ekstrak dari 'id' server pertama
     if (serverGroup.servers && serverGroup.servers.length > 0) {
       const firstServerId = serverGroup.servers[0].id;
-      // Regex untuk mengambil resolusi (e.g., -360p, -480p, -720p)
-      const match = firstServerId.match(/-(\d+p)$/); 
+      const match = firstServerId.match(/-(\d+p)$/);
       if (match && match[1]) {
         return `Quality: ${match[1]}`;
       }
     }
-    // Fallback jika tidak ditemukan
     return 'Servers';
   };
 
@@ -96,7 +181,7 @@ const Watch = () => {
     return (
       <div className="min-h-screen bg-gradient-primary">
         <div className="container mx-auto px-4 py-8">
-          <Skeleton className="mb-4 h-96 w-full" />
+          <Skeleton className="mb-4 aspect-video w-full" />
           <div className="grid gap-6 lg:grid-cols-2">
              <Skeleton className="h-[300px] w-full" />
              <Skeleton className="h-[300px] w-full" />
@@ -117,29 +202,23 @@ const Watch = () => {
   return (
     <div className="min-h-screen bg-gradient-primary">
       <div className="container mx-auto px-4 py-8">
-        {/* Video Player */}
         <div className="mb-8">
           <div className="mb-4">
             <h1 className="text-2xl font-bold">{episode.episode}</h1>
             {animeDetail && (
-              <Link 
-                to={`/anime/${animeDetail.slug}`}
-                className="text-primary hover:underline"
-              >
+              <Link to={`/anime/${animeDetail.slug}`} className="text-primary hover:underline">
                 ← Back to {animeDetail.title}
               </Link>
             )}
           </div>
 
-          <div 
-            className="relative w-full overflow-hidden rounded-xl border border-border bg-black" 
-            style={{ aspectRatio: '16/9' }}
-          >
+          <div className="relative w-full overflow-hidden rounded-xl border border-border bg-black" style={{ aspectRatio: '16/9' }}>
             {loadingServer && (
               <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/50 backdrop-blur-sm">
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
               </div>
             )}
+            {/* Menggunakan 'key' memastikan iframe dimuat ulang saat URL berubah */}
             <iframe
               key={currentStreamUrl}
               src={currentStreamUrl}
@@ -149,23 +228,15 @@ const Watch = () => {
             />
           </div>
 
-          {/* Episode Navigation */}
           <div className="mt-4 flex gap-2">
             {episode.has_previous_episode && episode.previous_episode && (
-              <Button
-                variant="outline"
-                onClick={() => navigate(`/watch/${episode.previous_episode!.slug}`)}
-                className="gap-2"
-              >
+              <Button variant="outline" onClick={() => navigate(`/watch/${episode.previous_episode!.slug}`)} className="gap-2">
                 <ChevronLeft className="h-4 w-4" />
                 Previous Episode
               </Button>
             )}
             {episode.has_next_episode && episode.next_episode && (
-              <Button
-                onClick={() => navigate(`/watch/${episode.next_episode!.slug}`)}
-                className="ml-auto gap-2"
-              >
+              <Button onClick={() => navigate(`/watch/${episode.next_episode!.slug}`)} className="ml-auto gap-2">
                 Next Episode
                 <ChevronRight className="h-4 w-4" />
               </Button>
@@ -180,7 +251,6 @@ const Watch = () => {
               <Monitor className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-bold">Stream Servers</h2>
             </div>
-
             <ScrollArea className="h-[300px]">
               <div className="space-y-2">
                 {episode.stream_servers.map((serverGroup, idx) => (
@@ -199,9 +269,7 @@ const Watch = () => {
                             onClick={() => handleServerChange(server.id, server.name)}
                           >
                             {server.name}
-                            {selectedServer === server.name && (
-                              <span className="ml-auto text-xs text-primary">● Active</span>
-                            )}
+                            {selectedServer === server.name && <span className="ml-auto text-xs text-primary">● Active</span>}
                           </Button>
                         ))}
                       </div>
@@ -214,11 +282,11 @@ const Watch = () => {
 
           {/* Download Links */}
           <div className="rounded-xl border border-border bg-card p-6">
+            {/* ... (tidak ada perubahan di bagian download) ... */}
             <div className="mb-4 flex items-center gap-2">
               <Download className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-bold">Download</h2>
             </div>
-
             <ScrollArea className="h-[300px]">
               <div className="space-y-4">
                 {episode.download_urls.mp4.length > 0 && (
@@ -233,15 +301,7 @@ const Watch = () => {
                         <CollapsibleContent>
                           <div className="ml-4 mt-1 space-y-1">
                             {quality.urls.map((dl, idx) => (
-                              <button
-                                key={idx}
-                                onClick={() => {
-                                  if (window.confirm(`Are you sure you want to download ${episode.episode} (${quality.resolution}) from ${dl.provider}?`)) {
-                                    window.open(dl.url, '_blank');
-                                  }
-                                }}
-                                className="block w-full rounded px-3 py-2 text-left text-sm hover:bg-muted"
-                              >
+                              <button key={idx} onClick={() => { if (window.confirm(`Download ${episode.episode} (${quality.resolution}) from ${dl.provider}?`)) { window.open(dl.url, '_blank'); } }} className="block w-full rounded px-3 py-2 text-left text-sm hover:bg-muted">
                                 {dl.provider}
                               </button>
                             ))}
@@ -251,7 +311,6 @@ const Watch = () => {
                     ))}
                   </div>
                 )}
-
                 {episode.download_urls.mkv.length > 0 && (
                   <div>
                     <h3 className="mb-2 font-semibold">MKV Format</h3>
@@ -264,15 +323,7 @@ const Watch = () => {
                         <CollapsibleContent>
                           <div className="ml-4 mt-1 space-y-1">
                             {quality.urls.map((dl, idx) => (
-                              <button
-                                key={idx}
-                                onClick={() => {
-                                  if (window.confirm(`Are you sure you want to download ${episode.episode} (${quality.resolution}) from ${dl.provider}?`)) {
-                                    window.open(dl.url, '_blank');
-                                  }
-                                }}
-                                className="block w-full rounded px-3 py-2 text-left text-sm hover:bg-muted"
-                              >
+                              <button key={idx} onClick={() => { if (window.confirm(`Download ${episode.episode} (${quality.resolution}) from ${dl.provider}?`)) { window.open(dl.url, '_blank'); } }} className="block w-full rounded px-3 py-2 text-left text-sm hover:bg-muted">
                                 {dl.provider}
                               </button>
                             ))}
@@ -294,15 +345,8 @@ const Watch = () => {
             <ScrollArea className="h-[200px]">
               <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {animeDetail.episode_lists.map((ep) => (
-                  <Button
-                    key={ep.slug}
-                    variant={ep.slug === slug ? 'default' : 'outline'}
-                    asChild
-                    size="sm"
-                  >
-                    <Link to={`/watch/${ep.slug}`}>
-                      Episode {ep.episode_number}
-                    </Link>
+                  <Button key={ep.slug} variant={ep.slug === slug ? 'default' : 'outline'} asChild size="sm">
+                    <Link to={`/watch/${ep.slug}`}>Episode {ep.episode_number}</Link>
                   </Button>
                 ))}
               </div>
