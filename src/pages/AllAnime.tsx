@@ -52,16 +52,16 @@ const AllAnime = () => {
                 <TabsContent key={letter} value={letter}>
                   {group?.animeList && group.animeList.length > 0 ? (
                     <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                      {group.animeList.map((anime) => (
-                        <Link
-                          key={anime.animeId}
-                          to={`/anime/${anime.animeId}`}
-                          className="block rounded-md p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-primary"
-                        >
-                          {anime.title}
-                        </Link>
-                      ))}
-                    </div>
+  {group.animeList.map((anime) => (
+    <Link
+      key={anime.animeId}
+      to={`/anime/${anime.animeId}`}
+      className="block rounded-md p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-primary"
+    >
+      {anime.title}
+    </Link>
+  ))}
+</div>
                   ) : (
                     <div className="py-20 text-center">
                       <p className="text-muted-foreground">No anime found starting with "{letter}"</p>

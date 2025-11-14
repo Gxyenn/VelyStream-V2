@@ -47,18 +47,18 @@ const Schedule = () => {
             {scheduleData?.map((daySchedule) => (
               <TabsContent key={daySchedule.day} value={daySchedule.day}>
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
-                  {daySchedule.anime_list.map((anime) => (
-                    <AnimeCard 
-                      key={anime.slug} 
-                      anime={{
-                        title: anime.anime_name,
-                        slug: anime.slug,
-                        poster: anime.poster,
-                        otakudesu_url: anime.url,
-                      }} 
-                    />
-                  ))}
-                </div>
+  {daySchedule.anime_list.map((anime) => (
+    <AnimeCard 
+      key={anime.slug} 
+      anime={{
+        title: anime.anime_name,
+        slug: anime.slug,
+        poster: anime.poster,
+        otakudesu_url: anime.url,
+      }} 
+    />
+  ))}
+</div>
               </TabsContent>
             ))}
           </Tabs>
