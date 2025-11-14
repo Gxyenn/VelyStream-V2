@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { api } from '@/lib/api';
+import { api, StreamServer } from '@/lib/api'; // Impor tipe StreamServer
 import { storage } from '@/lib/storage';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -58,7 +58,7 @@ const Watch = () => {
     if (episode?.stream_url && !currentStreamUrl) {
       setCurrentStreamUrl(episode.stream_url);
     }
-  }, [episode]);
+  }, [episode, currentStreamUrl]);
 
   const handleServerChange = async (serverId: string, serverName: string) => {
     setLoadingServer(true);
@@ -73,11 +73,34 @@ const Watch = () => {
     }
   };
 
+  // Helper function to get quality label for server groups
+  const getQualityLabel = (serverGroup: StreamServer) => {
+    // Prioritaskan 'quality' jika ada isinya
+    if (serverGroup.quality) {
+      return `Quality: ${serverGroup.quality}`;
+    }
+    // Jika tidak ada, coba ekstrak dari 'id' server pertama
+    if (serverGroup.servers && serverGroup.servers.length > 0) {
+      const firstServerId = serverGroup.servers[0].id;
+      // Regex untuk mengambil resolusi (e.g., -360p, -480p, -720p)
+      const match = firstServerId.match(/-(\d+p)$/); 
+      if (match && match[1]) {
+        return `Quality: ${match[1]}`;
+      }
+    }
+    // Fallback jika tidak ditemukan
+    return 'Servers';
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-primary">
         <div className="container mx-auto px-4 py-8">
           <Skeleton className="mb-4 h-96 w-full" />
+          <div className="grid gap-6 lg:grid-cols-2">
+             <Skeleton className="h-[300px] w-full" />
+             <Skeleton className="h-[300px] w-full" />
+          </div>
         </div>
       </div>
     );
@@ -108,15 +131,19 @@ const Watch = () => {
             )}
           </div>
 
-          <div className="relative w-full overflow-hidden rounded-xl border border-border bg-black" style={{ aspectRatio: '16/9', minHeight: '500px' }}>
+          <div 
+            className="relative w-full overflow-hidden rounded-xl border border-border bg-black" 
+            style={{ aspectRatio: '16/9' }}
+          >
             {loadingServer && (
               <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/50 backdrop-blur-sm">
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
               </div>
             )}
             <iframe
+              key={currentStreamUrl}
               src={currentStreamUrl}
-              className="h-full w-full"
+              className="absolute top-0 left-0 h-full w-full"
               allowFullScreen
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             />
@@ -159,7 +186,7 @@ const Watch = () => {
                 {episode.stream_servers.map((serverGroup, idx) => (
                   <Collapsible key={idx} defaultOpen={idx === 0}>
                     <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-secondary p-3 text-left font-semibold hover:bg-secondary/80">
-                      {serverGroup.quality ? `Quality: ${serverGroup.quality}` : 'Servers'}
+                      {getQualityLabel(serverGroup)}
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="ml-4 mt-2 space-y-1">
@@ -201,7 +228,7 @@ const Watch = () => {
                       <Collapsible key={quality.resolution}>
                         <CollapsibleTrigger className="mb-1 flex w-full items-center justify-between rounded-lg bg-secondary p-3 text-left hover:bg-secondary/80">
                           <span className="font-semibold">{quality.resolution}</span>
-                          <ChevronRight className="h-4 w-4" />
+                          <ChevronRight className="h-4 w-4 transition-transform data-[state=open]:rotate-90" />
                         </CollapsibleTrigger>
                         <CollapsibleContent>
                           <div className="ml-4 mt-1 space-y-1">
@@ -232,7 +259,7 @@ const Watch = () => {
                       <Collapsible key={quality.resolution}>
                         <CollapsibleTrigger className="mb-1 flex w-full items-center justify-between rounded-lg bg-secondary p-3 text-left hover:bg-secondary/80">
                           <span className="font-semibold">{quality.resolution}</span>
-                          <ChevronRight className="h-4 w-4" />
+                          <ChevronRight className="h-4 w-4 transition-transform data-[state=open]:rotate-90" />
                         </CollapsibleTrigger>
                         <CollapsibleContent>
                           <div className="ml-4 mt-1 space-y-1">
