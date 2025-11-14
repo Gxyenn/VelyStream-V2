@@ -48,6 +48,26 @@ export interface AnimeDetail {
   recommendations: Anime[];
 }
 
+export interface BatchDetail {
+    title: string;
+    animeId: string;
+    poster: string;
+    downloadUrl: {
+      formats: {
+        title: string;
+        qualities: {
+          title: string;
+          size: string;
+          urls: {
+            title: string;
+            url: string;
+          }[];
+        }[];
+      }[];
+    };
+}
+
+
 export interface Episode {
   episode: string;
   episode_number: number;
@@ -164,7 +184,7 @@ export const api = {
     return data.data;
   },
 
-  async getBatchDetail(slug: string) {
+  async getBatchDetail(slug: string): Promise<BatchDetail> {
     const res = await fetch(`${BASE_URL}/batch/${slug}`);
     const data = await res.json();
     return data.data;
