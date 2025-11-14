@@ -10,9 +10,7 @@ import {
   ChevronRight, 
   Download, 
   Monitor,
-  Loader2,
-  ListVideo,
-  X
+  Loader2
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import {
@@ -20,20 +18,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetClose,
-} from "@/components/ui/sheet";
-
-// Helper to extract resolution from server ID
-const getResolutionFromServerId = (serverId: string): string => {
-  const match = serverId.match(/(\d{3,4}p)$/);
-  return match ? match[1] : 'SD';
-};
 
 const Watch = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -47,13 +31,11 @@ const Watch = () => {
     queryFn: () => api.getEpisodeDetail(slug!),
     enabled: !!slug
   });
-  
-  const animeSlug = episode?.anime.slug.replace('https:/otakudesu.best/anime/', '').replace('/', '');
 
   const { data: animeDetail } = useQuery({
-    queryKey: ['anime', animeSlug],
-    queryFn: () => api.getAnimeDetail(animeSlug!),
-    enabled: !!animeSlug
+    queryKey: ['anime', episode?.anime.slug],
+    queryFn: () => api.getAnimeDetail(episode!.anime.slug.replace('https:/otakudesu.best/anime/', '').replace('/', '')),
+    enabled: !!episode?.anime.slug
   });
 
   // Save to history when episode loads
@@ -73,10 +55,10 @@ const Watch = () => {
 
   // Set default stream URL
   useEffect(() => {
-    if (episode?.stream_url) {
+    if (episode?.stream_url && !currentStreamUrl) {
       setCurrentStreamUrl(episode.stream_url);
     }
-  }, [episode?.stream_url]);
+  }, [episode]);
 
   const handleServerChange = async (serverId: string, serverName: string) => {
     setLoadingServer(true);
@@ -86,44 +68,16 @@ const Watch = () => {
       setCurrentStreamUrl(url);
     } catch (error) {
       console.error('Failed to load server:', error);
-      // You can add a toast notification here to inform the user
     } finally {
       setLoadingServer(false);
     }
   };
-  
-  // Group servers by resolution
-  const groupedServers = React.useMemo(() => {
-    if (!episode?.stream_servers) return [];
-    
-    const groups: { [key: string]: typeof episode.stream_servers[0]['servers'] } = {};
-
-    episode.stream_servers.forEach(group => {
-        group.servers.forEach(server => {
-            const resolution = getResolutionFromServerId(server.id);
-            if (!groups[resolution]) {
-                groups[resolution] = [];
-            }
-            groups[resolution].push(server);
-        });
-    });
-
-    return Object.entries(groups).map(([resolution, servers]) => ({
-        quality: resolution,
-        servers,
-    }));
-  }, [episode?.stream_servers]);
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-primary">
         <div className="container mx-auto px-4 py-8">
-          <Skeleton className="w-full aspect-video mb-4" />
-          <Skeleton className="h-10 w-1/4 mb-4" />
-          <div className="grid gap-6 lg:grid-cols-2">
-            <Skeleton className="h-48 w-full" />
-            <Skeleton className="h-48 w-full" />
-          </div>
+          <Skeleton className="mb-4 h-96 w-full" />
         </div>
       </div>
     );
@@ -154,14 +108,13 @@ const Watch = () => {
             )}
           </div>
 
-          <div className="relative w-full overflow-hidden rounded-xl border border-border bg-black aspect-video">
+          <div className="relative w-full overflow-hidden rounded-xl border border-border bg-black" style={{ aspectRatio: '16/9', minHeight: '500px' }}>
             {loadingServer && (
               <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/50 backdrop-blur-sm">
                 <Loader2 className="h-12 w-12 animate-spin text-primary" />
               </div>
             )}
             <iframe
-              key={currentStreamUrl} // Force re-render on URL change
               src={currentStreamUrl}
               className="h-full w-full"
               allowFullScreen
@@ -170,7 +123,7 @@ const Watch = () => {
           </div>
 
           {/* Episode Navigation */}
-          <div className="mt-4 flex flex-wrap gap-2 justify-between">
+          <div className="mt-4 flex gap-2">
             {episode.has_previous_episode && episode.previous_episode && (
               <Button
                 variant="outline"
@@ -178,56 +131,15 @@ const Watch = () => {
                 className="gap-2"
               >
                 <ChevronLeft className="h-4 w-4" />
-                Previous
+                Previous Episode
               </Button>
             )}
-            
-            <div className="flex-grow" />
-
-            {animeDetail && animeDetail.episode_lists.length > 0 && (
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    <ListVideo className="h-4 w-4" />
-                    All Episodes
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="bottom" className="h-[50vh]">
-                   <SheetHeader>
-                     <SheetTitle>All Episodes</SheetTitle>
-                     <SheetClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-secondary hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
-                       <X className="h-4 w-4" />
-                       <span className="sr-only">Close</span>
-                     </SheetClose>
-                   </SheetHeader>
-                   <ScrollArea className="h-[calc(50vh-4rem)] mt-4">
-                     <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 pr-6">
-                       {animeDetail.episode_lists.map((ep) => (
-                          <SheetClose asChild key={ep.slug}>
-                            <Button
-                              variant={ep.slug === slug ? 'default' : 'outline'}
-                              asChild
-                              size="sm"
-                              className="w-full"
-                            >
-                              <Link to={`/watch/${ep.slug}`}>
-                                Episode {ep.episode_number}
-                              </Link>
-                            </Button>
-                          </SheetClose>
-                       ))}
-                     </div>
-                   </ScrollArea>
-                </SheetContent>
-              </Sheet>
-            )}
-
             {episode.has_next_episode && episode.next_episode && (
               <Button
                 onClick={() => navigate(`/watch/${episode.next_episode!.slug}`)}
-                className="gap-2"
+                className="ml-auto gap-2"
               >
-                Next
+                Next Episode
                 <ChevronRight className="h-4 w-4" />
               </Button>
             )}
@@ -243,14 +155,14 @@ const Watch = () => {
             </div>
 
             <ScrollArea className="h-[300px]">
-              <div className="space-y-2 pr-4">
-                {groupedServers.map((serverGroup, idx) => (
+              <div className="space-y-2">
+                {episode.stream_servers.map((serverGroup, idx) => (
                   <Collapsible key={idx} defaultOpen={idx === 0}>
                     <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-secondary p-3 text-left font-semibold hover:bg-secondary/80">
-                      Resolution: {serverGroup.quality}
+                      {serverGroup.quality ? `Quality: ${serverGroup.quality}` : 'Servers'}
                     </CollapsibleTrigger>
                     <CollapsibleContent>
-                      <div className="ml-4 mt-2 grid grid-cols-2 gap-1">
+                      <div className="ml-4 mt-2 space-y-1">
                         {serverGroup.servers.map((server) => (
                           <Button
                             key={server.id}
@@ -261,7 +173,7 @@ const Watch = () => {
                           >
                             {server.name}
                             {selectedServer === server.name && (
-                              <span className="ml-auto text-xs text-primary">●</span>
+                              <span className="ml-auto text-xs text-primary">● Active</span>
                             )}
                           </Button>
                         ))}
@@ -281,23 +193,30 @@ const Watch = () => {
             </div>
 
             <ScrollArea className="h-[300px]">
-              <div className="space-y-4 pr-4">
+              <div className="space-y-4">
                 {episode.download_urls.mp4.length > 0 && (
                   <div>
-                    <h3 className="mb-2 font-semibold">MP4</h3>
+                    <h3 className="mb-2 font-semibold">MP4 Format</h3>
                     {episode.download_urls.mp4.map((quality) => (
                       <Collapsible key={quality.resolution}>
                         <CollapsibleTrigger className="mb-1 flex w-full items-center justify-between rounded-lg bg-secondary p-3 text-left hover:bg-secondary/80">
                           <span className="font-semibold">{quality.resolution}</span>
+                          <ChevronRight className="h-4 w-4" />
                         </CollapsibleTrigger>
                         <CollapsibleContent>
                           <div className="ml-4 mt-1 space-y-1">
                             {quality.urls.map((dl, idx) => (
-                               <Button key={idx} asChild variant="link" className="p-0 h-auto justify-start">
-                                <a href={dl.url} target="_blank" rel="noopener noreferrer">
-                                  {dl.provider}
-                                </a>
-                              </Button>
+                              <button
+                                key={idx}
+                                onClick={() => {
+                                  if (window.confirm(`Are you sure you want to download ${episode.episode} (${quality.resolution}) from ${dl.provider}?`)) {
+                                    window.open(dl.url, '_blank');
+                                  }
+                                }}
+                                className="block w-full rounded px-3 py-2 text-left text-sm hover:bg-muted"
+                              >
+                                {dl.provider}
+                              </button>
                             ))}
                           </div>
                         </CollapsibleContent>
@@ -308,20 +227,27 @@ const Watch = () => {
 
                 {episode.download_urls.mkv.length > 0 && (
                   <div>
-                    <h3 className="mb-2 font-semibold">MKV</h3>
+                    <h3 className="mb-2 font-semibold">MKV Format</h3>
                     {episode.download_urls.mkv.map((quality) => (
                       <Collapsible key={quality.resolution}>
                         <CollapsibleTrigger className="mb-1 flex w-full items-center justify-between rounded-lg bg-secondary p-3 text-left hover:bg-secondary/80">
                           <span className="font-semibold">{quality.resolution}</span>
+                          <ChevronRight className="h-4 w-4" />
                         </CollapsibleTrigger>
                         <CollapsibleContent>
                           <div className="ml-4 mt-1 space-y-1">
                             {quality.urls.map((dl, idx) => (
-                              <Button key={idx} asChild variant="link" className="p-0 h-auto justify-start">
-                                <a href={dl.url} target="_blank" rel="noopener noreferrer">
-                                  {dl.provider}
-                                </a>
-                              </Button>
+                              <button
+                                key={idx}
+                                onClick={() => {
+                                  if (window.confirm(`Are you sure you want to download ${episode.episode} (${quality.resolution}) from ${dl.provider}?`)) {
+                                    window.open(dl.url, '_blank');
+                                  }
+                                }}
+                                className="block w-full rounded px-3 py-2 text-left text-sm hover:bg-muted"
+                              >
+                                {dl.provider}
+                              </button>
                             ))}
                           </div>
                         </CollapsibleContent>
@@ -333,6 +259,29 @@ const Watch = () => {
             </ScrollArea>
           </div>
         </div>
+
+        {/* All Episodes List */}
+        {animeDetail && animeDetail.episode_lists.length > 0 && (
+          <div className="mt-6 rounded-xl border border-border bg-card p-6">
+            <h2 className="mb-4 text-xl font-bold">All Episodes</h2>
+            <ScrollArea className="h-[200px]">
+              <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                {animeDetail.episode_lists.map((ep) => (
+                  <Button
+                    key={ep.slug}
+                    variant={ep.slug === slug ? 'default' : 'outline'}
+                    asChild
+                    size="sm"
+                  >
+                    <Link to={`/watch/${ep.slug}`}>
+                      Episode {ep.episode_number}
+                    </Link>
+                  </Button>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -6,72 +6,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AnimeCard } from '@/components/AnimeCard';
-import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, Download, X } from 'lucide-react';
+import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { ScrollArea } from '@/components/ui/scroll-area';
-
-const BatchDownloadDialog = ({ batch, animeTitle }: { batch: any, animeTitle: string }) => {
-  const { data: batchDetail, isLoading } = useQuery({
-    queryKey: ['batch', batch.slug],
-    queryFn: () => api.getBatchDetail(batch.slug),
-    enabled: !!batch.slug,
-  });
-
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="lg" className="gap-2">
-          <Download className="h-5 w-5" />
-          Download Batch
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>Download Batch: {animeTitle}</DialogTitle>
-        </DialogHeader>
-        <ScrollArea className="max-h-[60vh]">
-          {isLoading ? <p>Loading download links...</p> : (
-            <div className="space-y-4 pr-4">
-              {batchDetail?.downloadUrl.formats.map((format, formatIdx) => (
-                <div key={formatIdx}>
-                  <h3 className="font-semibold mb-2">{format.title}</h3>
-                  <div className="space-y-2">
-                    {format.qualities.map((quality, qualityIdx) => (
-                      <div key={qualityIdx} className="p-3 rounded-md bg-secondary">
-                        <p className="font-medium">{quality.title} ({quality.size})</p>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {quality.urls.map((link, linkIdx) => (
-                            <Button key={linkIdx} size="sm" variant="ghost" asChild>
-                              <a href={link.url} target="_blank" rel="noopener noreferrer">
-                                {link.title}
-                              </a>
-                            </Button>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </ScrollArea>
-        <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
-          <X className="h-4 w-4" />
-          <span className="sr-only">Close</span>
-        </DialogClose>
-      </DialogContent>
-    </Dialog>
-  )
-}
 
 const AnimeDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -87,24 +23,21 @@ const AnimeDetail = () => {
     if (slug) {
       setIsInList(storage.isInMyList(slug));
     }
-  }, [slug, anime]);
+  }, [slug]);
 
   const handleToggleList = () => {
     if (!anime) return;
     
-    // Ensure the anime object for storage has all necessary properties
-    const animeDataForStorage = {
-      title: anime.title,
-      slug: anime.slug,
-      poster: anime.poster,
-      rating: anime.rating,
-      otakudesu_url: anime.otakudesu_url || anime.episode_lists?.[0]?.otakudesu_url || '',
-    };
-    
     if (isInList) {
       storage.removeFromMyList(anime.slug);
     } else {
-      storage.addToMyList(animeDataForStorage);
+      storage.addToMyList({
+        title: anime.title,
+        slug: anime.slug,
+        poster: anime.poster,
+        rating: anime.rating,
+        otakudesu_url: anime.episode_lists[0]?.otakudesu_url || ''
+      });
     }
     setIsInList(!isInList);
   };
@@ -162,11 +95,11 @@ const AnimeDetail = () => {
               <div className="mb-6 flex flex-wrap gap-4">
                 <div className="flex items-center gap-2">
                   <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                  <span className="text-lg font-semibold">{anime.rating || 'N/A'}</span>
+                  <span className="text-lg font-semibold">{anime.rating}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Film className="h-5 w-5 text-primary" />
-                  <span>{anime.episode_count || 'N/A'} Episodes</span>
+                  <span>{anime.episode_count} Episodes</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="h-5 w-5 text-primary" />
@@ -198,7 +131,7 @@ const AnimeDetail = () => {
               </div>
 
               {/* Actions */}
-              <div className="flex flex-wrap gap-4">
+              <div className="flex gap-4">
                 {anime.episode_lists.length > 0 && (
                   <Button asChild size="lg" className="gap-2">
                     <Link to={`/watch/${anime.episode_lists[0].slug}`}>
@@ -225,7 +158,6 @@ const AnimeDetail = () => {
                     </>
                   )}
                 </Button>
-                {anime.batch && <BatchDownloadDialog batch={anime.batch} animeTitle={anime.title} />}
               </div>
             </div>
           </div>
@@ -258,10 +190,10 @@ const AnimeDetail = () => {
         )}
 
         {/* Recommendations */}
-        {anime.recommendations?.length > 0 && (
+        {anime.recommendations.length > 0 && (
           <section>
             <h2 className="mb-4 text-2xl font-bold">You May Also Like</h2>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
               {anime.recommendations.map((rec) => (
                 <AnimeCard key={rec.slug} anime={rec} />
               ))}

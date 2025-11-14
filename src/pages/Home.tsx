@@ -3,9 +3,9 @@ import { api } from '@/lib/api';
 import { AnimeCard } from '@/components/AnimeCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Clock, CheckCircle, TrendingUp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Clock, CheckCircle, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
-import { Pagination } from '@/components/Pagination';
 
 const Home = () => {
   const [ongoingPage, setOngoingPage] = useState(1);
@@ -16,16 +16,14 @@ const Home = () => {
     queryFn: api.getHome
   });
 
-  const { data: ongoingData, isLoading: isLoadingOngoing } = useQuery({
+  const { data: ongoingData } = useQuery({
     queryKey: ['ongoing', ongoingPage],
-    queryFn: () => api.getOngoingAnime(ongoingPage),
-    keepPreviousData: true,
+    queryFn: () => api.getOngoingAnime(ongoingPage)
   });
 
-  const { data: completeData, isLoading: isLoadingComplete } = useQuery({
+  const { data: completeData } = useQuery({
     queryKey: ['complete', completePage],
-    queryFn: () => api.getCompleteAnime(completePage),
-    keepPreviousData: true,
+    queryFn: () => api.getCompleteAnime(completePage)
   });
 
   return (
@@ -49,8 +47,8 @@ const Home = () => {
         {isLoading ? (
           <div className="mb-12">
             <Skeleton className="mb-6 h-8 w-48" />
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
-              {[...Array(14)].map((_, i) => (
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+              {[...Array(12)].map((_, i) => (
                 <Skeleton key={i} className="aspect-[2/3]" />
               ))}
             </div>
@@ -63,7 +61,7 @@ const Home = () => {
                   <TrendingUp className="h-6 w-6 text-primary" />
                   <h2 className="text-2xl font-bold">Currently Airing</h2>
                 </div>
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                   {homeData.ongoing_anime.map((anime) => (
                     <AnimeCard key={anime.slug} anime={anime} />
                   ))}
@@ -86,25 +84,37 @@ const Home = () => {
                 </TabsList>
 
                 <TabsContent value="ongoing">
-                  {isLoadingOngoing ? (
-                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
-                       {[...Array(14)].map((_, i) => <Skeleton key={i} className="aspect-[2/3]" />)}
-                     </div>
-                  ) : ongoingData?.ongoingAnimeData && (
+                  {ongoingData?.ongoingAnimeData && (
                     <>
-                      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
+                      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                         {ongoingData.ongoingAnimeData.map((anime) => (
                           <AnimeCard key={anime.slug} anime={anime} />
                         ))}
                       </div>
                       
-                      {ongoingData.paginationData && ongoingData.paginationData.last_visible_page > 1 && (
-                        <div className="mt-8">
-                          <Pagination
-                            currentPage={ongoingData.paginationData.current_page}
-                            totalPages={ongoingData.paginationData.last_visible_page}
-                            onPageChange={setOngoingPage}
-                          />
+                      {ongoingData.paginationData && (
+                        <div className="mt-8 flex items-center justify-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setOngoingPage(p => Math.max(1, p - 1))}
+                            disabled={!ongoingData.paginationData.has_previous_page}
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </Button>
+                          
+                          <span className="px-4 text-sm">
+                            Page {ongoingData.paginationData.current_page} of {ongoingData.paginationData.last_visible_page}
+                          </span>
+                          
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setOngoingPage(p => p + 1)}
+                            disabled={!ongoingData.paginationData.has_next_page}
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
                         </div>
                       )}
                     </>
@@ -112,25 +122,37 @@ const Home = () => {
                 </TabsContent>
 
                 <TabsContent value="complete">
-                  {isLoadingComplete ? (
-                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
-                       {[...Array(14)].map((_, i) => <Skeleton key={i} className="aspect-[2/3]" />)}
-                     </div>
-                  ) : completeData?.completeAnimeData && (
+                  {completeData?.completeAnimeData && (
                     <>
-                      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
+                      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                         {completeData.completeAnimeData.map((anime) => (
                           <AnimeCard key={anime.slug} anime={anime} />
                         ))}
                       </div>
                       
-                      {completeData.paginationData && completeData.paginationData.last_visible_page > 1 && (
-                        <div className="mt-8">
-                           <Pagination
-                            currentPage={completeData.paginationData.current_page}
-                            totalPages={completeData.paginationData.last_visible_page}
-                            onPageChange={setCompletePage}
-                          />
+                      {completeData.paginationData && (
+                        <div className="mt-8 flex items-center justify-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setCompletePage(p => Math.max(1, p - 1))}
+                            disabled={!completeData.paginationData.has_previous_page}
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </Button>
+                          
+                          <span className="px-4 text-sm">
+                            Page {completeData.paginationData.current_page} of {completeData.paginationData.last_visible_page}
+                          </span>
+                          
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setCompletePage(p => p + 1)}
+                            disabled={!completeData.paginationData.has_next_page}
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
                         </div>
                       )}
                     </>

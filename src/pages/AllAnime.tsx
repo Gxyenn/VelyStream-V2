@@ -24,14 +24,14 @@ const AllAnime = () => {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
-            {[...Array(28)].map((_, i) => (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+            {[...Array(24)].map((_, i) => (
               <Skeleton key={i} className="aspect-[2/3]" />
             ))}
           </div>
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="mb-6 flex h-auto flex-wrap justify-start gap-1">
+            <TabsList className="mb-6 flex flex-wrap h-auto gap-1">
               {alphabets.map((letter) => {
                 const hasAnime = data?.list?.some((group) => group.startWith === letter);
                 return (
@@ -52,17 +52,14 @@ const AllAnime = () => {
               return (
                 <TabsContent key={letter} value={letter}>
                   {group?.animeList && group.animeList.length > 0 ? (
-                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
+                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                       {group.animeList.map((anime) => (
                         <AnimeCard 
                           key={anime.animeId} 
                           anime={{
                             title: anime.title,
                             slug: anime.animeId,
-                            // NOTE: The /unlimited API does not provide a poster. We need to handle this gracefully.
-                            // We can use a placeholder or try to find a poster from another source if needed.
-                            // For now, a placeholder is used in AnimeCard if poster is missing.
-                            poster: anime.poster || `https://via.placeholder.com/300x450?text=${encodeURIComponent(anime.title)}`,
+                            poster: 'https://via.placeholder.com/300x450?text=' + encodeURIComponent(anime.title),
                             otakudesu_url: anime.otakudesuUrl
                           }} 
                         />

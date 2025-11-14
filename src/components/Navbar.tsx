@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, Grid3x3, Bookmark, History, Menu, X, CalendarDays } from 'lucide-react';
+import { Home, Search, Grid3x3, Bookmark, History, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -12,7 +12,6 @@ export const Navbar = () => {
     { to: '/search', label: 'Search', icon: Search },
     { to: '/genres', label: 'Genres', icon: Grid3x3 },
     { to: '/all-anime', label: 'All Anime', icon: Grid3x3 },
-    { to: '/schedule', label: 'Schedule', icon: CalendarDays },
     { to: '/mylist', label: 'MyList', icon: Bookmark },
     { to: '/history', label: 'History', icon: History },
   ];
