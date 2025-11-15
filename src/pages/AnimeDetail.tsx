@@ -83,7 +83,7 @@ const AnimeDetail = () => {
             {/* Info */}
             <div className="flex flex-col justify-center">
               <h1 className="mb-2 text-4xl font-bold">{anime.title}</h1>
-              {anime.japanese_title && <p className="mb-4 text-md text-muted-foreground/80">{anime.japanese_title}</p>}
+              {anime.japanese_title && <p className="mb-4 text-lg text-muted-foreground">{anime.japanese_title}</p>}
 
               {/* Stats */}
               <div className="mb-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">

@@ -1,21 +1,14 @@
-const BASE_URL = 'https://www.sankavollerei.com/anime';
+const BASE_URL = 'https://api.gdriveplayer.us/v1';
+const BASE_URL_2 = 'https://api.gdriveplayer.us/v2';
 
-// Interface dasar untuk item anime di banyak endpoint
 export interface Anime {
   title: string;
   slug: string;
   poster: string;
   rating?: string;
-  episode_count?: string | null;
-  current_episode?: string;
+  episode?: string;
   release_day?: string;
   newest_release_date?: string;
-  last_release_date?: string;
-  status?: string;
-  genres?: Genre[];
-  synopsis?: string;
-  season?: string;
-  studio?: string;
   otakudesu_url: string;
 }
 
@@ -25,7 +18,6 @@ export interface Genre {
   otakudesu_url: string;
 }
 
-// Interface untuk Halaman Detail Anime
 export interface AnimeDetail {
   title: string;
   slug: string;
@@ -57,7 +49,6 @@ export interface Episode {
   otakudesu_url: string;
 }
 
-// Interface untuk Halaman Nonton (Watch)
 export interface EpisodeDetail {
   episode: string;
   anime: {
@@ -92,58 +83,9 @@ export interface DownloadQuality {
   }[];
 }
 
-// Untuk endpoint /complete-anime dan /ongoing-anime
-interface PaginatedAnimeResponse<T> {
-  paginationData: {
-    current_page: number;
-    last_visible_page: number;
-    has_next_page: boolean;
-    next_page: number | null;
-    has_previous_page: boolean;
-    previous_page: number | null;
-  };
-  ongoingAnimeData?: T;
-  completeAnimeData?: T;
-  anime?: T; // Untuk genre
-}
-
-// Untuk endpoint /schedule
-export interface ScheduleAnime {
-    anime_name: string;
-    url: string;
-    slug: string;
-    poster: string;
-}
-
-export interface ScheduleDay {
-    day: string;
-    anime_list: ScheduleAnime[];
-}
-
-// Untuk endpoint /unlimited
-export interface AllAnimeItem {
-  title: string;
-  animeId: string;
-  href: string;
-  otakudesuUrl: string;
-}
-
-export interface AllAnimeResponse {
-  list: {
-    startWith: string;
-    animeList: AllAnimeItem[];
-  }[];
-}
-
 export const api = {
   async getHome(): Promise<{ ongoing_anime: Anime[] }> {
     const res = await fetch(`${BASE_URL}/home`);
-    const data = await res.json();
-    return data.data;
-  },
-
-  async getSchedule(): Promise<ScheduleDay[]> {
-    const res = await fetch(`${BASE_URL}/schedule`);
     const data = await res.json();
     return data.data;
   },
@@ -154,28 +96,20 @@ export const api = {
     return data.data;
   },
 
-  async getCompleteAnime(page: number = 1): Promise<PaginatedAnimeResponse<Anime[]>> {
+  async getCompleteAnime(page: number = 1): Promise<any> {
     const res = await fetch(`${BASE_URL}/complete-anime/${page}`);
-    const data = await res.json();
-    return data.data;
-  },
-
-  async getOngoingAnime(page: number = 1): Promise<PaginatedAnimeResponse<Anime[]>> {
-    const res = await fetch(`${BASE_URL}/ongoing-anime?page=${page}`);
-    const data = await res.json();
-    return data.data;
+    return res.json();
   },
 
   async getGenres(): Promise<Genre[]> {
-    const res = await fetch(`${BASE_URL}/genre`);
+    const res = await fetch(`${BASE_URL}/genres`);
     const data = await res.json();
     return data.data;
   },
 
-  async getAnimeByGenre(genre: string, page: number = 1): Promise<PaginatedAnimeResponse<Anime[]>> {
-    const res = await fetch(`${BASE_URL}/genre/${genre}?page=${page}`);
-    const data = await res.json();
-    return data.data;
+  async getAnimeByGenre(genre: string, page: number = 1): Promise<any> {
+    const res = await fetch(`${BASE_URL}/genres/${genre}/${page}`);
+    return res.json();
   },
 
   async getEpisodeDetail(slug: string): Promise<EpisodeDetail> {
@@ -185,21 +119,14 @@ export const api = {
   },
 
   async searchAnime(query: string): Promise<Anime[]> {
-    const res = await fetch(`${BASE_URL}/search/${encodeURIComponent(query)}`);
+    const res = await fetch(`${BASE_URL_2}/search?q=${encodeURIComponent(query)}`);
     const data = await res.json();
     return data.data as Anime[];
   },
 
   async getServerUrl(serverId: string): Promise<string> {
-    // PERBAIKAN KRITIS: URL server dibentuk dari root domain
-    const res = await fetch(`https://www.sankavollerei.com${serverId}`);
+    const res = await fetch(`${BASE_URL}/stream/${serverId}`);
     const data = await res.json();
-    return data.url;
-  },
-
-  async getAllAnime(): Promise<AllAnimeResponse> {
-    const res = await fetch(`${BASE_URL}/unlimited`);
-    const data = await res.json();
-    return data.data;
-  },
+    return data.data.stream_url;
+  }
 };

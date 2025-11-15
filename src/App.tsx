@@ -1,40 +1,39 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Navbar } from "@/components/Navbar";
-import { DisclaimerDialog } from "@/components/DisclaimerDialog";
-import { DonationDialog } from "@/components/DonationDialog";
-import Home from "./pages/Home";
-import Search from "./pages/Search";
-import Genres from "./pages/Genres";
-import GenreDetail from "./pages/GenreDetail";
-import MyList from "./pages/MyList";
-import History from "./pages/History";
-import AnimeDetail from "./pages/AnimeDetail";
-import Watch from "./pages/Watch";
-import AllAnime from "./pages/AllAnime";
-import Schedule from "./pages/Schedule";
-import NotFound from "./pages/NotFound";
-import About from "./pages/About";
-import { useState } from "react";
+import { Toaster } from "@/components/ui/toaster"
+import { Toaster as Sonner } from "@/components/ui/sonner"
+import { TooltipProvider } from "@/components/ui/tooltip"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { Navbar } from "@/components/Navbar"
+import { DisclaimerDialog } from "@/components/DisclaimerDialog"
+import { DonationDialog } from "@/components/DonationDialog"
+import Home from "./pages/Home"
+import Search from "./pages/Search"
+import Genres from "./pages/Genres"
+import GenreDetail from "./pages/GenreDetail"
+import MyList from "./pages/MyList"
+import History from "./pages/History"
+import AnimeDetail from "./pages/AnimeDetail"
+import Watch from "./pages/Watch"
+import NotFound from "./pages/NotFound"
+import { useState } from "react"
 
 const queryClient = new QueryClient();
-const WATCH_COUNT_KEY = "vely_stream_watch_count";
-const DONATION_DIALOG_SHOWN_KEY = "vely_stream_donation_shown";
+const WATCH_COUNT_KEY = 'vely_stream_watch_count';
+const DONATION_DIALOG_SHOWN_KEY = 'vely_stream_donation_shown';
 
 const App = () => {
   const [isDonationDialogOpen, setDonationDialogOpen] = useState(false);
 
-  const triggerDonationDialog = () => {
+  const handleWatch = () => {
     const alreadyShown = localStorage.getItem(DONATION_DIALOG_SHOWN_KEY);
     if (alreadyShown) return;
 
-    const count = parseInt(localStorage.getItem(WATCH_COUNT_KEY) || "0");
-    if (count >= 3) {
+    const newCount = (parseInt(localStorage.getItem(WATCH_COUNT_KEY) || '0')) + 1;
+    localStorage.setItem(WATCH_COUNT_KEY, newCount.toString());
+    
+    if (newCount >= 3) {
       setDonationDialogOpen(true);
-      localStorage.setItem(DONATION_DIALOG_SHOWN_KEY, "true");
+      localStorage.setItem(DONATION_DIALOG_SHOWN_KEY, 'true');
       localStorage.removeItem(WATCH_COUNT_KEY); // Reset count after showing dialog
     }
   };
@@ -57,13 +56,10 @@ const App = () => {
               <Route path="/search" element={<Search />} />
               <Route path="/genres" element={<Genres />} />
               <Route path="/genre/:slug" element={<GenreDetail />} />
-              <Route path="/all-anime" element={<AllAnime />} />
-              <Route path="/schedule" element={<Schedule />} />
               <Route path="/mylist" element={<MyList />} />
               <Route path="/history" element={<History />} />
-              <Route path="/about" element={<About />} />
               <Route path="/anime/:slug" element={<AnimeDetail />} />
-              <Route path="/watch/:slug" element={<Watch />} />
+              <Route path="/watch/:slug" element={<Watch onWatch={handleWatch} />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
@@ -71,6 +67,6 @@ const App = () => {
       </TooltipProvider>
     </QueryClientProvider>
   );
-};
+}
 
 export default App;
