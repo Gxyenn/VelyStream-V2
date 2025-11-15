@@ -1,5 +1,5 @@
-const BASE_URL = 'https://api.gdriveplayer.us/v1';
-const BASE_URL_2 = 'https://api.gdriveplayer.us/v2';
+const BASE_URL = 'https://www.sankavollerei.com/anime';
+const BASE_URL_2 = 'https://www.sankavollerei.com/anime';
 
 export interface Anime {
   title: string;
