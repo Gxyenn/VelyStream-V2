@@ -7,19 +7,15 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
 // Helper function to format time since a timestamp
-const timeSince = (date: number) => {
-  const seconds = Math.floor((new Date().getTime() - date) / 1000);
-  let interval = seconds / 31536000;
-  if (interval > 1) return Math.floor(interval) + " years ago";
-  interval = seconds / 2592000;
-  if (interval > 1) return Math.floor(interval) + " months ago";
-  interval = seconds / 86400;
-  if (interval > 1) return Math.floor(interval) + " days ago";
-  interval = seconds / 3600;
-  if (interval > 1) return Math.floor(interval) + " hours ago";
-  interval = seconds / 60;
-  if (interval > 1) return Math.floor(interval) + " minutes ago";
-  return Math.floor(seconds) + " seconds ago";
+const formatTimestamp = (timestamp: number) => {
+  const date = new Date(timestamp);
+  return date.toLocaleString(undefined, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 };
 
 const History = () => {
@@ -60,7 +56,7 @@ const History = () => {
                 <AnimeCard anime={item.anime} />
                 <div className="mt-2 text-sm">
                   <p className="font-bold truncate group-hover:text-primary">Eps {item.episodeNumber}: {item.episode}</p>
-                  <p className="text-xs text-muted-foreground">{timeSince(item.timestamp)}</p>
+                  <p className="text-xs text-muted-foreground">{formatTimestamp(item.timestamp)}</p>
                 </div>
               </Link>
             ))}

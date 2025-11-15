@@ -57,12 +57,12 @@ export const AnimeCard = ({ anime, className }: AnimeCardProps) => {
       </div>
 
       {/* Info */}
-      <div className="flex flex-1 flex-col p-1.5">
-        <h3 className="mb-1 line-clamp-2 flex-grow text-[12px] font-semibold leading-tight">
+      <div className="flex flex-1 flex-col p-1">
+        <h3 className="mb-1 line-clamp-2 flex-grow text-[11px] font-semibold leading-tight">
           {anime.title}
         </h3>
         
-        <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+        <div className="flex items-center gap-2 text-[9px] text-muted-foreground">
           {/* Release Info (aman jika tidak ada) */}
           {anime.release_day && (
             <div className="flex items-center gap-1">
