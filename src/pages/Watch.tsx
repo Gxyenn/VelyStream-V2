@@ -10,17 +10,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChevronLeft, ChevronRight, Download, Monitor, Loader2, ListVideo, Clapperboard, Server } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 
-interface WatchProps {
-  onWatch?: () => void;
-}
-
-// Helper to parse quality from server ID
-const getQualityFromServerId = (id: string): string => {
-  const match = id.match(/-(\d+p)$/);
-  return match ? match[1] : 'Auto';
-};
-
-const Watch = ({ onWatch }: WatchProps) => {
+const Watch = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   
@@ -41,57 +31,25 @@ const Watch = ({ onWatch }: WatchProps) => {
     enabled: !!episode?.anime.slug,
   });
 
-  // Memoize the available qualities and servers
-  const qualities = useMemo(() => {
-    if (!episode) return [];
-    const qualityMap = new Map<string, StreamServer['servers']>();
-    episode.stream_servers.forEach(group => {
-      group.servers.forEach(server => {
-        const quality = getQualityFromServerId(server.id);
-        if (!qualityMap.has(quality)) {
-          qualityMap.set(quality, []);
-        }
-        qualityMap.get(quality)!.push(server);
-      });
-    });
-    // Sort qualities: 1080p, 720p, 480p, etc.
-    return Array.from(qualityMap.entries()).sort((a, b) => {
-        const qualityA = parseInt(a[0]);
-        const qualityB = parseInt(b[0]);
-        if (isNaN(qualityA)) return 1;
-        if (isNaN(qualityB)) return -1;
-        return qualityB - qualityA;
-    });
-  }, [episode]);
-
-  const serversForSelectedQuality = useMemo(() => {
-    if (!selectedQuality || qualities.length === 0) return [];
-    const found = qualities.find(([quality]) => quality === selectedQuality);
-    return found ? found[1] : [];
-  }, [selectedQuality, qualities]);
-
-  // Effect to set the best quality on initial load
-  useEffect(() => {
-    if (qualities.length > 0 && !selectedQuality) {
-      const bestQuality = qualities[0][0];
-      const firstServer = qualities[0][1][0];
-      setSelectedQuality(bestQuality);
-      handleServerChange(firstServer.id);
-    }
-  }, [qualities]);
-
-
-  useEffect(() => {
-    if (onWatch) onWatch();
-  }, [slug, onWatch]);
-
+  // Effect to save to history
   useEffect(() => {
     if (episode && animeDetail && slug) {
-      const episodeNumber = animeDetail.episode_lists.find(e => e.slug === slug)?.episode_number;
-      storage.addToHistory(
-        { title: animeDetail.title, slug: animeDetail.slug, poster: animeDetail.poster, otakudesu_url: episode.anime.otakudesu_url },
-        { title: episode.episode, slug: slug, number: episodeNumber || 0 }
-      );
+      const episodeData = animeDetail.episode_lists.find(e => e.slug === slug);
+      if (!episodeData) return;
+
+      const historyItem = {
+        anime: {
+          title: animeDetail.title,
+          slug: animeDetail.slug,
+          poster: animeDetail.poster,
+          otakudesu_url: animeDetail.otakudesu_url || '',
+        },
+        episode: episode.episode,
+        episodeSlug: slug,
+        episodeNumber: episodeData.episode_number,
+        // watchProgress and duration are omitted as we cannot track them from the iframe
+      };
+      storage.addToHistory(historyItem);
     }
   }, [episode, animeDetail, slug]);
 

@@ -17,6 +17,7 @@ import Watch from "./pages/Watch";
 import AllAnime from "./pages/AllAnime";
 import Schedule from "./pages/Schedule";
 import NotFound from "./pages/NotFound";
+import About from "./pages/About";
 import { useState } from "react";
 
 const queryClient = new QueryClient();
@@ -27,13 +28,13 @@ const App = () => {
   const [isDonationDialogOpen, setDonationDialogOpen] = useState(false);
 
   const triggerDonationDialog = () => {
-    const alreadyShown = sessionStorage.getItem(DONATION_DIALOG_SHOWN_KEY);
+    const alreadyShown = localStorage.getItem(DONATION_DIALOG_SHOWN_KEY);
     if (alreadyShown) return;
 
     const count = parseInt(localStorage.getItem(WATCH_COUNT_KEY) || "0");
     if (count >= 3) {
       setDonationDialogOpen(true);
-      sessionStorage.setItem(DONATION_DIALOG_SHOWN_KEY, "true");
+      localStorage.setItem(DONATION_DIALOG_SHOWN_KEY, "true");
       localStorage.removeItem(WATCH_COUNT_KEY); // Reset count after showing dialog
     }
   };
@@ -60,12 +61,9 @@ const App = () => {
               <Route path="/schedule" element={<Schedule />} />
               <Route path="/mylist" element={<MyList />} />
               <Route path="/history" element={<History />} />
+              <Route path="/about" element={<About />} />
               <Route path="/anime/:slug" element={<AnimeDetail />} />
-              <Route path="/watch/:slug" element={<Watch onWatch={() => {
-                const count = parseInt(localStorage.getItem(WATCH_COUNT_KEY) || "0") + 1;
-                localStorage.setItem(WATCH_COUNT_KEY, count.toString());
-                triggerDonationDialog();
-              }} />} />
+              <Route path="/watch/:slug" element={<Watch />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>

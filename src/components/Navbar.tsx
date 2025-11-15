@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, Grid3x3, Bookmark, History, Menu, CalendarDays, Heart, Coffee } from 'lucide-react';
+import { Home, Search, Grid3x3, Bookmark, History, Menu, CalendarDays, Heart, Info } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
@@ -16,6 +16,7 @@ export const Navbar = () => {
     { to: '/schedule', label: 'Schedule', icon: CalendarDays },
     { to: '/mylist', label: 'MyList', icon: Bookmark },
     { to: '/history', label: 'History', icon: History },
+    { to: '/about', label: 'About', icon: Info },
   ];
 
   const NavLink = ({ to, label, icon: Icon, isMobile = false, onClick }: { to: string, label: string, icon: any, isMobile?: boolean, onClick?: () => void }) => (
@@ -36,7 +37,7 @@ export const Navbar = () => {
   
   const DonationLink = ({ isMobile = false, onClick }: { isMobile?: boolean, onClick?: () => void }) => (
     <a
-      href="https://saweria.com/Gxyenn"
+      href="https://saweria.co/Gxyenn"
       target="_blank"
       rel="noopener noreferrer"
       onClick={onClick}
@@ -60,7 +61,7 @@ export const Navbar = () => {
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent shadow-glow-purple">
               <span className="text-2xl font-bold text-primary-foreground">V</span>
             </div>
-            <span className="hidden sm:inline text-xl font-bold tracking-tight">
+            <span className="font-serif text-xl font-bold tracking-tight">
               Vely<span className="text-primary">Stream</span>
             </span>
           </Link>

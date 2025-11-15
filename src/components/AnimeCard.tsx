@@ -57,8 +57,8 @@ export const AnimeCard = ({ anime, className }: AnimeCardProps) => {
       </div>
 
       {/* Info */}
-      <div className="flex flex-1 flex-col p-2">
-        <h3 className="mb-1 line-clamp-2 flex-grow text-xs font-semibold leading-tight">
+      <div className="flex flex-1 flex-col p-1.5">
+        <h3 className="mb-1 line-clamp-2 flex-grow text-[12px] font-semibold leading-tight">
           {anime.title}
         </h3>
         

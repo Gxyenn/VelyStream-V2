@@ -19,7 +19,11 @@ const AnimeDetail = () => {
 
   const { data: anime, isLoading } = useQuery({
     queryKey: ['anime', slug],
-    queryFn: () => api.getAnimeDetail(slug!),
+    queryFn: async () => {
+      const data = await api.getAnimeDetail(slug!);
+      console.log('Fetched Anime Detail:', data);
+      return data;
+    },
     enabled: !!slug
   });
 

@@ -10,6 +10,7 @@ export interface HistoryItem {
   episodeNumber: number; // Number of the episode
   timestamp: number; // When it was watched
   watchProgress?: number; // Optional: progress in seconds
+  duration?: number; // Optional: total duration of the episode in seconds
 }
 
 export const storage = {
@@ -40,18 +41,18 @@ export const storage = {
     const history = localStorage.getItem(HISTORY_KEY);
     return history ? JSON.parse(history) : [];
   },
-  addToHistory: (anime: Anime, episode: { title: string; slug: string; number: number }) => {
+  addToHistory: (item: Omit<HistoryItem, 'timestamp'>) => {
     let history = storage.getHistory();
-    // Remove existing entry for the same anime to avoid duplicates, now checking by anime slug.
-    history = history.filter(item => item.anime.slug !== anime.slug);
+    // Remove existing entry for the same anime episode to avoid duplicates
+    history = history.filter(h => h.episodeSlug !== item.episodeSlug);
+    
     // Add new entry to the beginning
-    history.unshift({ 
-      anime, 
-      episode: episode.title,
-      episodeSlug: episode.slug,
-      episodeNumber: episode.number,
-      timestamp: Date.now() 
-    });
+    const newHistoryItem: HistoryItem = {
+      ...item,
+      timestamp: Date.now()
+    };
+    history.unshift(newHistoryItem);
+
     // Keep history to a reasonable size, e.g., 100 items
     if (history.length > 100) {
       history.pop();
