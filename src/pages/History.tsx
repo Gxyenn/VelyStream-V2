@@ -4,19 +4,6 @@ import { History as HistoryIcon, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { HistoryItem } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-
-// Helper function to format time since a timestamp
-const formatTimestamp = (timestamp: number) => {
-  const date = new Date(timestamp);
-  return date.toLocaleString(undefined, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-};
 
 const History = () => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
@@ -50,15 +37,15 @@ const History = () => {
         </div>
 
         {history.length > 0 ? (
-          <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {history.map((item) => (
-              <Link to={`/anime/${item.anime.slug}`} key={`${item.anime.slug}-${item.timestamp}`} className="group">
+              <div key={`${item.anime.slug}-${item.timestamp}`}>
                 <AnimeCard anime={item.anime} />
-                <div className="mt-2 text-sm">
-                  <p className="font-bold truncate group-hover:text-primary">{item.episode}</p>
-                  <p className="text-xs text-muted-foreground">{formatTimestamp(item.timestamp)}</p>
+                <div className="mt-2 rounded-lg bg-secondary p-2 text-xs">
+                  <p className="text-secondary-foreground">Last watched:</p>
+                  <p className="font-semibold text-primary">{item.episode}</p>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         ) : (
