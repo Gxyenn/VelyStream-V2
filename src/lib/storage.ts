@@ -22,13 +22,14 @@ export const storage = {
     if (!exists) {
       list.push(anime);
       localStorage.setItem(MYLIST_KEY, JSON.stringify(list));
+      window.dispatchEvent(new Event('storage_changed'));
     }
   },
 
   removeFromMyList(slug: string): void {
-    const list = this.getMyList();
     const filtered = list.filter(item => item.slug !== slug);
     localStorage.setItem(MYLIST_KEY, JSON.stringify(filtered));
+    window.dispatchEvent(new Event('storage_changed'));
   },
 
   isInMyList(slug: string): boolean {
@@ -59,10 +60,12 @@ export const storage = {
     const limited = filtered.slice(0, 50);
     
     localStorage.setItem(HISTORY_KEY, JSON.stringify(limited));
+    window.dispatchEvent(new Event('storage_changed'));
   },
 
   clearHistory(): void {
     localStorage.setItem(HISTORY_KEY, JSON.stringify([]));
+    window.dispatchEvent(new Event('storage_changed'));
   }
 };
 

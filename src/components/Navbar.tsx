@@ -60,7 +60,7 @@ export const Navbar = () => {
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent shadow-glow-purple">
               <span className="text-2xl font-bold text-primary-foreground">V</span>
             </div>
-            <span className="hidden sm:inline text-xl font-bold tracking-tight">
+            <span className="text-xl font-bold tracking-tight">
               Vely<span className="text-primary">Stream</span>
             </span>
           </Link>

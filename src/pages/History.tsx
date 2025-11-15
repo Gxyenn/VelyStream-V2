@@ -9,7 +9,17 @@ const History = () => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
   useEffect(() => {
-    setHistory(storage.getHistory());
+    const handleStorageChange = () => {
+      setHistory(storage.getHistory());
+    };
+
+    handleStorageChange(); // Initial load
+
+    window.addEventListener('storage_changed', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage_changed', handleStorageChange);
+    };
   }, []);
 
   const handleClear = () => {

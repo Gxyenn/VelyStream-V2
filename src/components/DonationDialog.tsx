@@ -18,7 +18,7 @@ interface DonationDialogProps {
 
 export function DonationDialog({ isOpen, onClose }: DonationDialogProps) {
   const handleDonation = () => {
-    window.open("https://saweria.com/Gxyenn", "_blank");
+    window.open("https://saweria.co/Gxyenn", "_blank");
     onClose();
   };
 
@@ -40,8 +40,8 @@ export function DonationDialog({ isOpen, onClose }: DonationDialogProps) {
                 Yuk support Developer untuk terus update dengan cara berdonasi atau follow akun sosial media kami.
             </p>
             <div className="mt-4 flex flex-col space-y-2">
-                 <a href="https://t.me/GxyennOfficial" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-sky-500 hover:underline">
-                    Channel Telegram: t.me/GxyennOfficial
+                 <a href="https://t.me/Gxyenn969" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-sky-500 hover:underline">
+                    Channel Telegram: t.me/Gxyenn969
                 </a>
                 <a href="https://tiktok.com/@gxyenn969" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-pink-500 hover:underline">
                     TikTok: tiktok.com/@gxyenn969

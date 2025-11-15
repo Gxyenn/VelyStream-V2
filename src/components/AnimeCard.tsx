@@ -42,7 +42,7 @@ export const AnimeCard = ({ anime, className }: AnimeCardProps) => {
 
         {/* Rating Badge (aman jika rating tidak ada) */}
         {anime.rating && (
-          <div className="absolute right-2 top-2 flex items-center gap-1 rounded-lg bg-black/70 px-2 py-1 text-xs font-semibold backdrop-blur-sm">
+          <div className="absolute right-2 top-2 flex items-center gap-1 rounded-lg bg-black/70 px-1.5 py-0.5 text-xs font-semibold backdrop-blur-sm">
             <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
             <span>{anime.rating}</span>
           </div>
@@ -50,15 +50,15 @@ export const AnimeCard = ({ anime, className }: AnimeCardProps) => {
 
         {/* Episode/Status Badge (aman jika tidak ada) */}
         {(anime.current_episode || anime.episode_count) && (
-          <div className="absolute left-2 top-2 rounded-lg bg-primary/90 px-2 py-1 text-xs font-semibold backdrop-blur-sm">
+          <div className="absolute left-2 top-2 rounded-lg bg-primary/90 px-1.5 py-0.5 text-xs font-semibold backdrop-blur-sm">
             {anime.current_episode || `${anime.episode_count} Eps`}
           </div>
         )}
       </div>
 
       {/* Info */}
-      <div className="flex flex-1 flex-col p-3">
-        <h3 className="mb-2 line-clamp-2 flex-grow text-sm font-semibold leading-tight">
+      <div className="flex flex-1 flex-col p-2">
+        <h3 className="mb-2 line-clamp-2 flex-grow text-xs font-semibold leading-tight">
           {anime.title}
         </h3>
         

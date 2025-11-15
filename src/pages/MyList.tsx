@@ -21,7 +21,17 @@ const MyList = () => {
   const [myList, setMyList] = useState<Anime[]>([]);
 
   useEffect(() => {
-    setMyList(storage.getMyList());
+    const handleStorageChange = () => {
+      setMyList(storage.getMyList());
+    };
+
+    handleStorageChange(); // Initial load
+
+    window.addEventListener('storage_changed', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage_changed', handleStorageChange);
+    };
   }, []);
 
   const handleRemove = (slug: string) => {

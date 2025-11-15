@@ -93,7 +93,7 @@ export interface DownloadQuality {
 }
 
 // Untuk endpoint /complete-anime dan /ongoing-anime
-interface PaginatedAnimeResponse<T> {
+export interface PaginatedAnimeResponse<T> {
   paginationData: {
     current_page: number;
     last_visible_page: number;
@@ -135,6 +135,47 @@ export interface AllAnimeResponse {
   }[];
 }
 
+// Interfaces for Batch Download (API Key 10)
+export interface BatchUrl {
+  title: string;
+  url: string;
+}
+
+export interface BatchQuality {
+  title: string;
+  size: string;
+  urls: BatchUrl[];
+}
+
+export interface BatchFormat {
+  title: string;
+  qualities: BatchQuality[];
+}
+
+export interface BatchDetail {
+  title: string;
+  animeId: string;
+  poster: string;
+  japanese: string;
+  type: string;
+  score: string;
+  episodes: number;
+  duration: string;
+  studios: string;
+  producers: string;
+  aired: string;
+  credit: string;
+  genreList: {
+    title: string;
+    genreId: string;
+    href: string;
+    otakudesuUrl: string;
+  }[];
+  downloadUrl: {
+    formats: BatchFormat[];
+  };
+}
+
 export const api = {
   async getHome(): Promise<{ ongoing_anime: Anime[] }> {
     const res = await fetch(`${BASE_URL}/home`);
@@ -174,8 +215,14 @@ export const api = {
 
   async getAnimeByGenre(genre: string, page: number = 1): Promise<PaginatedAnimeResponse<Anime[]>> {
     const res = await fetch(`${BASE_URL}/genre/${genre}?page=${page}`);
-    const data = await res.json();
-    return data.data;
+    const rawData = await res.json();
+    // Transform the response to be consistent
+    const transformedData = {
+      ...rawData.data,
+      paginationData: rawData.data.pagination,
+    };
+    delete transformedData.pagination;
+    return transformedData;
   },
 
   async getEpisodeDetail(slug: string): Promise<EpisodeDetail> {
@@ -199,6 +246,12 @@ export const api = {
 
   async getAllAnime(): Promise<AllAnimeResponse> {
     const res = await fetch(`${BASE_URL}/unlimited`);
+    const data = await res.json();
+    return data.data;
+  },
+
+  async getBatchDetail(batchSlug: string): Promise<BatchDetail> {
+    const res = await fetch(`${BASE_URL}/batch/${batchSlug}`);
     const data = await res.json();
     return data.data;
   },

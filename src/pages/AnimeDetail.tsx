@@ -8,12 +8,14 @@ import { Badge } from '@/components/ui/badge';
 import { AnimeCard } from '@/components/AnimeCard';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo } from 'lucide-react';
+import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo, Download } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { DownloadDialog } from '@/components/DownloadDialog';
 
 const AnimeDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const [isInList, setIsInList] = useState(false);
+  const [isDownloadOpen, setIsDownloadOpen] = useState(false);
 
   const { data: anime, isLoading } = useQuery({
     queryKey: ['anime', slug],
@@ -117,11 +119,27 @@ const AnimeDetail = () => {
                   {isInList ? <BookmarkCheck className="h-5 w-5" /> : <Bookmark className="h-5 w-5" />}
                   {isInList ? 'In My List' : 'Add to List'}
                 </Button>
+                {anime.batch?.slug && (
+                    <Button variant="secondary" size="lg" onClick={() => setIsDownloadOpen(true)} className="gap-2">
+                        <Download className="h-5 w-5" />
+                        Download
+                    </Button>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {isDownloadOpen && anime.batch?.slug && (
+        <DownloadDialog
+          isOpen={isDownloadOpen}
+          onClose={() => setIsDownloadOpen(false)}
+          animeTitle={anime.title}
+          batchSlug={anime.batch.slug}
+          episodes={anime.episode_lists}
+        />
+      )}
 
       <div className="container mx-auto px-4 py-12">
         {/* Synopsis & Episodes Button */}
