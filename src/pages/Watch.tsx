@@ -5,7 +5,7 @@ import { storage } from '@/lib/storage';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChevronLeft, ChevronRight, Download, Monitor, Loader2, ListVideo, Clapperboard, Server } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
@@ -86,13 +86,14 @@ const Watch = ({ onWatch }: WatchProps) => {
   }, [slug, onWatch]);
 
   useEffect(() => {
-    if (episode && animeDetail) {
+    if (episode && animeDetail && slug) {
+      const episodeNumber = animeDetail.episode_lists.find(e => e.slug === slug)?.episode_number;
       storage.addToHistory(
         { title: animeDetail.title, slug: animeDetail.slug, poster: animeDetail.poster, otakudesu_url: episode.anime.otakudesu_url },
-        episode.episode
+        { title: episode.episode, slug: slug, number: episodeNumber || 0 }
       );
     }
-  }, [episode, animeDetail]);
+  }, [episode, animeDetail, slug]);
 
   const handleServerChange = async (serverId: string) => {
     setLoadingServer(true);
@@ -131,11 +132,9 @@ const Watch = ({ onWatch }: WatchProps) => {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-4">
           <h1 className="truncate text-xl font-bold">{episode.episode}</h1>
-          {animeDetail && (
-            <Button variant="link" asChild className="h-auto p-0 text-muted-foreground hover:text-primary">
-                <Link to={`/anime/${animeDetail.slug}`}>← Back to {animeDetail.title}</Link>
-            </Button>
-          )}
+          <Button variant="link" onClick={() => navigate(-1)} className="h-auto p-0 text-muted-foreground hover:text-primary">
+            <ChevronLeft className="h-4 w-4 mr-1" /> Back
+          </Button>
         </div>
 
         <div className="relative mb-4 w-full overflow-hidden rounded-xl border bg-black" style={{ aspectRatio: '16/9' }}>
@@ -213,9 +212,9 @@ const Watch = ({ onWatch }: WatchProps) => {
                 {animeDetail && (
                     <Sheet>
                         <SheetTrigger asChild>
-                            <Button variant="outline" size="sm" className="gap-2"><ListVideo/> All Episodes</Button>
+                            <Button variant="outline" size="sm" className="gap-2"><ListVideo/> Show All Eps</Button>
                         </SheetTrigger>
-                        <SheetContent side="right">
+                        <SheetContent side="right" className="w-[80vw] sm:max-w-sm">
                             <SheetHeader><SheetTitle>All Episodes</SheetTitle></SheetHeader>
                             <ScrollArea className="h-[calc(100%-4rem)] pr-4">
                                 <div className="grid grid-cols-2 gap-2 py-4">
@@ -229,7 +228,36 @@ const Watch = ({ onWatch }: WatchProps) => {
                         </SheetContent>
                     </Sheet>
                 )}
-                {/* Download button can be added here if needed */}
+                {/* Download button */}
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="gap-2"><Download/> Download</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                            <DialogTitle>Download Options</DialogTitle>
+                            <DialogDescription>
+                                Pilih resolusi dan provider untuk mengunduh episode ini.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                            {episode.download_urls?.mp4.map((q) => (
+                                <div key={q.resolution} className="grid grid-cols-4 items-center gap-4">
+                                    <span className="font-bold">{q.resolution}</span>
+                                    <div className="col-span-3 flex gap-2">
+                                        {q.urls.map(u => (
+                                            <Button asChild key={u.provider} size="sm" variant="outline">
+                                                <a href={u.url} download target="_blank" rel="noopener noreferrer">
+                                                    {u.provider}
+                                                </a>
+                                            </Button>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </DialogContent>
+                </Dialog>
             </div>
         </div>
         

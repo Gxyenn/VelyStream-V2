@@ -5,60 +5,58 @@ const HISTORY_KEY = 'velystream_history';
 
 export interface HistoryItem {
   anime: Anime;
-  episode: string;
-  timestamp: number;
+  episode: string; // Episode title, e.g., "Episode 1"
+  episodeSlug: string; // Slug for the watch page URL
+  episodeNumber: number; // Number of the episode
+  timestamp: number; // When it was watched
+  watchProgress?: number; // Optional: progress in seconds
 }
 
 export const storage = {
-  // MyList functions
-  getMyList(): Anime[] {
-    const data = localStorage.getItem(MYLIST_KEY);
-    return data ? JSON.parse(data) : [];
+  // My List
+  getMyList: (): Anime[] => {
+    const list = localStorage.getItem(MY_LIST_KEY);
+    return list ? JSON.parse(list) : [];
   },
-
-  addToMyList(anime: Anime): void {
-    const list = this.getMyList();
-    const exists = list.some(item => item.slug === anime.slug);
-    if (!exists) {
-      list.push(anime);
-      localStorage.setItem(MYLIST_KEY, JSON.stringify(list));
+  addToMyList: (anime: Anime) => {
+    const list = storage.getMyList();
+    if (!list.some(item => item.slug === anime.slug)) {
+      list.unshift(anime);
+      localStorage.setItem(MY_LIST_KEY, JSON.stringify(list));
     }
   },
-
-  removeFromMyList(slug: string): void {
-    const list = this.getMyList();
-    const filtered = list.filter(item => item.slug !== slug);
-    localStorage.setItem(MYLIST_KEY, JSON.stringify(filtered));
+  removeFromMyList: (slug: string) => {
+    let list = storage.getMyList();
+    list = list.filter(item => item.slug !== slug);
+    localStorage.setItem(MY_LIST_KEY, JSON.stringify(list));
   },
-
-  isInMyList(slug: string): boolean {
-    const list = this.getMyList();
+  isInMyList: (slug: string): boolean => {
+    const list = storage.getMyList();
     return list.some(item => item.slug === slug);
   },
 
-  // History functions
-  getHistory(): HistoryItem[] {
-    const data = localStorage.getItem(HISTORY_KEY);
-    return data ? JSON.parse(data) : [];
+  // History
+  getHistory: (): HistoryItem[] => {
+    const history = localStorage.getItem(HISTORY_KEY);
+    return history ? JSON.parse(history) : [];
   },
-
-  addToHistory(anime: Anime, episode: string): void {
-    const history = this.getHistory();
-    
-    // Remove existing entry for same anime
-    const filtered = history.filter(item => item.anime.slug !== anime.slug);
-    
-    // Add new entry at the beginning
-    filtered.unshift({
-      anime,
-      episode,
-      timestamp: Date.now()
+  addToHistory: (anime: Anime, episode: { title: string; slug: string; number: number }) => {
+    let history = storage.getHistory();
+    // Remove existing entry for the same anime to avoid duplicates, now checking by anime slug.
+    history = history.filter(item => item.anime.slug !== anime.slug);
+    // Add new entry to the beginning
+    history.unshift({ 
+      anime, 
+      episode: episode.title,
+      episodeSlug: episode.slug,
+      episodeNumber: episode.number,
+      timestamp: Date.now() 
     });
-
-    // Keep only last 50 items
-    const limited = filtered.slice(0, 50);
-    
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(limited));
+    // Keep history to a reasonable size, e.g., 100 items
+    if (history.length > 100) {
+      history.pop();
+    }
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
   },
 
   clearHistory(): void {

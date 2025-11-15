@@ -4,6 +4,23 @@ import { History as HistoryIcon, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { HistoryItem } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+
+// Helper function to format time since a timestamp
+const timeSince = (date: number) => {
+  const seconds = Math.floor((new Date().getTime() - date) / 1000);
+  let interval = seconds / 31536000;
+  if (interval > 1) return Math.floor(interval) + " years ago";
+  interval = seconds / 2592000;
+  if (interval > 1) return Math.floor(interval) + " months ago";
+  interval = seconds / 86400;
+  if (interval > 1) return Math.floor(interval) + " days ago";
+  interval = seconds / 3600;
+  if (interval > 1) return Math.floor(interval) + " hours ago";
+  interval = seconds / 60;
+  if (interval > 1) return Math.floor(interval) + " minutes ago";
+  return Math.floor(seconds) + " seconds ago";
+};
 
 const History = () => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
@@ -37,15 +54,15 @@ const History = () => {
         </div>
 
         {history.length > 0 ? (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {history.map((item) => (
-              <div key={`${item.anime.slug}-${item.timestamp}`}>
+              <Link to={`/watch/${item.episodeSlug}`} key={`${item.anime.slug}-${item.timestamp}`} className="group">
                 <AnimeCard anime={item.anime} />
-                <div className="mt-2 rounded-lg bg-secondary p-2 text-xs">
-                  <p className="text-secondary-foreground">Last watched:</p>
-                  <p className="font-semibold text-primary">{item.episode}</p>
+                <div className="mt-2 text-sm">
+                  <p className="font-bold truncate group-hover:text-primary">Eps {item.episodeNumber}: {item.episode}</p>
+                  <p className="text-xs text-muted-foreground">{timeSince(item.timestamp)}</p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (
