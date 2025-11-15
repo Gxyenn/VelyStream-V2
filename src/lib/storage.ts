@@ -6,11 +6,7 @@ const HISTORY_KEY = 'velystream_history';
 export interface HistoryItem {
   anime: Anime;
   episode: string; // Episode title, e.g., "Episode 1"
-  episodeSlug: string; // Slug for the watch page URL
-  episodeNumber: number; // Number of the episode
   timestamp: number; // When it was watched
-  watchProgress?: number; // Optional: progress in seconds
-  duration?: number; // Optional: total duration of the episode in seconds
 }
 
 export const storage = {
@@ -41,14 +37,15 @@ export const storage = {
     const history = localStorage.getItem(HISTORY_KEY);
     return history ? JSON.parse(history) : [];
   },
-  addToHistory: (item: Omit<HistoryItem, 'timestamp'>) => {
+  addToHistory: (anime: Anime, episode: string) => {
     let history = storage.getHistory();
     // Remove existing entry for the same anime episode to avoid duplicates
-    history = history.filter(h => h.episodeSlug !== item.episodeSlug);
+    history = history.filter(h => !(h.anime.slug === anime.slug && h.episode === episode));
     
     // Add new entry to the beginning
     const newHistoryItem: HistoryItem = {
-      ...item,
+      anime,
+      episode,
       timestamp: Date.now()
     };
     history.unshift(newHistoryItem);

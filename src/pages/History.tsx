@@ -52,10 +52,10 @@ const History = () => {
         {history.length > 0 ? (
           <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {history.map((item) => (
-              <Link to={`/watch/${item.episodeSlug}`} key={`${item.anime.slug}-${item.timestamp}`} className="group">
+              <Link to={`/anime/${item.anime.slug}`} key={`${item.anime.slug}-${item.timestamp}`} className="group">
                 <AnimeCard anime={item.anime} />
                 <div className="mt-2 text-sm">
-                  <p className="font-bold truncate group-hover:text-primary">Eps {item.episodeNumber}: {item.episode}</p>
+                  <p className="font-bold truncate group-hover:text-primary">{item.episode}</p>
                   <p className="text-xs text-muted-foreground">{formatTimestamp(item.timestamp)}</p>
                 </div>
               </Link>

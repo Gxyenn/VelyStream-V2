@@ -8,18 +8,16 @@ import { Badge } from '@/components/ui/badge';
 import { AnimeCard } from '@/components/AnimeCard';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { DownloadDialog } from '@/components/DownloadDialog';
-import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo, Download } from 'lucide-react';
+import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const AnimeDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const [isInList, setIsInList] = useState(false);
-  const [isDownloadDialogOpen, setDownloadDialogOpen] = useState(false);
 
   const { data: anime, isLoading } = useQuery({
     queryKey: ['anime', slug],
-    queryFn: () => api.getAnimeDetail(slug!.replace('https:/otakudesu.best/anime/', '').replace('/', '')),
+    queryFn: () => api.getAnimeDetail(slug!),
     enabled: !!slug
   });
 
@@ -119,10 +117,6 @@ const AnimeDetail = () => {
                   {isInList ? <BookmarkCheck className="h-5 w-5" /> : <Bookmark className="h-5 w-5" />}
                   {isInList ? 'In My List' : 'Add to List'}
                 </Button>
-                <Button variant="outline" size="lg" onClick={() => setDownloadDialogOpen(true)} className="gap-2">
-                  <Download className="h-5 w-5" />
-                  Download
-                </Button>
               </div>
             </div>
           </div>
@@ -171,16 +165,6 @@ const AnimeDetail = () => {
           </section>
         )}
       </div>
-      
-      {anime && (
-        <DownloadDialog
-            isOpen={isDownloadDialogOpen}
-            onClose={() => setDownloadDialogOpen(false)}
-            episodes={anime.episode_lists}
-            animeSlug={anime.slug}
-            animeTitle={anime.title}
-        />
-      )}
     </div>
   );
 };
