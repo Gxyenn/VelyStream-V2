@@ -36,7 +36,7 @@ export const Navbar = () => {
   
   const DonationLink = ({ isMobile = false, onClick }: { isMobile?: boolean, onClick?: () => void }) => (
     <a
-      href="https://saweria.com/Gxyenn"
+      href="https://saweria.co/Gxyenn"
       target="_blank"
       rel="noopener noreferrer"
       onClick={onClick}
