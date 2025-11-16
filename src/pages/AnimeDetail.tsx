@@ -8,14 +8,17 @@ import { Badge } from '@/components/ui/badge';
 import { AnimeCard } from '@/components/AnimeCard';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo, Download } from 'lucide-react';
+// Menghapus 'Download' dari lucide-react
+import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { DownloadDialog } from '@/components/DownloadDialog';
+// Menghapus import DownloadDialog karena sudah tidak digunakan
+// import { DownloadDialog } from '@/components/DownloadDialog';
 
 const AnimeDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const [isInList, setIsInList] = useState(false);
-  const [isDownloadOpen, setIsDownloadOpen] = useState(false);
+  // Menghapus state untuk dialog download
+  // const [isDownloadOpen, setIsDownloadOpen] = useState(false);
 
   const { data: anime, isLoading } = useQuery({
     queryKey: ['anime', slug],
@@ -108,52 +111,24 @@ const AnimeDetail = () => {
                 {anime.produser && <p><span className="font-semibold text-muted-foreground">Producer:</span> {anime.produser}</p>}
               </div>
 
-              {/* Actions */}
-              <div className="flex flex-wrap gap-4">
+              {/* Actions - Tombol-tombol sudah dikelompokkan di sini */}
+              <div className="flex flex-wrap items-center gap-4">
+                {/* Tombol Nonton Episode Pertama */}
                 {anime.episode_lists.length > 0 && (
                   <Button asChild size="lg" className="gap-2">
-                    <Link to={`/watch/${anime.episode_lists[0].slug}`}><Play className="h-5 w-5" fill="currentColor" />Watch Now</Link>
+                    <Link to={`/watch/${anime.episode_lists[0].slug}`}><Play className="h-5 w-5" fill="currentColor" />Tonton Sekarang</Link>
                   </Button>
                 )}
-                <Button variant="outline" size="lg" onClick={handleToggleList} className="gap-2">
-                  {isInList ? <BookmarkCheck className="h-5 w-5" /> : <Bookmark className="h-5 w-5" />}
-                  {isInList ? 'In My List' : 'Add to List'}
-                </Button>
-                {anime.batch?.slug && (
-                    <Button variant="secondary" size="lg" onClick={() => setIsDownloadOpen(true)} className="gap-2">
-                        <Download className="h-5 w-5" />
-                        Download
-                    </Button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {isDownloadOpen && anime.batch?.slug && (
-        <DownloadDialog
-          isOpen={isDownloadOpen}
-          onClose={() => setIsDownloadOpen(false)}
-          animeTitle={anime.title}
-          batchSlug={anime.batch.slug}
-          episodes={anime.episode_lists}
-        />
-      )}
-
-      <div className="container mx-auto px-4 py-12">
-        {/* Synopsis & Episodes Button */}
-        <section className="mb-12">
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold">Synopsis</h2>
+                {/* Tombol Tampilkan Semua Episode */}
                 {anime.episode_lists.length > 0 && (
                     <Sheet>
                         <SheetTrigger asChild>
-                            <Button variant="secondary" className="gap-2"><ListVideo/> Show Episodes</Button>
+                            <Button variant="secondary" size="lg" className="gap-2"><ListVideo className="h-5 w-5"/> Tampilkan Episode</Button>
                         </SheetTrigger>
                         <SheetContent side="bottom" className="h-[60%]">
                             <SheetHeader>
-                                <SheetTitle>Episodes: {anime.title}</SheetTitle>
+                                <SheetTitle>Episode: {anime.title}</SheetTitle>
                             </SheetHeader>
                             <ScrollArea className="h-full pr-4">
                                 <div className="grid grid-cols-2 gap-3 py-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
@@ -167,6 +142,28 @@ const AnimeDetail = () => {
                         </SheetContent>
                     </Sheet>
                 )}
+
+                {/* Tombol Tambah ke Favorit */}
+                <Button variant="outline" size="lg" onClick={handleToggleList} className="gap-2">
+                  {isInList ? <BookmarkCheck className="h-5 w-5" /> : <Bookmark className="h-5 w-5" />}
+                  {isInList ? 'Sudah Difavorit' : 'Tambah ke Favorit'}
+                </Button>
+                
+                {/* Tombol Download sudah dihapus dari sini */}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Dialog Download sudah dihapus dari sini */}
+
+      <div className="container mx-auto px-4 py-12">
+        {/* Synopsis */}
+        <section className="mb-12">
+            {/* Tombol Show Episodes sudah dipindahkan ke atas */}
+            <div className="mb-4">
+                <h2 className="text-2xl font-bold">Synopsis</h2>
             </div>
             <p className="leading-relaxed text-muted-foreground">{anime.synopsis}</p>
         </section>
