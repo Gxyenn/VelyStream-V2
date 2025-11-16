@@ -1,5 +1,0 @@
-name = "velystream"
-compatibility_date = "2025-11-16"
-
-[site]
-bucket = "./dist"
