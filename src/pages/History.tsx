@@ -50,10 +50,10 @@ const History = () => {
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {history.map((item) => (
               <div key={`${item.anime.slug}-${item.timestamp}`}>
-                <AnimeCard anime={item.anime} />
+                <AnimeCard anime={item.anime} episodeSlug={item.episode.slug} />
                 <div className="mt-2 rounded-lg bg-secondary p-2 text-xs">
                   <p className="text-secondary-foreground">Last watched:</p>
-                  <p className="font-semibold text-primary">{item.episode}</p>
+                  <p className="font-semibold text-primary">{item.episode.title}</p>
                 </div>
               </div>
             ))}

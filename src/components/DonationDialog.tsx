@@ -1,15 +1,14 @@
 
-import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogClose
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Heart, Coffee } from "lucide-react";
+import { Coffee, Share2 } from "lucide-react";
 
 interface DonationDialogProps {
   isOpen: boolean;
@@ -19,41 +18,29 @@ interface DonationDialogProps {
 export function DonationDialog({ isOpen, onClose }: DonationDialogProps) {
   const handleDonation = () => {
     window.open("https://saweria.co/Gxyenn", "_blank");
-    onClose();
+  };
+
+  const handleTikTok = () => {
+    window.open("https://tiktok.com/Gxyenn", "_blank");
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <div className="flex items-center justify-center flex-col text-center">
-             <Heart className="h-12 w-12 text-red-500 mb-4" />
-            <DialogTitle>Terima Kasih Sudah Menggunakan VelyStream!</DialogTitle>
-            <DialogDescription className="pt-2">
-              Sepertinya kamu asik nonton, maaf ya mengganggu.
-              Dukunganmu sangat berarti bagi kami untuk terus melanjutkan project ini.
-            </DialogDescription>
-          </div>
+          <DialogTitle className="text-center">Hai Kamu!</DialogTitle>
         </DialogHeader>
         <div className="py-4 text-center">
-            <p className="text-sm text-muted-foreground">
-                Yuk support Developer untuk terus update dengan cara berdonasi atau follow akun sosial media kami.
-            </p>
-            <div className="mt-4 flex flex-col space-y-2">
-                 <a href="https://t.me/Gxyenn969" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-sky-500 hover:underline">
-                    Channel Telegram: t.me/Gxyenn969
-                </a>
-                <a href="https://tiktok.com/@gxyenn969" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-pink-500 hover:underline">
-                    TikTok: tiktok.com/@gxyenn969
-                </a>
-            </div>
+          <p className="text-muted-foreground">
+            Yuk support Dev Supaya Lebih Semangat Update dengan Cara Donasi/Follow TiktokDev
+          </p>
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            Nanti Saja
-          </Button>
+        <DialogFooter className="grid grid-cols-2 gap-2">
           <Button onClick={handleDonation}>
-            <Coffee className="mr-2 h-4 w-4" /> Donasi Sekarang
+            <Coffee className="mr-2 h-4 w-4" /> Donasi
+          </Button>
+          <Button variant="secondary" onClick={handleTikTok}>
+            <Share2 className="mr-2 h-4 w-4" /> Follow TikTok
           </Button>
         </DialogFooter>
       </DialogContent>

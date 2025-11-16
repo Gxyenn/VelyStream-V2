@@ -5,7 +5,10 @@ const HISTORY_KEY = 'velystream_history';
 
 export interface HistoryItem {
   anime: Anime;
-  episode: string;
+  episode: {
+    title: string;
+    slug: string;
+  };
   timestamp: number;
 }
 
@@ -27,6 +30,7 @@ export const storage = {
   },
 
   removeFromMyList(slug: string): void {
+    let list = this.getMyList();
     const filtered = list.filter(item => item.slug !== slug);
     localStorage.setItem(MYLIST_KEY, JSON.stringify(filtered));
     window.dispatchEvent(new Event('storage_changed'));
@@ -40,10 +44,21 @@ export const storage = {
   // History functions
   getHistory(): HistoryItem[] {
     const data = localStorage.getItem(HISTORY_KEY);
-    return data ? JSON.parse(data) : [];
+    if (data) {
+      const history = JSON.parse(data);
+      // Quick check to see if the data is in the old format.
+      // If the first item's episode is a string, it's the old format.
+      if (history.length > 0 && typeof history[0].episode === 'string') {
+        // Clear the old history
+        localStorage.removeItem(HISTORY_KEY);
+        return [];
+      }
+      return history;
+    }
+    return [];
   },
 
-  addToHistory(anime: Anime, episode: string): void {
+  addToHistory(anime: Anime, episode: { title: string; slug: string }): void {
     const history = this.getHistory();
     
     // Remove existing entry for same anime

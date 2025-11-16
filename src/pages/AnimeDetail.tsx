@@ -8,12 +8,15 @@ import { Badge } from '@/components/ui/badge';
 import { AnimeCard } from '@/components/AnimeCard';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo } from 'lucide-react';
+import { AnimeListHorizontal } from '@/components/AnimeListHorizontal';
+import { DownloadDialog } from '@/components/DownloadDialog';
+import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo, Download } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const AnimeDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const [isInList, setIsInList] = useState(false);
+  const [isDownloadDialogOpen, setDownloadDialogOpen] = useState(false);
 
   const { data: anime, isLoading } = useQuery({
     queryKey: ['anime', slug],
@@ -122,30 +125,35 @@ const AnimeDetail = () => {
                   </Button>
                 </div>
 
-                {/* Baris Bawah: Tombol Show All Episodes */}
-                {anime.episode_lists.length > 0 && (
-                    <Sheet>
-                        <SheetTrigger asChild>
-                            <Button variant="secondary" size="lg" className="w-full gap-2">
-                                <ListVideo className="h-5 w-5"/> Show All Episodes
-                            </Button>
-                        </SheetTrigger>
-                        <SheetContent side="bottom" className="h-[60%]">
-                            <SheetHeader>
-                                <SheetTitle>Episodes: {anime.title}</SheetTitle>
-                            </SheetHeader>
-                            <ScrollArea className="h-full pr-4">
-                                <div className="grid grid-cols-2 gap-3 py-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                                {anime.episode_lists.map((episode) => (
-                                    <Button asChild key={episode.slug} variant="outline">
-                                    <Link to={`/watch/${episode.slug}`}>Episode {episode.episode_number}</Link>
-                                    </Button>
-                                ))}
-                                </div>
-                            </ScrollArea>
-                        </SheetContent>
-                    </Sheet>
-                )}
+                {/* Baris Bawah: Tombol Show All Episodes & Download */}
+                <div className="grid grid-cols-2 gap-3">
+                  {anime.episode_lists.length > 0 && (
+                      <Sheet>
+                          <SheetTrigger asChild>
+                              <Button variant="secondary" size="lg" className="w-full gap-2">
+                                  <ListVideo className="h-5 w-5"/> Show All Episodes
+                              </Button>
+                          </SheetTrigger>
+                          <SheetContent side="bottom" className="h-[60%]">
+                              <SheetHeader>
+                                  <SheetTitle>Episodes: {anime.title}</SheetTitle>
+                              </SheetHeader>
+                              <ScrollArea className="h-full pr-4">
+                                  <div className="grid grid-cols-2 gap-3 py-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                                  {anime.episode_lists.map((episode) => (
+                                      <Button asChild key={episode.slug} variant="outline">
+                                      <Link to={`/watch/${episode.slug}`}>Episode {episode.episode_number}</Link>
+                                      </Button>
+                                  ))}
+                                  </div>
+                              </ScrollArea>
+                          </SheetContent>
+                      </Sheet>
+                  )}
+                  <Button size="lg" className="gap-2" onClick={() => setDownloadDialogOpen(true)}>
+                    <Download className="h-5 w-5" /> Download
+                  </Button>
+                </div>
               </div>
               {/* === PERUBAHAN BERAKHIR DI SINI === */}
 
@@ -167,14 +175,18 @@ const AnimeDetail = () => {
         {anime.recommendations?.length > 0 && (
           <section>
             <h2 className="mb-4 text-2xl font-bold">You May Also Like</h2>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-              {anime.recommendations.map((rec) => (
-                <AnimeCard key={rec.slug} anime={rec} />
-              ))}
-            </div>
+            <AnimeListHorizontal animes={anime.recommendations} />
           </section>
         )}
       </div>
+      {anime && (
+        <DownloadDialog
+          isOpen={isDownloadDialogOpen}
+          onClose={() => setDownloadDialogOpen(false)}
+          episodes={anime.episode_lists}
+          animeTitle={anime.title}
+        />
+      )}
     </div>
   );
 };

@@ -53,7 +53,7 @@ export default {
         'gradient-card': 'var(--gradient-card)',
       },
       boxShadow: {
-        'glow-purple': 'var(--glow-purple)',
+        'glow-primary': 'var(--glow-primary)',
       },
       borderRadius: {
         lg: "var(--radius)",

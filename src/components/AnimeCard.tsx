@@ -6,19 +6,22 @@ import { cn } from '@/lib/utils';
 interface AnimeCardProps {
   anime: Anime;
   className?: string;
+  episodeSlug?: string;
 }
 
-export const AnimeCard = ({ anime, className }: AnimeCardProps) => {
+export const AnimeCard = ({ anime, className, episodeSlug }: AnimeCardProps) => {
   // Jika karena suatu alasan data anime tidak ada, jangan render apapun untuk mencegah error.
   if (!anime) {
     return null;
   }
 
+  const destination = episodeSlug ? `/watch/${episodeSlug}` : `/anime/${anime.slug}`;
+
   return (
     <Link
-      to={`/anime/${anime.slug}`}
+      to={destination}
       className={cn(
-        'group relative flex flex-col overflow-hidden rounded-xl border border-border bg-gradient-card transition-all hover:scale-105 hover:shadow-glow-purple',
+        'group relative flex flex-col overflow-hidden rounded-xl border border-border bg-gradient-card transition-all hover:scale-105 hover:shadow-glow-primary',
         className
       )}
     >
@@ -58,7 +61,7 @@ export const AnimeCard = ({ anime, className }: AnimeCardProps) => {
 
       {/* Info */}
       <div className="flex flex-1 flex-col p-2">
-        <h3 className="mb-2 line-clamp-2 flex-grow text-xs font-semibold leading-tight">
+        <h3 className="mb-2 line-clamp-2 flex-grow text-sm font-semibold leading-tight">
           {anime.title}
         </h3>
         

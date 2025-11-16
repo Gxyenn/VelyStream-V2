@@ -86,13 +86,13 @@ const Watch = ({ onWatch }: WatchProps) => {
   }, [slug, onWatch]);
 
   useEffect(() => {
-    if (episode && animeDetail) {
+    if (episode && animeDetail && slug) {
       storage.addToHistory(
         { title: animeDetail.title, slug: animeDetail.slug, poster: animeDetail.poster, otakudesu_url: episode.anime.otakudesu_url },
-        episode.episode
+        { title: episode.episode, slug: slug }
       );
     }
-  }, [episode, animeDetail]);
+  }, [episode, animeDetail, slug]);
 
   const handleServerChange = async (serverId: string) => {
     setLoadingServer(true);
@@ -105,6 +105,16 @@ const Watch = ({ onWatch }: WatchProps) => {
       // Optionally show a toast to the user
     } finally {
       setLoadingServer(false);
+    }
+  };
+
+  const handleDownload = async (serverId: string) => {
+    try {
+      const url = await api.getServerUrl(serverId);
+      window.open(url, '_blank');
+    } catch (error) {
+      console.error('Failed to get download link:', error);
+      // Optionally show a toast to the user
     }
   };
 
@@ -230,6 +240,24 @@ const Watch = ({ onWatch }: WatchProps) => {
                     </Sheet>
                 )}
                 {/* Download button can be added here if needed */}
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button variant="outline" size="sm" className="gap-2"><Download/> Download</Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-48 p-1">
+                        {qualities.map(([quality, servers]) => (
+                            <Button
+                                key={quality}
+                                variant={"ghost"}
+                                size="sm"
+                                className="w-full justify-start"
+                                onClick={() => handleDownload(servers[0].id)}
+                            >
+                                {quality}
+                            </Button>
+                        ))}
+                    </PopoverContent>
+                </Popover>
             </div>
         </div>
         
