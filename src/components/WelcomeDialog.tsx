@@ -12,7 +12,7 @@ const WELCOME_DIALOG_SHOWN_KEY = "VelyStreamWelcome";
 
 export function WelcomeDialog() {
   const [isOpen, setIsOpen] = useState(false);
-  const [countdown, setCountdown] = useState(10); // Diubah menjadi 10 detik
+  const [countdown, setCountdown] = useState(15); // Diubah menjadi 15 detik
 
   useEffect(() => {
     const alreadyShown = sessionStorage.getItem(WELCOME_DIALOG_SHOWN_KEY);
@@ -34,14 +34,12 @@ export function WelcomeDialog() {
   }, [isOpen, countdown]);
 
   return (
-    // onOpenChange dihapus untuk mencegah penutupan manual
     <Dialog open={isOpen}>
       <DialogContent 
         className="sm:max-w-md"
-        // Properti ini mencegah dialog ditutup saat menekan tombol Escape
         onEscapeKeyDown={(e) => e.preventDefault()}
-        // Properti ini mencegah dialog ditutup saat mengklik di luar
         onInteractOutside={(e) => e.preventDefault()}
+        hideCloseButton // Properti baru untuk menyembunyikan tombol close
       >
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold">
