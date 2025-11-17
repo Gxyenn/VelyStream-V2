@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { DonationDialog } from "@/components/DonationDialog";
+import { WelcomeDialog } from "@/components/WelcomeDialog";
 import Home from "./pages/Home";
 import Search from "./pages/Search";
 import Genres from "./pages/Genres";
@@ -42,6 +43,7 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <WelcomeDialog />
         <BrowserRouter>
           <div className="min-h-screen bg-background text-foreground">
             <DonationDialog 
