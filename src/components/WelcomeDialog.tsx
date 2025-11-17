@@ -8,11 +8,11 @@ import {
 } from "@/components/ui/dialog";
 import { useState, useEffect } from "react";
 
-const WELCOME_DIALOG_SHOWN_KEY = "vely_stream_welcome_shown_session";
+const WELCOME_DIALOG_SHOWN_KEY = "VelyStreamWelcome";
 
 export function WelcomeDialog() {
   const [isOpen, setIsOpen] = useState(false);
-  const [countdown, setCountdown] = useState(5);
+  const [countdown, setCountdown] = useState(10); // Diubah menjadi 10 detik
 
   useEffect(() => {
     const alreadyShown = sessionStorage.getItem(WELCOME_DIALOG_SHOWN_KEY);
@@ -34,13 +34,15 @@ export function WelcomeDialog() {
   }, [isOpen, countdown]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => {
-        if (!open) {
-            setIsOpen(false);
-            sessionStorage.setItem(WELCOME_DIALOG_SHOWN_KEY, "true");
-        }
-    }}>
-      <DialogContent className="sm:max-w-md">
+    // onOpenChange dihapus untuk mencegah penutupan manual
+    <Dialog open={isOpen}>
+      <DialogContent 
+        className="sm:max-w-md"
+        // Properti ini mencegah dialog ditutup saat menekan tombol Escape
+        onEscapeKeyDown={(e) => e.preventDefault()}
+        // Properti ini mencegah dialog ditutup saat mengklik di luar
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold">
             Welcome to <span className="text-primary">VelyStream</span>
