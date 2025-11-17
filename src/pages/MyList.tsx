@@ -25,7 +25,7 @@ const MyList = () => {
       setMyList(storage.getMyList());
     };
 
-    handleStorageChange(); // Initial load
+    handleStorageChange();
 
     window.addEventListener('storage_changed', handleStorageChange);
 
@@ -35,7 +35,12 @@ const MyList = () => {
   }, []);
 
   const handleRemove = (slug: string) => {
-    storage.removeFromMyList(slug);
+    const cleanedSlug = slug
+      .replace('https:/otakudesu.best/anime/', '')
+      .replace(/\/$/, ''); 
+
+    storage.removeFromMyList(cleanedSlug);
+    
     setMyList(storage.getMyList());
   };
 
@@ -71,6 +76,7 @@ const MyList = () => {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      {/* Saat di-klik, fungsi handleRemove akan dipanggil dengan slug LENGKAP */}
                       <AlertDialogAction onClick={() => handleRemove(anime.slug)}>
                         Remove
                       </AlertDialogAction>

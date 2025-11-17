@@ -34,13 +34,11 @@ const AnimeDetail = () => {
     if (!anime) return;
     
     if (isInList) {
-      // Sekarang aman menggunakan anime.slug karena sudah dibersihkan di api.ts
       storage.removeFromMyList(anime.slug);
     } else {
       const animeForList = {
         title: anime.title,
-        // KEMBALI MENGGUNAKAN anime.slug, KARENA SUDAH BERSIH
-        slug: anime.slug, 
+        slug: anime.slug,
         poster: anime.poster,
         rating: anime.rating,
         otakudesu_url: anime.episode_lists[0]?.otakudesu_url || '',
@@ -51,8 +49,6 @@ const AnimeDetail = () => {
     setIsInList(!isInList);
   };
 
-  // ... (Sisa kode JSX di bawah ini tidak perlu diubah, biarkan seperti semula)
-  // ... (Salin sisa kode dari file asli Anda)
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-primary">
@@ -113,8 +109,10 @@ const AnimeDetail = () => {
                 {anime.produser && <p><span className="font-semibold text-muted-foreground">Producer:</span> {anime.produser}</p>}
               </div>
 
+              {/* === PERUBAHAN DIMULAI DI SINI === */}
               {/* Actions */}
               <div className="flex w-full flex-col gap-3">
+                {/* Baris Atas: Tombol Watch Now & Favorite */}
                 <div className="grid grid-cols-2 gap-3">
                   {anime.episode_lists.length > 0 && (
                     <Button asChild size="lg" className="gap-2">
@@ -127,6 +125,7 @@ const AnimeDetail = () => {
                   </Button>
                 </div>
 
+                {/* Baris Bawah: Tombol Show All Episodes & Download */}
                 <div className="grid grid-cols-2 gap-3">
                   {anime.episode_lists.length > 0 && (
                       <Sheet>
@@ -156,6 +155,7 @@ const AnimeDetail = () => {
                   </Button>
                 </div>
               </div>
+              {/* === PERUBAHAN BERAKHIR DI SINI === */}
 
             </div>
           </div>
@@ -163,6 +163,7 @@ const AnimeDetail = () => {
       </div>
 
       <div className="container mx-auto px-4 py-12">
+        {/* Synopsis */}
         <section className="mb-12">
             <div className="mb-4">
                 <h2 className="text-2xl font-bold">Synopsis</h2>
@@ -170,6 +171,7 @@ const AnimeDetail = () => {
             <p className="leading-relaxed text-muted-foreground">{anime.synopsis}</p>
         </section>
 
+        {/* Recommendations */}
         {anime.recommendations?.length > 0 && (
           <section>
             <h2 className="mb-4 text-2xl font-bold">You May Also Like</h2>
