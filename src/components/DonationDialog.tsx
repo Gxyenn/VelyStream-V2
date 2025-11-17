@@ -21,7 +21,7 @@ export function DonationDialog({ isOpen, onClose }: DonationDialogProps) {
   };
 
   const handleTikTok = () => {
-    window.open("https://tiktok.com/Gxyenn969", "_blank");
+    window.open("https://tiktok.com/@Gxyenn969", "_blank");
   };
 
   return (
