@@ -1,3 +1,7 @@
+#### `src/lib/api.ts` (Lengkap)
+```ts
+import { cleanSlug } from './utils';
+
 const BASE_URL = 'https://www.sankavollerei.com/anime';
 
 // Interface dasar untuk item anime di banyak endpoint
@@ -191,8 +195,14 @@ export const api = {
 
   async getAnimeDetail(slug: string): Promise<AnimeDetail> {
     const res = await fetch(`${BASE_URL}/anime/${slug}`);
-    const data = await res.json();
-    return data.data;
+    const json = await res.json();
+    
+    // PERBAIKAN: Membersihkan slug utama dari data API sebelum dikembalikan
+    if (json.data && json.data.slug) {
+      json.data.slug = cleanSlug(json.data.slug);
+    }
+    
+    return json.data;
   },
 
   async getCompleteAnime(page: number = 1): Promise<PaginatedAnimeResponse<Anime[]>> {
@@ -227,8 +237,14 @@ export const api = {
 
   async getEpisodeDetail(slug: string): Promise<EpisodeDetail> {
     const res = await fetch(`${BASE_URL}/episode/${slug}`);
-    const data = await res.json();
-    return data.data;
+    const json = await res.json();
+
+    // PERBAIKAN: Membersihkan slug anime yang ada di dalam data episode
+    if (json.data && json.data.anime && json.data.anime.slug) {
+      json.data.anime.slug = cleanSlug(json.data.anime.slug);
+    }
+
+    return json.data;
   },
 
   async searchAnime(query: string): Promise<Anime[]> {
