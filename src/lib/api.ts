@@ -1,5 +1,3 @@
-#### `src/lib/api.ts` (Lengkap)
-```ts
 import { cleanSlug } from './utils';
 
 const BASE_URL = 'https://www.sankavollerei.com/anime';
