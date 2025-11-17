@@ -195,12 +195,11 @@ export const api = {
     return data.data;
   },
 
-    async getCompleteAnime(page: number = 1): Promise<PaginatedAnimeResponse<Anime[]>> {
-      // Ubah baris ini
-      const res = await fetch(`${BASE_URL}/complete-anime?page=${page}`); 
-      const data = await res.json();
-      return data.data;
-    },
+  async getCompleteAnime(page: number = 1): Promise<PaginatedAnimeResponse<Anime[]>> {
+    const res = await fetch(`${BASE_URL}/complete-anime/${page}`);
+    const data = await res.json();
+    return data.data;
+  },
 
   async getOngoingAnime(page: number = 1): Promise<PaginatedAnimeResponse<Anime[]>> {
     const res = await fetch(`${BASE_URL}/ongoing-anime?page=${page}`);
