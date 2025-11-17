@@ -21,18 +21,20 @@ export function DonationDialog({ isOpen, onClose }: DonationDialogProps) {
   };
 
   const handleTikTok = () => {
-    window.open("https://tiktok.com/Gxyenn", "_blank");
+    window.open("https://tiktok.com/Gxyenn969", "_blank");
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-center">Hai Kamu!</DialogTitle>
+          <DialogTitle className="text-center">Hai Kamu, Iya Kamu!.</DialogTitle>
         </DialogHeader>
         <div className="py-4 text-center">
           <p className="text-muted-foreground">
-            Yuk support Dev Supaya Lebih Semangat Update dengan Cara Donasi/Follow TiktokDev
+            Ayo Support Developer Supaya Semangat Update Terus.
+            Dengan Cara Donasi/Follow TiktokDev
+                        Terimakasih...
           </p>
         </div>
         <DialogFooter className="grid grid-cols-2 gap-2">
