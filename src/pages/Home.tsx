@@ -5,10 +5,12 @@ import { CheckCircle, TrendingUp, Loader2 } from 'lucide-react';
 import { AnimeListHorizontal } from '@/components/AnimeListHorizontal';
 import { AnimeCard } from '@/components/AnimeCard';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import React from 'react';
+import React, { useState } from 'react';
+import { CompletedAnimeSheet } from '@/components/CompletedAnimeSheet';
 
 const Home = () => {
+  const [completedSheetOpen, setCompletedSheetOpen] = useState(false);
+
   const { 
     data: ongoingData, 
     isLoading: isLoadingOngoing,
@@ -31,8 +33,6 @@ const Home = () => {
     ongoingData?.pages.flatMap(page => page.ongoingAnimeData || []) ?? [], 
   [ongoingData]);
 
-  const isLoading = isLoadingOngoing || isLoadingComplete;
-
   return (
     <div className="min-h-screen">
       {/* Hero Section with Gradient */}
@@ -50,21 +50,21 @@ const Home = () => {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Terbaru Section (Previously Ongoing Tab) */}
+        {/* Terbaru Section */}
         <section className="mb-12">
           <div className="mb-6 flex items-center gap-3">
             <TrendingUp className="h-6 w-6 text-primary" />
-            <h2 className="text-2xl font-bold">Terbaru</h2>
+            <h2 className="text-2xl font-bold">Episode Terbaru</h2>
           </div>
           {isLoadingOngoing && ongoingAnimes.length === 0 ? (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
-              {[...Array(14)].map((_, i) => <Skeleton key={i} className="aspect-[2/3] w-40" />)}
+            <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+              {[...Array(18)].map((_, i) => <Skeleton key={i} className="aspect-[2/3] w-full" />)}
             </div>
           ) : (
             <>
               <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                 {ongoingAnimes.map((anime) => (
-                  <AnimeCard key={anime.slug} anime={anime} className="w-full" />
+                  <AnimeCard key={`${anime.slug}-${anime.newest_release_date}`} anime={anime} className="w-full" />
                 ))}
               </div>
               {hasNextPage && (
@@ -85,7 +85,7 @@ const Home = () => {
           )}
         </section>
 
-        {/* Tamat Section (Previously Complete Tab) */}
+        {/* Tamat Section */}
         {isLoadingComplete ? (
             <div className="mb-12">
                 <Skeleton className="mb-6 h-8 w-48" />
@@ -99,8 +99,8 @@ const Home = () => {
                             <CheckCircle className="h-6 w-6 text-primary" />
                             <h2 className="text-2xl font-bold">Tamat</h2>
                         </div>
-                        <Button variant="link" asChild>
-                            <Link to="/completed">Show All →</Link>
+                        <Button variant="link" onClick={() => setCompletedSheetOpen(true)}>
+                            Show All →
                         </Button>
                     </div>
                     <AnimeListHorizontal animes={completeData.completeAnimeData} />
@@ -115,6 +115,8 @@ const Home = () => {
           </p>
         </div>
       </div>
+      
+      <CompletedAnimeSheet open={completedSheetOpen} onOpenChange={setCompletedSheetOpen} />
     </div>
   );
 };
