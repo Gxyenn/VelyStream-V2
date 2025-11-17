@@ -17,8 +17,8 @@ export const AnimeCard = ({ anime, className, episodeSlug }: AnimeCardProps) => 
   const destination = episodeSlug ? `/watch/${episodeSlug}` : `/anime/${anime.slug}`;
   
   const displayEpisode = anime.current_episode?.startsWith("Total ") 
-    ? anime.current_episode.replace("Total ", "Episode ") + " Terbaru" 
-    : (anime.current_episode || (anime.episode_count ? `${anime.episode_count} Eps` : null));
+    ? anime.current_episode.replace("Episode ") + " Terbaru" 
+    : (anime.current_episode || (anime.episode_count ? `${anime.episode_count}` : null));
 
 
   return (
