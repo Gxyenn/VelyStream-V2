@@ -143,7 +143,7 @@ const Watch = ({ onWatch }: WatchProps) => {
           <h1 className="truncate text-xl font-bold">{episode.episode}</h1>
           {animeDetail && (
             <Button variant="link" asChild className="h-auto p-0 text-muted-foreground hover:text-primary">
-                <Link to={`/anime/${animeDetail.slug}`}>← Back to {animeDetail.title}</Link>
+                <Link to={`/anime/${animeDetail.slug}`}>← Back </Link>
             </Button>
           )}
         </div>
