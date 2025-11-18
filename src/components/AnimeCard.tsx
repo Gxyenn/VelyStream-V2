@@ -43,6 +43,7 @@ export const AnimeCard = ({ anime, className, episodeSlug }: AnimeCardProps) => 
   return (
     <Link
       to={destination}
+      data-aos="zoom-in-down"
       className={cn(
         'group relative flex flex-col overflow-hidden rounded-xl border border-border bg-gradient-card transition-all hover:scale-105 hover:shadow-glow-primary',
         className

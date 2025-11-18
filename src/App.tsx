@@ -17,7 +17,9 @@ import Watch from "./pages/Watch";
 import AllAnime from "./pages/AllAnime";
 import Schedule from "./pages/Schedule";
 import NotFound from "./pages/NotFound";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const queryClient = new QueryClient();
 const WATCH_COUNT_KEY = "vely_stream_watch_count";
@@ -25,6 +27,13 @@ const DONATION_DIALOG_SHOWN_KEY = "vely_stream_donation_shown";
 
 const App = () => {
   const [isDonationDialogOpen, setDonationDialogOpen] = useState(false);
+
+  useEffect(() => {
+    AOS.init({
+      duration: 800,
+      once: true,
+    });
+  }, []);
 
   const triggerDonationDialog = () => {
     const alreadyShown = sessionStorage.getItem(DONATION_DIALOG_SHOWN_KEY);

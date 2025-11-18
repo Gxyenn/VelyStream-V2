@@ -50,6 +50,22 @@ export const Navbar = () => {
     </a>
   );
 
+  const DownloadLink = ({ isMobile = false, onClick }: { isMobile?: boolean, onClick?: () => void }) => (
+    <a
+      href="https://vely-stream.vercel.app/VelyStream.apk"
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={onClick}
+      className={cn(
+        'flex items-center gap-2 text-sm font-medium transition-colors text-green-500 hover:text-green-400',
+        isMobile && 'px-4 py-3 rounded-lg gap-3'
+      )}
+    >
+      <Coffee className={cn('h-4 w-4', isMobile && 'h-5 w-5')} />
+      Download Apk
+    </a>
+  );
+
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-lg">
@@ -69,6 +85,7 @@ export const Navbar = () => {
           <div className="hidden items-center gap-6 md:flex">
             {navItems.map((item) => <NavLink key={item.to} {...item} />)}
             <DonationLink />
+            <DownloadLink />
           </div>
 
           {/* Mobile Menu Button */}
@@ -89,6 +106,9 @@ export const Navbar = () => {
                     <div className="pt-2 border-t border-border">
                         <SheetClose asChild>
                             <DonationLink isMobile />
+                        </SheetClose>
+                        <SheetClose asChild>
+                            <DownloadLink isMobile />
                         </SheetClose>
                     </div>
                 </div>
