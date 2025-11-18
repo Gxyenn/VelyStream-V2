@@ -52,7 +52,7 @@ export const Navbar = () => {
 
   const DownloadLink = ({ isMobile = false, onClick }: { isMobile?: boolean, onClick?: () => void }) => (
     <a
-      href="https://velystream.vercel.app/VelyStream.apk"
+      href="/VelyStream.apk"
       target="_blank"
       rel="noopener noreferrer"
       onClick={onClick}
