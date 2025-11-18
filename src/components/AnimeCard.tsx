@@ -14,7 +14,26 @@ export const AnimeCard = ({ anime, className, episodeSlug }: AnimeCardProps) => 
     return null;
   }
 
-  const destination = episodeSlug ? `/watch/${episodeSlug}` : `/anime/${anime.slug}`;
+  // Defensively clean up the slug, in case the API returns a full URL
+  const cleanSlug = (slug: string) => {
+    try {
+      // If it's a full URL, take the last part
+      if (slug.startsWith('http')) {
+        const url = new URL(slug);
+        // Split pathname and filter out empty strings from trailing slashes
+        const pathParts = url.pathname.split('/').filter(Boolean);
+        return pathParts[pathParts.length - 1];
+      }
+      // Otherwise, assume it's a clean slug
+      return slug;
+    } catch (error) {
+      console.error("Invalid slug format:", slug);
+      return slug; // fallback to original slug
+    }
+  };
+
+  const finalSlug = cleanSlug(anime.slug);
+  const destination = episodeSlug ? `/watch/${episodeSlug}` : `/anime/${finalSlug}`;
   
   const displayEpisode = anime.current_episode?.startsWith("Total ") 
     ? anime.current_episode.replace("Episode ") + " Terbaru" 

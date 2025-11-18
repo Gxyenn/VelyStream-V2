@@ -70,7 +70,14 @@ const Watch = ({ onWatch }: WatchProps) => {
     return found ? found[1] : [];
   }, [selectedQuality, qualities]);
 
-  // Effect to set the best quality on initial load
+  useEffect(() => {
+    // Reset state when slug changes to force re-initialization for new episode
+    setSelectedQuality(null);
+    setSelectedServerId(null);
+    setCurrentStreamUrl('');
+  }, [slug]);
+
+  // Effect to set the best quality on initial load or when episode data changes
   useEffect(() => {
     if (qualities.length > 0 && !selectedQuality) {
       const bestQuality = qualities[0][0];
@@ -78,7 +85,7 @@ const Watch = ({ onWatch }: WatchProps) => {
       setSelectedQuality(bestQuality);
       handleServerChange(firstServer.id);
     }
-  }, [qualities]);
+  }, [qualities, selectedQuality]);
 
 
   useEffect(() => {
@@ -94,6 +101,8 @@ const Watch = ({ onWatch }: WatchProps) => {
     }
   }, [episode, animeDetail, slug]);
 
+  const [downloadingQuality, setDownloadingQuality] = useState<string | null>(null);
+
   const handleServerChange = async (serverId: string) => {
     setLoadingServer(true);
     setSelectedServerId(serverId);
@@ -108,13 +117,30 @@ const Watch = ({ onWatch }: WatchProps) => {
     }
   };
 
-  const handleDownload = async (serverId: string) => {
+  const handleDownload = async (serverId: string, quality: string) => {
+    setDownloadingQuality(quality);
     try {
       const url = await api.getServerUrl(serverId);
-      window.open(url, '_blank');
+      
+      // Fetch the video as a blob
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      const fileName = `${animeDetail?.title || 'anime'}_${episode?.episode || 'episode'}_${quality}.mp4`;
+      link.download = fileName.replace(/[^a-zA-Z0-9_.-]/g, '_'); // Sanitize filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(objectUrl);
+
     } catch (error) {
       console.error('Failed to get download link:', error);
       // Optionally show a toast to the user
+    } finally {
+      setDownloadingQuality(null);
     }
   };
 
@@ -250,9 +276,15 @@ const Watch = ({ onWatch }: WatchProps) => {
                                 key={quality}
                                 variant={"ghost"}
                                 size="sm"
-                                className="w-full justify-start"
-                                onClick={() => handleDownload(servers[0].id)}
+                                className="w-full justify-start gap-2"
+                                onClick={() => handleDownload(servers[0].id, quality)}
+                                disabled={downloadingQuality === quality}
                             >
+                                {downloadingQuality === quality ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <Download className="h-4 w-4" />
+                                )}
                                 {quality}
                             </Button>
                         ))}

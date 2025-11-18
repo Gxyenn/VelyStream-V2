@@ -41,8 +41,6 @@ export const DownloadDialog = ({ isOpen, onClose, episodes, animeTitle }: Downlo
     setIsDownloading(true);
     for (const slug of selectedEpisodes) {
       try {
-        // This is a simplified example. In a real app, you'd need to get 
-        // the download link for the specific quality.
         const episodeDetail = await api.getEpisodeDetail(slug);
         const server = episodeDetail.stream_servers
           .flatMap(s => s.servers)
@@ -50,7 +48,20 @@ export const DownloadDialog = ({ isOpen, onClose, episodes, animeTitle }: Downlo
 
         if (server) {
           const url = await api.getServerUrl(server.id);
-          window.open(url, "_blank");
+          
+          const response = await fetch(url);
+          const blob = await response.blob();
+          const objectUrl = URL.createObjectURL(blob);
+
+          const link = document.createElement('a');
+          link.href = objectUrl;
+          const episodeNumber = episodes.find(e => e.slug === slug)?.episode_number || 'ep';
+          const fileName = `${animeTitle}_Episode_${episodeNumber}_${quality}.mp4`;
+          link.download = fileName.replace(/[^a-zA-Z0-9_.-]/g, '_'); // Sanitize
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(objectUrl);
         }
       } catch (error) {
         console.error(`Failed to download ${slug}`, error);
