@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { api } from '@/lib/api';
+import { api, Anime } from '@/lib/api';
 import { storage } from '@/lib/storage';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,7 @@ const AnimeDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const [isInList, setIsInList] = useState(false);
   const [isDownloadDialogOpen, setDownloadDialogOpen] = useState(false);
+  const [relatedAnime, setRelatedAnime] = useState<Anime[]>([]);
 
   const { data: anime, isLoading } = useQuery({
     queryKey: ['anime', slug],
@@ -28,7 +29,19 @@ const AnimeDetail = () => {
     if (slug) {
       setIsInList(storage.isInMyList(slug));
     }
+    // Scroll to top when slug changes
+    window.scrollTo(0, 0);
   }, [slug]);
+
+  useEffect(() => {
+    if (anime) {
+      const baseTitle = anime.title.replace(/ S\d+$/, '').replace(/ Season \d+$/, '');
+      api.searchAnime(baseTitle).then(results => {
+        const filteredResults = results.filter(item => item.slug !== anime.slug);
+        setRelatedAnime(filteredResults);
+      });
+    }
+  }, [anime]);
 
   const handleToggleList = () => {
     if (!anime) return;
@@ -172,10 +185,10 @@ const AnimeDetail = () => {
         </section>
 
         {/* Recommendations */}
-        {anime.recommendations?.length > 0 && (
+        {relatedAnime.length > 0 && (
           <section>
-            <h2 className="mb-4 text-2xl font-bold">You May Also Like</h2>
-            <AnimeListHorizontal animes={anime.recommendations} />
+            <h2 className="mb-4 text-2xl font-bold">Anime Terkait</h2>
+            <AnimeListHorizontal animes={relatedAnime} />
           </section>
         )}
       </div>

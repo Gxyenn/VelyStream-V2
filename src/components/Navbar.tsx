@@ -1,12 +1,14 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, Grid3x3, Bookmark, History, Menu, CalendarDays, Heart, Coffee } from 'lucide-react';
+import { Home, Search, Grid3x3, Bookmark, History, Menu, CalendarDays, Heart, Coffee, Bell } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Button } from './ui/button';
+import { usePushNotifications } from '@/hooks/usePushNotifications';
 
 export const Navbar = () => {
   const location = useLocation();
+  const { isSubscribed, subscribe, isLoading } = usePushNotifications();
 
   const navItems = [
     { to: '/', label: 'Home', icon: Home },
@@ -66,6 +68,23 @@ export const Navbar = () => {
     </a>
   );
 
+  const NotificationButton = ({ isMobile = false, onClick }: { isMobile?: boolean, onClick?: () => void }) => (
+    <button
+      onClick={() => {
+        subscribe();
+        if(onClick) onClick();
+      }}
+      disabled={isSubscribed || isLoading}
+      className={cn(
+        'flex items-center gap-2 text-sm font-medium transition-colors text-blue-500 hover:text-blue-400 disabled:cursor-not-allowed disabled:opacity-50',
+        isMobile && 'px-4 py-3 rounded-lg gap-3'
+      )}
+    >
+      <Bell className={cn('h-4 w-4', isMobile && 'h-5 w-5')} />
+      {isSubscribed ? 'Subscribed' : 'Notifications'}
+    </button>
+  );
+
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-lg">
@@ -86,6 +105,7 @@ export const Navbar = () => {
             {navItems.map((item) => <NavLink key={item.to} {...item} />)}
             <DonationLink />
             <DownloadLink />
+            <NotificationButton />
           </div>
 
           {/* Mobile Menu Button */}
@@ -109,6 +129,9 @@ export const Navbar = () => {
                         </SheetClose>
                         <SheetClose asChild>
                             <DownloadLink isMobile />
+                        </SheetClose>
+                        <SheetClose asChild>
+                            <NotificationButton isMobile />
                         </SheetClose>
                     </div>
                 </div>
