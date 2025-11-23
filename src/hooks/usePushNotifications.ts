@@ -39,17 +39,32 @@ export const usePushNotifications = () => {
   }, []);
 
   const subscribe = async () => {
+    toast.info("Starting subscription process...");
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
       toast.error("Push Notifications are not supported by this browser.");
       return;
     }
 
     try {
+      toast.info("Registering service worker...");
       const registration = await navigator.serviceWorker.register('/sw.js');
+      toast.success("Service worker registered.");
+
+      toast.info("Requesting notification permission...");
       const permission = await Notification.requestPermission();
 
       if (permission !== 'granted') {
-        toast.warning("You have blocked push notifications.");
+        toast.warning("Permission to receive notifications was not granted.");
+        return;
+      }
+      toast.success("Permission granted!");
+
+      toast.info("Subscribing for push notifications...");
+      if (VAPID_PUBLIC_KEY === "YOUR_VAPID_PUBLIC_KEY") {
+        toast.error("Subscription failed: VAPID key is not configured.", {
+          description: "The application developer needs to configure the push notification keys on the server.",
+        });
+        console.error("VAPID_PUBLIC_KEY is not set.");
         return;
       }
 
@@ -59,7 +74,7 @@ export const usePushNotifications = () => {
       });
 
       console.log('Push Subscription:', sub);
-      toast.success("You have subscribed to notifications!");
+      toast.success("Successfully subscribed to notifications!");
       
       // ===================================================================
       // IMPORTANT: Send this 'sub' object to your backend server
@@ -76,7 +91,9 @@ export const usePushNotifications = () => {
 
     } catch (error) {
       console.error('Failed to subscribe to push notifications', error);
-      toast.error("Failed to subscribe to notifications.");
+      toast.error("An error occurred during subscription.", {
+        description: `${error.message}`,
+      });
     }
   };
 

@@ -26,6 +26,7 @@ const AnimeDetail = () => {
   });
 
   useEffect(() => {
+    setRelatedAnime([]); // Clear related anime on new page
     if (slug) {
       setIsInList(storage.isInMyList(slug));
     }
