@@ -71,6 +71,7 @@ export const Navbar = () => {
   const NotificationButton = ({ isMobile = false, onClick }: { isMobile?: boolean, onClick?: () => void }) => (
     <button
       onClick={() => {
+        alert('Notification button clicked! Starting process...');
         subscribe();
         if(onClick) onClick();
       }}

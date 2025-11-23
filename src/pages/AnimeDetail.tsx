@@ -18,28 +18,31 @@ const AnimeDetail = () => {
   const [isInList, setIsInList] = useState(false);
   const [isDownloadDialogOpen, setDownloadDialogOpen] = useState(false);
   const [relatedAnime, setRelatedAnime] = useState<Anime[]>([]);
+  const [isLoadingRelated, setIsLoadingRelated] = useState(true);
 
   const { data: anime, isLoading } = useQuery({
     queryKey: ['anime', slug],
     queryFn: () => api.getAnimeDetail(slug!),
-    enabled: !!slug
+    enabled: !!slug,
   });
 
   useEffect(() => {
-    setRelatedAnime([]); // Clear related anime on new page
+    setRelatedAnime([]);
+    setIsLoadingRelated(true);
     if (slug) {
       setIsInList(storage.isInMyList(slug));
     }
-    // Scroll to top when slug changes
     window.scrollTo(0, 0);
   }, [slug]);
 
   useEffect(() => {
     if (anime) {
+      setIsLoadingRelated(true);
       const baseTitle = anime.title.replace(/ S\d+$/, '').replace(/ Season \d+$/, '');
       api.searchAnime(baseTitle).then(results => {
         const filteredResults = results.filter(item => item.slug !== anime.slug);
         setRelatedAnime(filteredResults);
+        setIsLoadingRelated(false);
       });
     }
   }, [anime]);
@@ -185,13 +188,17 @@ const AnimeDetail = () => {
             <p className="leading-relaxed text-muted-foreground">{anime.synopsis}</p>
         </section>
 
-        {/* Recommendations */}
-        {relatedAnime.length > 0 && (
-          <section>
-            <h2 className="mb-4 text-2xl font-bold">Anime Terkait</h2>
+        {/* Related Anime */}
+        <section>
+          <h2 className="mb-4 text-2xl font-bold">Anime Terkait</h2>
+          {isLoadingRelated ? (
+            <p className="text-muted-foreground">Mencari anime terkait...</p>
+          ) : relatedAnime.length > 0 ? (
             <AnimeListHorizontal animes={relatedAnime} />
-          </section>
-        )}
+          ) : (
+            <p className="text-muted-foreground">Tidak ada anime terkait ditemukan.</p>
+          )}
+        </section>
       </div>
       {anime && (
         <DownloadDialog
