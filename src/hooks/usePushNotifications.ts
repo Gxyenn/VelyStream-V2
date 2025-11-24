@@ -24,42 +24,44 @@ export const usePushNotifications = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const checkSubscription = async () => {
-      if ('serviceWorker' in navigator && 'PushManager' in window) {
-        const registration = await navigator.serviceWorker.ready;
-        const sub = await registration.pushManager.getSubscription();
-        if (sub) {
-          setIsSubscribed(true);
-          setSubscription(sub);
-        }
+    const checkAndSubscribe = async () => {
+      if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        setIsLoading(false);
+        return;
+      }
+
+      const registration = await navigator.serviceWorker.ready;
+      const sub = await registration.pushManager.getSubscription();
+
+      if (sub) {
+        setIsSubscribed(true);
+        setSubscription(sub);
+      } else {
+        // If not subscribed, attempt to subscribe automatically
+        await subscribe();
       }
       setIsLoading(false);
     };
-    checkSubscription();
+    checkAndSubscribe();
   }, []);
 
   const subscribe = async () => {
-    toast.info("Starting subscription process...");
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
       toast.error("Push Notifications are not supported by this browser.");
       return;
     }
 
     try {
-      toast.info("Registering service worker...");
       const registration = await navigator.serviceWorker.register('/sw.js');
-      toast.success("Service worker registered.");
-
-      toast.info("Requesting notification permission...");
+      
       const permission = await Notification.requestPermission();
 
       if (permission !== 'granted') {
         toast.warning("Permission to receive notifications was not granted.");
         return;
       }
-      toast.success("Permission granted!");
+      // toast.success("Permission granted!"); // Removed for less intrusive automatic prompt
 
-      toast.info("Subscribing for push notifications...");
       if (VAPID_PUBLIC_KEY === "YOUR_VAPID_PUBLIC_KEY") {
         toast.error("Subscription failed: VAPID key is not configured.", {
           description: "The application developer needs to configure the push notification keys on the server.",

@@ -194,7 +194,7 @@ const AnimeDetail = () => {
           {isLoadingRelated ? (
             <p className="text-muted-foreground">Mencari anime terkait...</p>
           ) : relatedAnime.length > 0 ? (
-            <AnimeListHorizontal animes={relatedAnime} />
+            <AnimeListHorizontal animes={relatedAnime} size="small" />
           ) : (
             <p className="text-muted-foreground">Tidak ada anime terkait ditemukan.</p>
           )}

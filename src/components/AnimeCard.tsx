@@ -7,9 +7,10 @@ interface AnimeCardProps {
   anime: Anime;
   className?: string;
   episodeSlug?: string;
+  size?: 'small' | 'normal';
 }
 
-export const AnimeCard = ({ anime, className, episodeSlug }: AnimeCardProps) => {
+export const AnimeCard = ({ anime, className, episodeSlug, size = 'normal' }: AnimeCardProps) => {
   if (!anime) {
     return null;
   }
@@ -79,36 +80,43 @@ export const AnimeCard = ({ anime, className, episodeSlug }: AnimeCardProps) => 
       </div>
 
       <div className="flex flex-1 flex-col p-2">
-        <h3 className="mb-2 line-clamp-2 flex-grow text-sm font-semibold leading-tight">
+        <h3 className={cn(
+          "mb-2 line-clamp-2 flex-grow font-semibold leading-tight",
+          size === 'small' ? 'text-xs line-clamp-1' : 'text-sm'
+        )}>
           {anime.title}
         </h3>
         
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          {anime.release_day && (
-            <div className="flex items-center gap-1">
-              <Calendar className="h-3 w-3" />
-              <span>{anime.release_day}</span>
+        {size === 'normal' && (
+          <>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              {anime.release_day && (
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  <span>{anime.release_day}</span>
+                </div>
+              )}
+              {anime.newest_release_date && (
+                <span>• {anime.newest_release_date}</span>
+              )}
+              {anime.last_release_date && (
+                <span>• {anime.last_release_date}</span>
+              )}
             </div>
-          )}
-          {anime.newest_release_date && (
-            <span>• {anime.newest_release_date}</span>
-          )}
-          {anime.last_release_date && (
-            <span>• {anime.last_release_date}</span>
-          )}
-        </div>
 
-        {anime.genres?.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1">
-            {anime.genres.slice(0, 3).map((genre) => (
-              <span
-                key={genre.slug}
-                className="rounded bg-secondary px-2 py-0.5 text-xs text-secondary-foreground"
-              >
-                {genre.name}
-              </span>
-            ))}
-          </div>
+            {anime.genres?.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1">
+                {anime.genres.slice(0, 3).map((genre) => (
+                  <span
+                    key={genre.slug}
+                    className="rounded bg-secondary px-2 py-0.5 text-xs text-secondary-foreground"
+                  >
+                    {genre.name}
+                  </span>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </Link>
