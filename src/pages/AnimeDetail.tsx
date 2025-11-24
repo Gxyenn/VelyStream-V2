@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api, Anime } from '@/lib/api';
 import { storage } from '@/lib/storage';
@@ -10,11 +10,12 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { AnimeListHorizontal } from '@/components/AnimeListHorizontal';
 import { DownloadDialog } from '@/components/DownloadDialog';
-import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo, Download } from 'lucide-react';
+import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo, Download, ChevronLeft } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const AnimeDetail = () => {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate(); // Initialize useNavigate
   const [isInList, setIsInList] = useState(false);
   const [isDownloadDialogOpen, setDownloadDialogOpen] = useState(false);
   const [relatedAnime, setRelatedAnime] = useState<Anime[]>([]);
@@ -100,6 +101,13 @@ const AnimeDetail = () => {
 
             {/* Info */}
             <div className="flex flex-col justify-center">
+              <Button
+                variant="link"
+                onClick={() => navigate(-1)}
+                className="mb-2 h-auto p-0 text-muted-foreground hover:text-primary"
+              >
+                <ChevronLeft className="h-4 w-4" /> Back
+              </Button>
               <h1 className="mb-2 text-4xl font-bold">{anime.title}</h1>
               {anime.japanese_title && <p className="mb-4 text-lg text-muted-foreground">{anime.japanese_title}</p>}
 
