@@ -20,7 +20,6 @@ import NotFound from "./pages/NotFound";
 import { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { usePushNotifications } from "./hooks/usePushNotifications"; // Import the hook
 
 const queryClient = new QueryClient();
 const WATCH_COUNT_KEY = "vely_stream_watch_count";
@@ -28,7 +27,6 @@ const DONATION_DIALOG_SHOWN_KEY = "vely_stream_donation_shown";
 
 const App = () => {
   const [isDonationDialogOpen, setDonationDialogOpen] = useState(false);
-  usePushNotifications(); // Call the hook here
 
   useEffect(() => {
     AOS.init({

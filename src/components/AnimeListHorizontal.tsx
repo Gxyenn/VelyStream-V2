@@ -8,7 +8,7 @@ interface AnimeListHorizontalProps {
 }
 
 export const AnimeListHorizontal = ({ animes, size = 'normal' }: AnimeListHorizontalProps) => {
-  const cardWidth = size === 'small' ? 'w-28' : 'w-48';
+  const cardWidth = size === 'small' ? 'w-36' : 'w-48';
   return (
     <ScrollArea className="w-full whitespace-nowrap rounded-lg border">
       <div className="flex w-max space-x-4 p-4">
