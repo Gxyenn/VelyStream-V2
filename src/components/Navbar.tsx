@@ -93,7 +93,7 @@ export const Navbar = () => {
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <Menu className="h-5 w-5" />
-                </button>
+                </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-64">
                 <div className="flex flex-col space-y-2 p-4">
