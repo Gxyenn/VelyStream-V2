@@ -17,6 +17,9 @@ const AnimeDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const [isInList, setIsInList] = useState(false);
   const [isDownloadDialogOpen, setDownloadDialogOpen] = useState(false);
+  const [relatedAnime, setRelatedAnime] = useState<Anime[]>([]);
+  const [isLoadingRelated, setIsLoadingRelated] = useState(true);
+
   const { data: anime, isLoading } = useQuery({
     queryKey: ['anime', slug],
     queryFn: () => api.getAnimeDetail(slug!),
@@ -29,6 +32,18 @@ const AnimeDetail = () => {
     }
     window.scrollTo(0, 0);
   }, [slug]);
+
+  useEffect(() => {
+    if (anime) {
+      setIsLoadingRelated(true);
+      const baseTitle = anime.title.replace(/ S\d+$/, '').replace(/ Season \d+$/, '');
+      api.searchAnime(baseTitle).then(results => {
+        const filteredResults = results.filter(item => item.title !== anime.title);
+        setRelatedAnime(filteredResults);
+        setIsLoadingRelated(false);
+      });
+    }
+  }, [anime]);
 
   const handleToggleList = () => {
     if (!anime) return;
@@ -174,8 +189,10 @@ const AnimeDetail = () => {
         {/* Related Anime */}
         <section>
           <h2 className="mb-4 text-2xl font-bold">Anime Terkait</h2>
-          {anime.recommendations && anime.recommendations.length > 0 ? (
-            <AnimeListHorizontal animes={anime.recommendations} size="small" />
+          {isLoadingRelated ? (
+            <p className="text-muted-foreground">Mencari anime terkait...</p>
+          ) : relatedAnime.length > 0 ? (
+            <AnimeListHorizontal animes={relatedAnime} size="small" />
           ) : (
             <p className="text-muted-foreground">Tidak ada anime terkait ditemukan.</p>
           )}

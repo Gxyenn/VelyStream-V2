@@ -67,7 +67,7 @@ export const AnimeCard = ({ anime, className, episodeSlug, size = 'normal' }: An
 
         {anime.rating && (
           <div className="absolute right-2 top-2 flex items-center gap-1 rounded-lg bg-black/70 px-1.5 py-0.5 text-xs font-semibold backdrop-blur-sm">
-            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
             <span>{anime.rating}</span>
           </div>
         )}
@@ -92,7 +92,7 @@ export const AnimeCard = ({ anime, className, episodeSlug, size = 'normal' }: An
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               {anime.release_day && (
                 <div className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
+                  <Calendar className="h-4 w-4" />
                   <span>{anime.release_day}</span>
                 </div>
               )}
