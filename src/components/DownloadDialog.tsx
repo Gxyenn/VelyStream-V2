@@ -33,7 +33,7 @@ export const DownloadDialog = ({
 }: DownloadDialogProps) => {
   const [selectedEpisodes, setSelectedEpisodes] = useState<string[]>([]);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [quality, setQuality] = useState("720p"); // Default quality
+  const [quality, setQuality] = useState("720p");
 
   const handleSelectAll = () => {
     if (selectedEpisodes.length === episodes.length) {
@@ -45,66 +45,64 @@ export const DownloadDialog = ({
 
   const handleDownload = async () => {
     if (selectedEpisodes.length === 0) {
-      toast.warning("Tidak ada episode yang dipilih.", {
-        description: "Silakan pilih setidaknya satu episode untuk diunduh.",
-      });
+      toast.warning("Pilih episode dulu ya!");
       return;
     }
 
     setIsDownloading(true);
-    toast.info(
-      `Mempersiapkan unduhan untuk ${selectedEpisodes.length} episode...`,
-      {
-        description: `Kualitas yang dipilih: ${quality}. Browser Anda akan membuka tab baru untuk setiap unduhan.`,
-      }
-    );
+    toast.info("Mencari link download...", { description: "Popup tab baru mungkin akan muncul." });
 
     let successCount = 0;
-    let errorCount = 0;
 
+    // Loop setiap episode yang dipilih
     for (const slug of selectedEpisodes) {
-      const ep = episodes.find(e => e.slug === slug);
       try {
         const episodeDetail = await api.getEpisodeDetail(slug);
-        const server = episodeDetail.stream_servers
-          .flatMap((s) => s.servers)
-          .find((s) => s.id.includes(quality));
+        
+        // Cari server dengan kualitas yg dipilih
+        const serverGroups = episodeDetail.stream_servers;
+        let targetServerId = "";
 
-        if (server) {
-          const url = await api.getServerUrl(server.id);
+        // Prioritas pencarian server yang bagus (biasanya direct)
+        for (const group of serverGroups) {
+            const found = group.servers.find(s => s.id.includes(quality) || group.quality.includes(quality));
+            if (found) {
+                targetServerId = found.id;
+                break;
+            }
+        }
+
+        // Fallback: kalau kualitas itu gak ada, ambil server pertama aja
+        if (!targetServerId && serverGroups.length > 0 && serverGroups[0].servers.length > 0) {
+             targetServerId = serverGroups[0].servers[0].id;
+        }
+
+        if (targetServerId) {
+          const url = await api.getServerUrl(targetServerId);
+          
+          // Kita pakai window.open karena ini bulk download.
+          // Browser akan memblokir jika kita coba auto-download banyak file sekaligus lewat Blob.
+          // Window open lebih aman dari blokir browser untuk multi-file.
           window.open(url, "_blank");
           successCount++;
-        } else {
-          errorCount++;
-          toast.error(
-            `Tidak ada server ${quality} ditemukan untuk Episode ${ep?.episode_number || ''}`
-          );
-        }
-        // Add a small delay to prevent browser from blocking popups
-        await new Promise(resolve => setTimeout(resolve, 500));
+        } 
       } catch (error) {
-        errorCount++;
-        console.error(`Gagal mengunduh Episode ${ep?.episode_number || ''}`, error);
-        toast.error(
-          `Gagal mengunduh Episode ${ep?.episode_number || ''}`,
-          {
-            description: "Server mungkin offline atau terjadi kesalahan jaringan.",
-          }
-        );
+        console.error(`Skip ${slug}`, error);
       }
+      
+      // Kasih jeda 1 detik biar browser ga ngira kita spam popup
+      await new Promise(r => setTimeout(r, 1000)); 
     }
 
     setIsDownloading(false);
     onClose();
 
-    if (errorCount === 0) {
-        toast.success("Semua unduhan telah dimulai.", {
-            description: `${successCount} episode sedang diproses oleh browser Anda.`
+    if (successCount > 0) {
+        toast.success(`${successCount} Tab Terbuka`, {
+            description: "Silakan simpan video dari tab baru tersebut."
         });
     } else {
-        toast.warning("Beberapa unduhan gagal.", {
-            description: `${successCount} berhasil, ${errorCount} gagal. Periksa konsol untuk detail.`
-        })
+        toast.error("Gagal, server sibuk/kosong.");
     }
   };
 
@@ -114,14 +112,13 @@ export const DownloadDialog = ({
         <AlertDialogHeader>
           <AlertDialogTitle>Download Episodes: {animeTitle}</AlertDialogTitle>
           <AlertDialogDescription>
-            Pilih episode dan kualitas untuk diunduh. Setiap episode akan
-            terbuka di tab baru.
+            Pilih episode. Kami akan membuka tab download untuk setiap episode.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <div className="flex items-center justify-between">
           <Button onClick={handleSelectAll} variant="outline" size="sm">
             {selectedEpisodes.length === episodes.length
-              ? "Batal Pilih Semua"
+              ? "Batal Pilih"
               : "Pilih Semua"}
           </Button>
           <Popover>
@@ -176,10 +173,10 @@ export const DownloadDialog = ({
             {isDownloading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Memproses...
+                Proses...
               </>
             ) : (
-              `Unduh ${selectedEpisodes.length} Episode`
+              `Unduh (${selectedEpisodes.length})`
             )}
           </AlertDialogAction>
         </AlertDialogFooter>

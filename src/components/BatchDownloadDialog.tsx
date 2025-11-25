@@ -28,6 +28,8 @@ export const BatchDownloadDialog = ({
   batchSlug,
   animeTitle,
 }: BatchDownloadDialogProps) => {
+  // State ini sebenarnya tidak terlalu terpakai karena kita langsung window.open, 
+  // tapi bagus untuk efek visual sesaat
   const [downloadingUrl, setDownloadingUrl] = useState<string | null>(null);
 
   const { data: batchData, isLoading, isError } = useQuery({
@@ -36,45 +38,17 @@ export const BatchDownloadDialog = ({
     enabled: isOpen && !!batchSlug,
   });
 
-  // Fungsi Auto Download (Direct Blob)
+  // FUNGSI DOWNLOAD BATCH
   const handleAutoDownload = async (url: string, provider: string) => {
-    setDownloadingUrl(url);
-    toast.info(`Memulai unduhan dari ${provider}...`, {
-        description: "Mohon tunggu, sedang mengambil file."
+    // KITA LANGSUNG BUKA TAB BARU
+    // Karena OtakuDrive dll adalah halaman Safelink, bukan file video langsung.
+    // Kalau dipaksa 'fetch', akan error CORS atau download file HTML sampah.
+    
+    toast.success(`Membuka ${provider}...`, {
+        description: "Silakan klik 'Tetap Download' di halaman yang terbuka."
     });
-
-    try {
-      // Coba fetch sebagai blob (Auto Download style)
-      const response = await fetch(url);
-      
-      // Cek jika response tidak oke atau terkena CORS (biasanya file hosting kena CORS)
-      if (!response.ok) throw new Error("Network response was not ok");
-
-      const blob = await response.blob();
-      const objectUrl = URL.createObjectURL(blob);
-
-      const link = document.createElement('a');
-      link.href = objectUrl;
-      // Buat nama file sederhana
-      const fileName = `${animeTitle.replace(/[^a-zA-Z0-9]/g, '_')}_Batch.mp4`; 
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(objectUrl);
-      
-      toast.success("Unduhan Berhasil Dimulai!");
-
-    } catch (error) {
-      console.error("Direct download failed:", error);
-      // Fallback: Buka link di tab baru jika direct download gagal (CORS/External Host)
-      window.open(url, "_blank");
-      toast.warning("Unduhan Langsung Gagal", {
-        description: "Membuka link di tab baru sebagai alternatif.",
-      });
-    } finally {
-      setDownloadingUrl(null);
-    }
+    
+    window.open(url, "_blank");
   };
 
   return (
@@ -83,7 +57,7 @@ export const BatchDownloadDialog = ({
         <DialogHeader>
           <DialogTitle>Download Batch: {animeTitle}</DialogTitle>
           <DialogDescription>
-            Pilih kualitas dan provider untuk mengunduh seluruh episode (Batch).
+            Pilih kualitas dan provider untuk mengunduh seluruh episode.
           </DialogDescription>
         </DialogHeader>
 
@@ -99,9 +73,7 @@ export const BatchDownloadDialog = ({
             </div>
           ) : (
             <ScrollArea className="h-[300px] pr-4">
-              {/* Handle struktur data yang mungkin bervariasi */}
               <Accordion type="single" collapsible className="w-full">
-                {/* Terkadang formats langsung array, kadang nested. Sesuaikan dengan API Sankavollerei */}
                 {(Array.isArray(batchData.downloadUrl?.formats) 
                     ? batchData.downloadUrl.formats 
                     : []
@@ -122,14 +94,9 @@ export const BatchDownloadDialog = ({
                             variant="outline"
                             size="sm"
                             className="justify-start gap-2"
-                            disabled={downloadingUrl === link.url}
                             onClick={() => handleAutoDownload(link.url, link.title)}
                           >
-                            {downloadingUrl === link.url ? (
-                                <Loader2 className="h-3 w-3 animate-spin"/>
-                            ) : (
-                                <Download className="h-3 w-3" />
-                            )}
+                            <Download className="h-3 w-3" />
                             {link.title}
                           </Button>
                         ))}
@@ -140,7 +107,7 @@ export const BatchDownloadDialog = ({
               </Accordion>
               
               {(!batchData.downloadUrl?.formats || batchData.downloadUrl.formats.length === 0) && (
-                  <p className="py-4 text-center text-sm text-muted-foreground">Link batch belum tersedia untuk anime ini.</p>
+                  <p className="py-4 text-center text-sm text-muted-foreground">Link batch belum tersedia.</p>
               )}
             </ScrollArea>
           )}
