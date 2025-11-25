@@ -7,8 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ChevronLeft, ChevronRight, Download, Monitor, Loader2, ListVideo, Clapperboard, Server } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, Loader2, ListVideo, Clapperboard, Server, ArrowLeft } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
+import { toast } from "sonner";
 
 interface WatchProps {
   onWatch?: () => void;
@@ -28,6 +29,7 @@ const Watch = ({ onWatch }: WatchProps) => {
   const [selectedServerId, setSelectedServerId] = useState<string | null>(null);
   const [currentStreamUrl, setCurrentStreamUrl] = useState<string>('');
   const [loadingServer, setLoadingServer] = useState(false);
+  const [downloadingQuality, setDownloadingQuality] = useState<string | null>(null);
 
   const { data: episode, isLoading, isError } = useQuery({
     queryKey: ['episode', slug],
@@ -41,7 +43,6 @@ const Watch = ({ onWatch }: WatchProps) => {
     enabled: !!episode?.anime.slug,
   });
 
-  // Memoize the available qualities and servers
   const qualities = useMemo(() => {
     if (!episode) return [];
     const qualityMap = new Map<string, StreamServer['servers']>();
@@ -54,7 +55,6 @@ const Watch = ({ onWatch }: WatchProps) => {
         qualityMap.get(quality)!.push(server);
       });
     });
-    // Sort qualities: 1080p, 720p, 480p, etc.
     return Array.from(qualityMap.entries()).sort((a, b) => {
         const qualityA = parseInt(a[0]);
         const qualityB = parseInt(b[0]);
@@ -71,13 +71,11 @@ const Watch = ({ onWatch }: WatchProps) => {
   }, [selectedQuality, qualities]);
 
   useEffect(() => {
-    // Reset state when slug changes to force re-initialization for new episode
     setSelectedQuality(null);
     setSelectedServerId(null);
     setCurrentStreamUrl('');
   }, [slug]);
 
-  // Effect to set the best quality on initial load or when episode data changes
   useEffect(() => {
     if (qualities.length > 0 && !selectedQuality) {
       const bestQuality = qualities[0][0];
@@ -86,7 +84,6 @@ const Watch = ({ onWatch }: WatchProps) => {
       handleServerChange(firstServer.id);
     }
   }, [qualities, selectedQuality]);
-
 
   useEffect(() => {
     if (onWatch) onWatch();
@@ -101,8 +98,6 @@ const Watch = ({ onWatch }: WatchProps) => {
     }
   }, [episode, animeDetail, slug]);
 
-  const [downloadingQuality, setDownloadingQuality] = useState<string | null>(null);
-
   const handleServerChange = async (serverId: string) => {
     setLoadingServer(true);
     setSelectedServerId(serverId);
@@ -111,7 +106,6 @@ const Watch = ({ onWatch }: WatchProps) => {
       setCurrentStreamUrl(url);
     } catch (error) {
       console.error('Failed to load server:', error);
-      // Optionally show a toast to the user
     } finally {
       setLoadingServer(false);
     }
@@ -119,35 +113,62 @@ const Watch = ({ onWatch }: WatchProps) => {
 
   const handleDownload = async (serverId: string, quality: string) => {
     setDownloadingQuality(quality);
+    toast.info(`Mengambil link ${quality}...`);
+
     try {
       const url = await api.getServerUrl(serverId);
-      
-      // Fetch the video as a blob
-      const response = await fetch(url);
-      const blob = await response.blob();
-      const objectUrl = URL.createObjectURL(blob);
+      if(!url) throw new Error("URL Kosong");
 
-      const link = document.createElement('a');
-      link.href = objectUrl;
-      const fileName = `${animeDetail?.title || 'anime'}_${episode?.episode || 'episode'}_${quality}.mp4`;
-      link.download = fileName.replace(/[^a-zA-Z0-9_.-]/g, '_'); // Sanitize filename
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(objectUrl);
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("CORS/Network Error");
+        
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = objectUrl;
+        const fileName = `${animeDetail?.title || 'anime'}_${episode?.episode || 'ep'}_${quality}.mp4`;
+        link.download = fileName.replace(/[^a-zA-Z0-9_.-]/g, '_');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(objectUrl);
+        toast.success("Download dimulai!");
+      } catch (err) {
+        console.warn("Auto download blocked, opening tab...", err);
+        window.open(url, '_blank');
+        toast.warning("Membuka di tab baru (Limitasi Google Drive)", {
+            description: "Silakan klik 'Tetap Download' di halaman yang terbuka."
+        });
+      }
 
     } catch (error) {
       console.error('Failed to get download link:', error);
-      // Optionally show a toast to the user
+      toast.error("Gagal mengambil link download.");
     } finally {
       setDownloadingQuality(null);
     }
   };
 
+  const EpisodeListComponent = () => (
+    <SheetContent side="right">
+        <SheetHeader><SheetTitle>All Episodes</SheetTitle></SheetHeader>
+        <ScrollArea className="h-[calc(100%-4rem)] pr-4">
+            <div className="grid grid-cols-2 gap-2 py-4">
+                {animeDetail?.episode_lists.map((ep) => (
+                    <Button key={ep.slug} variant={ep.slug === slug ? 'default' : 'outline'} asChild size="sm">
+                        <Link to={`/watch/${ep.slug}`}>Eps {ep.episode_number}</Link>
+                    </Button>
+                ))}
+            </div>
+        </ScrollArea>
+    </SheetContent>
+  );
+
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <Skeleton className="mb-4 aspect-video w-full" />
+        <Skeleton className="mb-4 aspect-video w-full rounded-2xl" />
         <div className="flex gap-2">
             <Skeleton className="h-10 w-32" />
             <Skeleton className="h-10 w-32" />
@@ -163,45 +184,85 @@ const Watch = ({ onWatch }: WatchProps) => {
   const selectedServerName = serversForSelectedQuality.find(s => s.id === selectedServerId)?.name;
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-4">
-          <h1 className="truncate text-xl font-bold">{episode.episode}</h1>
+    <div className="min-h-screen flex flex-col items-center bg-background/50">
+      {/* Header Section */}
+      <div className="container mx-auto px-4 pt-6 pb-2">
+        <div className="mb-4 flex flex-col items-start gap-1 w-full">
           {animeDetail && (
-            <Button variant="link" asChild className="h-auto p-0 text-muted-foreground hover:text-primary">
-                <Link to={`/anime/${animeDetail.slug.replace('https:/otakudesu.best/anime/', '').replace('/', '')}`}>← Back </Link>
+            <Button variant="ghost" size="sm" asChild className="h-auto p-0 text-muted-foreground hover:text-primary hover:bg-transparent gap-1 mb-1">
+                <Link to={`/anime/${animeDetail.slug.replace('https:/otakudesu.best/anime/', '').replace('/', '')}`}>
+                    <ArrowLeft className="h-4 w-4" /> Back
+                </Link>
             </Button>
           )}
+          <h1 className="w-full text-lg md:text-xl font-bold leading-tight line-clamp-2 break-words">
+            {episode.episode}
+          </h1>
         </div>
+      </div>
 
-        <div className="relative mb-4 w-full overflow-hidden rounded-xl border bg-black" style={{ aspectRatio: '16/9' }}>
+      {/* Video Player Section - DIPERBESAR & WATERMARK */}
+      {/* width: w-full, max-width dinaikkan jadi 1400px (screen-2xl) agar lebih lebar */}
+      <div className="w-full max-w-[1400px] px-2 md:px-6 mb-6">
+        <div 
+            className="relative w-full overflow-hidden bg-black shadow-2xl rounded-2xl border border-white/10 touch-none select-none" 
+            style={{ aspectRatio: '16/9', touchAction: 'none' }}
+        >
+          
+          {/* --- WATERMARK START --- */}
+          <div 
+            className="absolute top-4 left-4 z-30 flex items-center gap-2 pointer-events-none select-none opacity-60 hover:opacity-80 transition-opacity duration-500"
+            style={{ animation: 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} // Custom slow pulse
+          >
+            {/* Logo V */}
+            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-primary to-accent shadow-[0_0_15px_rgba(236,72,153,0.5)]">
+              <span className="text-sm font-bold text-primary-foreground">V</span>
+            </div>
+            {/* Teks VelyStream */}
+            <div className="flex flex-col">
+                <span className="text-sm font-extrabold tracking-tight text-white drop-shadow-md leading-none">
+                    Vely<span className="text-primary">Stream</span>
+                </span>
+            </div>
+          </div>
+          {/* --- WATERMARK END --- */}
+
           {loadingServer && (
-            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-              <Loader2 className="h-12 w-12 animate-spin text-primary" />
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+              <div className="flex flex-col items-center gap-3">
+                <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                <p className="text-sm text-muted-foreground animate-pulse">Memuat server...</p>
+              </div>
             </div>
           )}
+          
           {currentStreamUrl ? (
             <iframe
               key={currentStreamUrl}
               src={currentStreamUrl}
-              className="h-full w-full"
+              className="h-full w-full border-0 rounded-2xl"
               allowFullScreen
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              style={{ touchAction: 'none' }}
             />
           ) : !isLoading && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center">
-                <p>Pilih kualitas dan server untuk memulai.</p>
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-white/80 gap-2 bg-zinc-900">
+                <Server className="h-10 w-10 opacity-50 mb-2"/>
+                <p className="text-lg font-medium">Siap Memutar</p>
+                <p className="text-sm text-muted-foreground">Pilih kualitas dan server di bawah untuk memulai.</p>
             </div>
           )}
         </div>
-        
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-                {/* Quality Selector */}
+      </div>
+      
+      {/* Controls & Navigation Section */}
+      <div className="container mx-auto px-4 pb-12 w-full max-w-[1400px]">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 bg-secondary/30 p-3 rounded-xl border border-white/5">
+            <div className="flex items-center gap-2 flex-wrap">
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button variant="outline" size="sm" className="gap-2 w-32" disabled={qualities.length === 0}>
-                            <Clapperboard className="h-4 w-4"/> {selectedQuality || 'Kualitas'}
+                        <Button variant="outline" size="sm" className="gap-2 w-32 border-white/10 bg-black/20 hover:bg-white/10" disabled={qualities.length === 0}>
+                            <Clapperboard className="h-4 w-4 text-primary"/> {selectedQuality || 'Kualitas'}
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-48 p-1">
@@ -213,7 +274,7 @@ const Watch = ({ onWatch }: WatchProps) => {
                                 className="w-full justify-start"
                                 onClick={() => {
                                     setSelectedQuality(quality);
-                                    handleServerChange(servers[0].id); // Auto-select first server of new quality
+                                    handleServerChange(servers[0].id);
                                 }}
                             >
                                 {quality}
@@ -222,11 +283,10 @@ const Watch = ({ onWatch }: WatchProps) => {
                     </PopoverContent>
                 </Popover>
 
-                {/* Server Selector */}
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button variant="outline" size="sm" className="gap-2 w-32" disabled={!selectedQuality}>
-                            <Server className="h-4 w-4"/> {selectedServerName || 'Server'}
+                        <Button variant="outline" size="sm" className="gap-2 w-32 border-white/10 bg-black/20 hover:bg-white/10" disabled={!selectedQuality}>
+                            <Server className="h-4 w-4 text-primary"/> {selectedServerName || 'Server'}
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-48 p-1">
@@ -249,26 +309,14 @@ const Watch = ({ onWatch }: WatchProps) => {
                 {animeDetail && (
                     <Sheet>
                         <SheetTrigger asChild>
-                            <Button variant="outline" size="sm" className="gap-2"><ListVideo/> All Episodes</Button>
+                            <Button variant="outline" size="sm" className="gap-2 border-white/10 bg-black/20 hover:bg-white/10"><ListVideo className="h-4 w-4"/> Show All</Button>
                         </SheetTrigger>
-                        <SheetContent side="right">
-                            <SheetHeader><SheetTitle>All Episodes</SheetTitle></SheetHeader>
-                            <ScrollArea className="h-[calc(100%-4rem)] pr-4">
-                                <div className="grid grid-cols-2 gap-2 py-4">
-                                    {animeDetail.episode_lists.map((ep) => (
-                                        <Button key={ep.slug} variant={ep.slug === slug ? 'default' : 'outline'} asChild size="sm">
-                                            <Link to={`/watch/${ep.slug}`}>Eps {ep.episode_number}</Link>
-                                        </Button>
-                                    ))}
-                                </div>
-                            </ScrollArea>
-                        </SheetContent>
+                        <EpisodeListComponent />
                     </Sheet>
                 )}
-                {/* Download button can be added here if needed */}
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button variant="outline" size="sm" className="gap-2"><Download/> Download</Button>
+                        <Button variant="outline" size="sm" className="gap-2 border-white/10 bg-black/20 hover:bg-white/10"><Download className="h-4 w-4"/> Download</Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-48 p-1">
                         {qualities.map(([quality, servers]) => (
@@ -293,16 +341,30 @@ const Watch = ({ onWatch }: WatchProps) => {
             </div>
         </div>
         
-        <div className="flex gap-2">
-          {episode.has_previous_episode && episode.previous_episode && (
-            <Button variant="secondary" onClick={() => navigate(`/watch/${episode.previous_episode!.slug}`)} className="gap-2">
-              <ChevronLeft /> Previous
+        <div className="flex items-center justify-between w-full mt-4 gap-2">
+          {episode.has_previous_episode && episode.previous_episode ? (
+            <Button variant="secondary" onClick={() => navigate(`/watch/${episode.previous_episode!.slug}`)} className="gap-2 pl-2 hover:bg-primary/20">
+              <ChevronLeft className="h-4 w-4" /> Previous
             </Button>
+          ) : (
+             <div />
           )}
-          {episode.has_next_episode && episode.next_episode && (
-            <Button variant="secondary" onClick={() => navigate(`/watch/${episode.next_episode!.slug}`)} className="ml-auto gap-2">
-              Next <ChevronRight />
+          
+          {episode.has_next_episode && episode.next_episode ? (
+            <Button variant="default" onClick={() => navigate(`/watch/${episode.next_episode!.slug}`)} className="gap-2 pr-2 shadow-glow-primary">
+              Next <ChevronRight className="h-4 w-4" />
             </Button>
+          ) : (
+             animeDetail && (
+                <Sheet>
+                    <SheetTrigger asChild>
+                         <Button variant="outline" className="gap-2">
+                            Show All Episodes <ListVideo className="h-4 w-4"/>
+                        </Button>
+                    </SheetTrigger>
+                    <EpisodeListComponent />
+                </Sheet>
+             )
           )}
         </div>
       </div>
