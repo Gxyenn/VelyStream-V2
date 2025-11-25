@@ -15,7 +15,6 @@ interface WatchProps {
   onWatch?: () => void;
 }
 
-// Helper to parse quality from server ID
 const getQualityFromServerId = (id: string): string => {
   const match = id.match(/-(\d+p)$/);
   return match ? match[1] : 'Auto';
@@ -201,31 +200,37 @@ const Watch = ({ onWatch }: WatchProps) => {
         </div>
       </div>
 
-      {/* Video Player Section - DIPERBESAR & WATERMARK */}
-      {/* width: w-full, max-width dinaikkan jadi 1400px (screen-2xl) agar lebih lebar */}
+      {/* Video Player Section */}
       <div className="w-full max-w-[1400px] px-2 md:px-6 mb-6">
         <div 
             className="relative w-full overflow-hidden bg-black shadow-2xl rounded-2xl border border-white/10 touch-none select-none" 
             style={{ aspectRatio: '16/9', touchAction: 'none' }}
         >
           
-          {/* --- WATERMARK START --- */}
+          {/* --- WATERMARK (Updated) --- */}
+          {/* 
+              Perubahan: 
+              - top-2 left-2 (Lebih mepet atas kiri)
+              - h-5 w-5 (Logo lebih kecil)
+              - text-xs (Teks lebih kecil)
+              - gap-1.5 (Jarak logo dan teks lebih rapat)
+          */}
           <div 
-            className="absolute top-4 left-4 z-30 flex items-center gap-2 pointer-events-none select-none opacity-60 hover:opacity-80 transition-opacity duration-500"
-            style={{ animation: 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} // Custom slow pulse
+            className="absolute top-2 left-2 z-30 flex items-center gap-1.5 pointer-events-none select-none opacity-50 hover:opacity-80 transition-opacity duration-500"
+            style={{ animation: 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}
           >
             {/* Logo V */}
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-primary to-accent shadow-[0_0_15px_rgba(236,72,153,0.5)]">
-              <span className="text-sm font-bold text-primary-foreground">V</span>
+            <div className="flex h-5 w-5 items-center justify-center rounded bg-gradient-to-br from-primary to-accent shadow-[0_0_10px_rgba(236,72,153,0.5)]">
+              <span className="text-[10px] font-bold text-primary-foreground">V</span>
             </div>
             {/* Teks VelyStream */}
             <div className="flex flex-col">
-                <span className="text-sm font-extrabold tracking-tight text-white drop-shadow-md leading-none">
+                <span className="text-xs font-extrabold tracking-tight text-white drop-shadow-md leading-none">
                     Vely<span className="text-primary">Stream</span>
                 </span>
             </div>
           </div>
-          {/* --- WATERMARK END --- */}
+          {/* --- END WATERMARK --- */}
 
           {loadingServer && (
             <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/80 backdrop-blur-sm">
