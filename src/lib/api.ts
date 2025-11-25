@@ -1,6 +1,6 @@
 const BASE_URL = 'https://www.sankavollerei.com/anime';
 
-// Interface dasar untuk item anime di banyak endpoint
+// Interface dasar
 export interface Anime {
   title: string;
   slug: string;
@@ -25,7 +25,7 @@ export interface Genre {
   otakudesu_url: string;
 }
 
-// Interface untuk Halaman Detail Anime
+// Interface untuk Detail Anime
 export interface AnimeDetail {
   title: string;
   slug: string;
@@ -57,7 +57,7 @@ export interface Episode {
   otakudesu_url: string;
 }
 
-// Interface untuk Halaman Nonton (Watch)
+// Interface untuk Watch/Episode Detail
 export interface EpisodeDetail {
   episode: string;
   anime: {
@@ -70,10 +70,6 @@ export interface EpisodeDetail {
   previous_episode: { slug: string; otakudesu_url: string } | null;
   stream_url: string;
   stream_servers: StreamServer[];
-  download_urls: {
-    mp4: DownloadQuality[];
-    mkv: DownloadQuality[];
-  };
 }
 
 export interface StreamServer {
@@ -84,72 +80,16 @@ export interface StreamServer {
   }[];
 }
 
-export interface DownloadQuality {
-  resolution: string;
-  urls: {
-    provider: string;
-    url: string;
-  }[];
-}
-
-// Untuk endpoint /complete-anime dan /ongoing-anime
-export interface PaginatedAnimeResponse<T> {
-  paginationData: {
-    current_page: number;
-    last_visible_page: number;
-    has_next_page: boolean;
-    next_page: number | null;
-    has_previous_page: boolean;
-    previous_page: number | null;
-  };
-  ongoingAnimeData?: T;
-  completeAnimeData?: T;
-  anime?: T; // Untuk genre
-}
-
-// Untuk endpoint /schedule
-export interface ScheduleAnime {
-    anime_name: string;
-    url: string;
-    slug: string;
-    poster: string;
-}
-
-export interface ScheduleDay {
-    day: string;
-    anime_list: ScheduleAnime[];
-}
-
-// Untuk endpoint /unlimited
-export interface AllAnimeItem {
-  title: string;
-  animeId: string;
-  href: string;
-  otakudesuUrl: string;
-}
-
-export interface AllAnimeResponse {
-  list: {
-    startWith: string;
-    animeList: AllAnimeItem[];
-  }[];
-}
-
-// Interfaces for Batch Download (API Key 10)
+// --- Interfaces untuk Batch Download (Sesuai API Streaming) ---
 export interface BatchUrl {
   title: string;
   url: string;
 }
 
 export interface BatchQuality {
-  title: string;
-  size: string;
-  urls: BatchUrl[];
-}
-
-export interface BatchFormat {
-  title: string;
-  qualities: BatchQuality[];
+  title: string; // ex: "MP4 360p"
+  size: string;  // ex: "0.91 GB"
+  urls: BatchUrl[]; // List provider (OtakuDrive, Mega, dll)
 }
 
 export interface BatchDetail {
@@ -165,15 +105,48 @@ export interface BatchDetail {
   producers: string;
   aired: string;
   credit: string;
-  genreList: {
-    title: string;
-    genreId: string;
-    href: string;
-    otakudesuUrl: string;
-  }[];
   downloadUrl: {
-    formats: BatchFormat[];
+    formats: BatchQuality[]; // Struktur API biasanya langsung list quality di dalam formats atau nested
   };
+}
+
+// Response Wrappers
+export interface PaginatedAnimeResponse<T> {
+  paginationData: {
+    current_page: number;
+    last_visible_page: number;
+    has_next_page: boolean;
+    next_page: number | null;
+    has_previous_page: boolean;
+    previous_page: number | null;
+  };
+  ongoingAnimeData?: T;
+  completeAnimeData?: T;
+  anime?: T;
+}
+
+export interface ScheduleAnime {
+    anime_name: string;
+    url: string;
+    slug: string;
+    poster: string;
+}
+
+export interface ScheduleDay {
+    day: string;
+    anime_list: ScheduleAnime[];
+}
+
+export interface AllAnimeResponse {
+  list: {
+    startWith: string;
+    animeList: {
+        title: string;
+        animeId: string;
+        href: string;
+        otakudesuUrl: string;
+    }[];
+  }[];
 }
 
 export const api = {
@@ -216,7 +189,6 @@ export const api = {
   async getAnimeByGenre(genre: string, page: number = 1): Promise<PaginatedAnimeResponse<Anime[]>> {
     const res = await fetch(`${BASE_URL}/genre/${genre}?page=${page}`);
     const rawData = await res.json();
-    // Transform the response to be consistent
     const transformedData = {
       ...rawData.data,
       paginationData: rawData.data.pagination,
@@ -238,7 +210,6 @@ export const api = {
   },
 
   async getServerUrl(serverId: string): Promise<string> {
-    // PERBAIKAN KRITIS: URL server dibentuk dari root domain
     const res = await fetch(`https://www.sankavollerei.com${serverId}`);
     const data = await res.json();
     return data.url;
@@ -250,9 +221,11 @@ export const api = {
     return data.data;
   },
 
+  // Endpoint Batch Baru
   async getBatchDetail(batchSlug: string): Promise<BatchDetail> {
     const res = await fetch(`${BASE_URL}/batch/${batchSlug}`);
     const data = await res.json();
+    // Adaptasi jika struktur formats sedikit berbeda
     return data.data;
   },
 };
