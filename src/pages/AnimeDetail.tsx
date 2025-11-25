@@ -10,14 +10,22 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { AnimeListHorizontal } from '@/components/AnimeListHorizontal';
 import { DownloadDialog } from '@/components/DownloadDialog';
-import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo, Download, ChevronLeft } from 'lucide-react';
+// Import Batch Dialog Baru
+import { BatchDownloadDialog } from '@/components/BatchDownloadDialog';
+import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo, Download, ChevronLeft, Archive } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const AnimeDetail = () => {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
   const [isInList, setIsInList] = useState(false);
+  
+  // State untuk Dialog Download Biasa (Per Episode)
   const [isDownloadDialogOpen, setDownloadDialogOpen] = useState(false);
+  
+  // State untuk Dialog Download Batch (Baru)
+  const [isBatchDialogOpen, setBatchDialogOpen] = useState(false);
+
   const [relatedAnime, setRelatedAnime] = useState<Anime[]>([]);
   const [isLoadingRelated, setIsLoadingRelated] = useState(true);
 
@@ -132,10 +140,9 @@ const AnimeDetail = () => {
                 {anime.produser && <p><span className="font-semibold text-muted-foreground">Producer:</span> {anime.produser}</p>}
               </div>
 
-              {/* === PERUBAHAN DIMULAI DI SINI === */}
-              {/* Actions */}
+              {/* Actions Section */}
               <div className="flex w-full flex-col gap-3">
-                {/* Baris Atas: Tombol Watch Now & Favorite */}
+                {/* Top Row */}
                 <div className="grid grid-cols-2 gap-3">
                   {anime.episode_lists.length > 0 && (
                     <Button asChild size="lg" className="gap-2">
@@ -148,13 +155,13 @@ const AnimeDetail = () => {
                   </Button>
                 </div>
 
-                {/* Baris Bawah: Tombol Show All Episodes & Download */}
+                {/* Middle Row - Episodes & Single Download */}
                 <div className="grid grid-cols-2 gap-3">
                   {anime.episode_lists.length > 0 && (
                       <Sheet>
                           <SheetTrigger asChild>
                               <Button variant="secondary" size="lg" className="w-full gap-2">
-                                  <ListVideo className="h-5 w-5"/> Show All Episodes
+                                  <ListVideo className="h-5 w-5"/> All Episodes
                               </Button>
                           </SheetTrigger>
                           <SheetContent side="bottom" className="h-[60%]">
@@ -173,12 +180,22 @@ const AnimeDetail = () => {
                           </SheetContent>
                       </Sheet>
                   )}
-                  <Button size="lg" className="gap-2" onClick={() => setDownloadDialogOpen(true)}>
-                    <Download className="h-5 w-5" /> Download
+                  <Button size="lg" variant="outline" className="gap-2" onClick={() => setDownloadDialogOpen(true)}>
+                    <Download className="h-5 w-5" /> Download Eps
                   </Button>
                 </div>
+
+                {/* Bottom Row - Batch Download (Hanya jika batch tersedia) */}
+                {anime.batch && (
+                    <Button 
+                        size="lg" 
+                        className="w-full gap-2 bg-accent hover:bg-accent/90 text-white"
+                        onClick={() => setBatchDialogOpen(true)}
+                    >
+                        <Archive className="h-5 w-5" /> Download Batch (Full)
+                    </Button>
+                )}
               </div>
-              {/* === PERUBAHAN BERAKHIR DI SINI === */}
 
             </div>
           </div>
@@ -206,12 +223,23 @@ const AnimeDetail = () => {
           )}
         </section>
       </div>
+
+      {/* Dialogs */}
       {anime && (
         <DownloadDialog
           isOpen={isDownloadDialogOpen}
           onClose={() => setDownloadDialogOpen(false)}
           episodes={anime.episode_lists}
           animeTitle={anime.title}
+        />
+      )}
+
+      {anime.batch && (
+        <BatchDownloadDialog 
+            isOpen={isBatchDialogOpen}
+            onClose={() => setBatchDialogOpen(false)}
+            batchSlug={anime.batch.slug}
+            animeTitle={anime.title}
         />
       )}
     </div>
