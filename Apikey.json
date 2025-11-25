@@ -1,0 +1,956 @@
+[
+  {
+    "Judul": "Halaman Home",
+    "Apikey": "https://www.sankavollerei.com/anime/home",
+    "Json": {
+      "status": "success",
+      "creator": "Sanka Vollerei",
+      "data": {
+        "ongoing_anime": [
+          {
+            "title": "Gintama 3-nen Z-gumi Ginpachi-sensei",
+            "slug": "3z-gumi-ginpachi-sensei-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/3-nen-Z-gumi-Ginpachi-sensei.jpg",
+            "current_episode": "Episode 8",
+            "release_day": "Selasa",
+            "newest_release_date": "25 Nov",
+            "otakudesu_url": "https://otakudesu.best/anime/3z-gumi-ginpachi-sensei-sub-indo/"
+          },
+          {
+            "title": "Sozai Saishuka no Isekai Ryokouki",
+            "slug": "sozai-isekai-ryokouki-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/09/Sozai-Saishuka-no-Isekai-Ryokouki-Sub.jpg",
+            "current_episode": "Episode 9",
+            "release_day": "Selasa",
+            "newest_release_date": "25 Nov",
+            "otakudesu_url": "https://otakudesu.best/anime/sozai-isekai-ryokouki-sub-indo/"
+          },
+          {
+            "title": "Ansatsusha de Aru Ore no Status ga Yuusha yori mo Akiraka ni Tsuyoi no da ga",
+            "slug": "sutetsuyo-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/151118.jpg",
+            "current_episode": "Episode 8",
+            "release_day": "Selasa",
+            "newest_release_date": "25 Nov",
+            "otakudesu_url": "https://otakudesu.best/anime/sutetsuyo-sub-indo/"
+          },
+          {
+            "title": "Mofa Gongzhu de Xiao Fannao",
+            "slug": "mofa-fannaoi-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/09/Who-Made-Me-a-Princess-Subtitle-Indonesia.jpg",
+            "current_episode": "Episode 11",
+            "release_day": "Senin",
+            "newest_release_date": "24 Nov",
+            "otakudesu_url": "https://otakudesu.best/anime/mofa-fannaoi-sub-indo/"
+          },
+          {
+            "title": "Kikaijikake no Marie",
+            "slug": "kikaijikake-marie-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/151138.jpg",
+            "current_episode": "Episode 8",
+            "release_day": "Senin",
+            "newest_release_date": "24 Nov",
+            "otakudesu_url": "https://otakudesu.best/anime/kikaijikake-marie-sub-indo/"
+          },
+          {
+            "title": "Alma-chan wa Kazoku ni Naritai",
+            "slug": "alma-kazoku-naritai-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/Alma-chan-wa-Kazoku-ni-Naritai.jpg",
+            "current_episode": "Episode 8",
+            "release_day": "Minggu",
+            "newest_release_date": "24 Nov",
+            "otakudesu_url": "https://otakudesu.best/anime/alma-kazoku-naritai-sub-indo/"
+          },
+          {
+            "title": "Chichi wa Eiyuu, Haha wa Seirei, Musume no Watashi wa Tenseisha.",
+            "slug": "chichi-haha-seirei-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/151799.jpg",
+            "current_episode": "Episode 8",
+            "release_day": "Minggu",
+            "newest_release_date": "23 Nov",
+            "otakudesu_url": "https://otakudesu.best/anime/chichi-haha-seirei-sub-indo/"
+          },
+          {
+            "title": "One Punch Man Season 3",
+            "slug": "punch-man-s3-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/One-Punch-Man-Season-3.jpg",
+            "current_episode": "Episode 7",
+            "release_day": "Minggu",
+            "newest_release_date": "23 Nov",
+            "otakudesu_url": "https://otakudesu.best/anime/punch-man-s3-sub-indo/"
+          },
+          {
+            "title": "Gachiakuta",
+            "slug": "gachiakuta-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/07/Gachiakuta.jpg",
+            "current_episode": "Episode 20",
+            "release_day": "Minggu",
+            "newest_release_date": "23 Nov",
+            "otakudesu_url": "https://otakudesu.best/anime/gachiakuta-sub-indo/"
+          },
+          {
+            "title": "Ao no Orchestra Season 2",
+            "slug": "orchestra-s2-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/151796.jpg",
+            "current_episode": "Episode 8",
+            "release_day": "Minggu",
+            "newest_release_date": "23 Nov",
+            "otakudesu_url": "https://otakudesu.best/anime/orchestra-s2-sub-indo/"
+          },
+          {
+            "title": "Uma Musume: Cinderella Gray Part 2",
+            "slug": "uma-musume-cinderella-gray-p2-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/152280-1.jpg",
+            "current_episode": "Episode 6",
+            "release_day": "Minggu",
+            "newest_release_date": "23 Nov",
+            "otakudesu_url": "https://otakudesu.best/anime/uma-musume-cinderella-gray-p2-sub-indo/"
+          },
+          {
+            "title": "Shuumatsu Touring",
+            "slug": "shuumatsu-touring-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/Shuumatsu-Touring.jpg",
+            "current_episode": "Episode 8",
+            "release_day": "Minggu",
+            "newest_release_date": "23 Nov",
+            "otakudesu_url": "https://otakudesu.best/anime/shuumatsu-touring-sub-indo/"
+          },
+          {
+            "title": "SI-VIS: The Sound of Heroes",
+            "slug": "si-vis-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/151178.jpg",
+            "current_episode": "Episode 8",
+            "release_day": "Minggu",
+            "newest_release_date": "23 Nov",
+            "otakudesu_url": "https://otakudesu.best/anime/si-vis-sub-indo/"
+          },
+          {
+            "title": "Digimon Beatbreak",
+            "slug": "digimon-bb-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/Digimon-Beatbreak.jpg",
+            "current_episode": "Episode 8",
+            "release_day": "Minggu",
+            "newest_release_date": "23 Nov",
+            "otakudesu_url": "https://otakudesu.best/anime/digimon-bb-sub-indo/"
+          },
+          {
+            "title": "Kingdom Season 6",
+            "slug": "kngdm-season-6-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/151476.jpg",
+            "current_episode": "Episode 8",
+            "release_day": "Minggu",
+            "newest_release_date": "23 Nov",
+            "otakudesu_url": "https://otakudesu.best/anime/kngdm-season-6-sub-indo/"
+          }
+        ],
+        "complete_anime": [
+          {
+            "title": "Jibaku Shounen Hanako-kun Season 2 Part 2",
+            "slug": "jibaku-shounen-hanako-kun-2-part-2-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/11/Jibaku-Shounen-Hanako-kun-Season-2-Part-2-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "8.03",
+            "last_release_date": "12 Nov",
+            "otakudesu_url": "https://otakudesu.best/anime/jibaku-shounen-hanako-kun-2-part-2-sub-indo/"
+          },
+          {
+            "title": "Utagoe wa Mille-Feuille",
+            "slug": "utagoe-wa-mille-feuille-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/11/Utagoe-wa-Mille-Feuille-Sub-Indo.jpg",
+            "episode_count": "10",
+            "rating": "6.56",
+            "last_release_date": "02 Nov",
+            "otakudesu_url": "https://otakudesu.best/anime/utagoe-wa-mille-feuille-sub-indo/"
+          },
+          {
+            "title": "#Compass 2.0: Sentou Setsuri Kaiseki System",
+            "slug": "compass-20-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/08/Compass-2.0-Sentou-Setsuri-Kaiseki-System-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "5.89",
+            "last_release_date": "02 Nov",
+            "otakudesu_url": "https://otakudesu.best/anime/compass-20-sub-indo/"
+          },
+          {
+            "title": "Busamen Gachi Fighter",
+            "slug": "busamen-gachi-fighter-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/Busamen-Gachi-Fighter-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "6.32",
+            "last_release_date": "21 Okt",
+            "otakudesu_url": "https://otakudesu.best/anime/busamen-gachi-fighter-sub-indo/"
+          },
+          {
+            "title": "Bad Girl",
+            "slug": "bad-girl-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/Bad-Girl-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "7.07",
+            "last_release_date": "18 Okt",
+            "otakudesu_url": "https://otakudesu.best/anime/bad-girl-sub-indo/"
+          },
+          {
+            "title": "Ame to Kimi to",
+            "slug": "ame-kimi-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/Ame-to-Kimi-to-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "7.53",
+            "last_release_date": "16 Okt",
+            "otakudesu_url": "https://otakudesu.best/anime/ame-kimi-sub-indo/"
+          },
+          {
+            "title": "Sono Bisque Doll wa Koi wo Suru Season 2",
+            "slug": "sbdwk-s2-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/Sono-Bisque-Doll-wa-Koi-wo-Suru-Season-2-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "8.24",
+            "last_release_date": "15 Okt",
+            "otakudesu_url": "https://otakudesu.best/anime/sbdwk-s2-sub-indo/"
+          },
+          {
+            "title": "Koujo Denka no Kateikyoushi",
+            "slug": "koujo-denka-kateikyoushi-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/Koujo-Denka-no-Kateikyoushi-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "6.31",
+            "last_release_date": "15 Okt",
+            "otakudesu_url": "https://otakudesu.best/anime/koujo-denka-kateikyoushi-sub-indo/"
+          },
+          {
+            "title": "Yuusha Party wo Tsuihou sareta Shiromadoushi, S-Rank Boukensha ni Hirowareru",
+            "slug": "scooped-up-by-an-s-ranked-adventurer-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/Yuusha-Party-wo-Tsuihou-sareta-Shiromadoushi-S-Rank-Boukensha-ni-Hirowareru-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "6.11",
+            "last_release_date": "14 Okt",
+            "otakudesu_url": "https://otakudesu.best/anime/scooped-up-by-an-s-ranked-adventurer-sub-indo/"
+          },
+          {
+            "title": "Kizetsu Yuusha to Ansatsu Hime",
+            "slug": "kizetsu-yuusha-ansatsu-hime-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/10/Kizetsu-Yuusha-to-Ansatsu-Hime-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "6.62",
+            "last_release_date": "13 Okt",
+            "otakudesu_url": "https://otakudesu.best/anime/kizetsu-yuusha-ansatsu-hime-sub-indo/"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "Judul": "Jadwal Rilis Anime",
+    "Apikey": "https://www.sankavollerei.com/anime/schedule",
+    "Json": "Senin (Monday):\n*   City The Animation\n*   Kijin Gentoushou\n*   Kikaijikake no Marie\n*   Mofa Gongzhu de Xiao Fannao\n*   Watashi no Shiawase na Kekkon Season 2\n\n**Selasa (Tuesday):**\n*   Ansatsusha de Aru Ore no Status ga Yuusha yori mo Akiraka ni Tsuyoi no da ga\n*   Chitose-kun wa Ramune Bin no Naka\n*   Egao no Taenai Shokuba desu.\n*   Fate/strange Fake\n*   Gintama 3-nen Z-gumi Ginpachi-sensei\n*   Grand Blue Season 2\n*   Ruri no Houseki\n*   Sozai Saishuka no Isekai Ryokouki\n*   Summer Pockets\n*   Toujima Tanzaburou wa Kamen Rider ni Naritai\n*   Watanare\n\n**Rabu (Wednesday):**\n*   Kakkou no Iinazuke Season 2\n*   Kimi to Koete Koi ni Naru\n*   Ninja to Gokudou\n*   Tate no Yuusha no Nariagari Season 4\n*   Tondemo Skill de Isekai Hourou Meshi Season 2\n*   Yano-kun no Futsuu no Hibi\n\n**Kamis (Thursday):**\n*   Ameku Takao no Suiri Karte\n*   Bukiyou na Senpai.\n*   Dr. Stone Season 4 Part 2\n*   Jigoku Sensei Nube (2025)\n*   Kakuriyo no Yadomeshi Ni\n*   Kinoko Inu\n*   Let's Play: Quest-darake no My Life\n*   Mushoku no Eiyuu\n*   Tensei Akujo no Kuro Rekishi\n*   Tensei shitara Dainana Ouji Datta node Season 2\n*   Touhai: Ura Rate Mahjong Touhai Roku\n*   Wandance\n\n**Jumat (Friday):**\n*   Akujiki Reijou to Kyouketsu Koushaku\n*   Around 40 Otoko no Isekai Tsuuhan\n*   BanG Dream! Ave Mujica\n*   Mecha-ude (TV)\n*   Mizu Zokusei no Mahoutsukai\n*   Mugen Gacha\n*   Senpai wa Otokonoko\n*   Tougen Anki\n*   Towa no Yuugure\n*   Watashi wo Tabetai, Hitodenashi\n\n**Sabtu (Saturday):**\n*   Astro Note\n*   Boku no Hero Academia Season 8\n*   Busu ni Hanataba wo.\n*   Guilty Gear Strive: Dual Rulers\n*   Kaijuu 8-gou Season 2\n*   Kao ni Denai Kashiwada-san to Kao ni Deru Oota-kun\n*   Kekkon Yubiwa Monogatari Season 2\n*   Mikata ga Yowasugite Hojo Mahou ni Tesshiteita Kyuutei Mahoushi\n*   Momentary Lily\n*   Saigo ni Hitotsu dake Onegai shitemo Yoroshii deshou ka\n*   Sanda\n*   Shabake\n*   Shin Samurai-den Yaiba\n*   Silent Witch\n*   Spy x Family Season 3\n*   Watari-kun no xx ga Houkai Sunzen\n\n**Minggu (Sunday):**\n*   Alma-chan wa Kazoku ni Naritai\n*   Anne Shirley\n*   Ao no Orchestra Season 2\n*   Chanto Suenai Kyuuketsuki-chan\n*   Chichi wa Eiyuu, Haha wa Seirei, Musume no Watashi wa Tenseisha.\n*   Digimon Beatbreak\n*   Fumetsu no Anata e Season 3\n*   Gachiakuta\n*   Game Center Shoujo to Ibunka Kouryuu\n*   Gnosia\n*   Hikaru ga Shinda Natsu\n*   Isekai Mokushiroku Mynoghra\n*   Kaoru Hana wa Rin to Saku\n*   Kingdom Season 6\n*   Nageki no Bourei wa Intai shitai Season 2\n*   Nanatsu no Taizai: Mokushiroku no Yonkishi S2\n*   Okinawa de Suki ni Natta Ko ga Hougen Sugite Tsurasugiru\n*   One Piece\n*   One Punch Man Season 3\n*   Seishun Buta Yarou wa Santa Claus no Yume wo Minai\n*   Shuumatsu Touring\n*   SI-VIS: The Sound of Heroes\n*   Taiyou yori mo Mabushii Hoshi\n*   Tomodachi no Imouto ga Ore ni dake Uzai\n*   Uma Musume: Cinderella Gray Part 2\n*   Witch Watch\n*   Yasei no Last Boss ga Arawareta!\n\n**Random:**\n*   Isekai Quartet Season 3\n*   NEET Kunoichi to Nazeka Dousei Hajimemashita\n*   Ranma ½ (2024) Season 2\n*   Tonari no Youkai-san"
+  },
+  {
+    "Judul": "Detail Lengkap Anime",
+    "Apikey": "https://www.sankavollerei.com/anime/anime/okamoto-day-part-2-sub-indo",
+    "Json": {
+      "status": "success",
+      "creator": "Sanka Vollerei"
+    }
+  },
+  {
+    "Judul": "Anime Tamat per Halaman",
+    "Apikey": "https://www.sankavollerei.com/anime/complete-anime/2",
+    "Json": {
+      "status": "success",
+      "creator": "Sanka Vollerei",
+      "data": {
+        "paginationData": {
+          "current_page": 2,
+          "last_visible_page": 64,
+          "has_next_page": true,
+          "next_page": 3,
+          "has_previous_page": true,
+          "previous_page": 1
+        },
+        "completeAnimeData": [
+          {
+            "title": "Sakamoto Days Part 2",
+            "slug": "akamoto-day-part-2-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/09/Sakamoto-Days-Part-2-Sub-Indo.jpg",
+            "episode_count": "11",
+            "rating": "7.96",
+            "last_release_date": "18 Sep",
+            "otakudesu_url": "https://otakudesu.best/anime/akamoto-day-part-2-sub-indo/"
+          },
+          {
+            "title": "A-Rank Party wo Ridatsu shita Ore wa",
+            "slug": "a-rank-party-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/09/A-Rank-Party-wo-Ridatsu-shita-Ore-wa-Sub-Indo.jpg",
+            "episode_count": "24",
+            "rating": "6.57",
+            "last_release_date": "18 Sep",
+            "otakudesu_url": "https://otakudesu.best/anime/a-rank-party-sub-indo/"
+          },
+          {
+            "title": "Arknights Season 3",
+            "slug": "arknights-rise-from-ember-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/09/Arknights-Season-3-Sub-Indo.jpg",
+            "episode_count": "10",
+            "rating": "7.78",
+            "last_release_date": "16 Sep",
+            "otakudesu_url": "https://otakudesu.best/anime/arknights-rise-from-ember-sub-indo/"
+          },
+          {
+            "title": "Kowloon Generic Romance",
+            "slug": "kowloon-generic-romance-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/09/Kowloon-Generic-Romance-Sub-Indo.jpg",
+            "episode_count": "13",
+            "rating": "7.37",
+            "last_release_date": "15 Sep",
+            "otakudesu_url": "https://otakudesu.best/anime/kowloon-generic-romance-sub-indo/"
+          },
+          {
+            "title": "Kuroshitsuji: Midori no Majo-hen",
+            "slug": "kuroshitsuji-midori-no-majo-hen-subtitle-indonesia",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/09/Kuroshitsuji-Midori-no-Majo-hen-Sub-Indo.jpg",
+            "episode_count": "13",
+            "rating": "8.18",
+            "last_release_date": "06 Sep",
+            "otakudesu_url": "https://otakudesu.best/anime/kuroshitsuji-midori-no-majo-hen-subtitle-indonesia/"
+          },
+          {
+            "title": "Teogonia",
+            "slug": "teogonia-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/08/Teogonia-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "6.92",
+            "last_release_date": "31 Agu",
+            "otakudesu_url": "https://otakudesu.best/anime/teogonia-sub-indo/"
+          },
+          {
+            "title": "Ninja to Koroshiya no Futarigurashi",
+            "slug": "ninja-koroshiya-futarigurashi-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/08/Ninja-to-Koroshiya-no-Futarigurashi-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "7.62",
+            "last_release_date": "29 Agu",
+            "otakudesu_url": "https://otakudesu.best/anime/ninja-koroshiya-futarigurashi-sub-indo/"
+          },
+          {
+            "title": "Kidou Senshi Gundam: GQuuuuuuX",
+            "slug": "kidou-gundam-gquuuuuux-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/08/Kidou-Senshi-Gundam-GQuuuuuuX-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "7.04",
+            "last_release_date": "24 Agu",
+            "otakudesu_url": "https://otakudesu.best/anime/kidou-gundam-gquuuuuux-sub-indo/"
+          },
+          {
+            "title": "Takopii no Genzai",
+            "slug": "takopii-genzai-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/08/Takopii-no-Genzai-Sub-Indo.jpg",
+            "episode_count": "6",
+            "rating": "8.91",
+            "last_release_date": "14 Agu",
+            "otakudesu_url": "https://otakudesu.best/anime/takopii-genzai-sub-indo/"
+          },
+          {
+            "title": "Maebashi Witches",
+            "slug": "maebashi-witches-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/08/Maebashi-Witches-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "7.00",
+            "last_release_date": "12 Agu",
+            "otakudesu_url": "https://otakudesu.best/anime/maebashi-witches-sub-indo/"
+          },
+          {
+            "title": "Zatsu Tabi: That's Journey",
+            "slug": "zatsu-tabi-journey-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/08/Zatsu-Tabi-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "6.93",
+            "last_release_date": "05 Agu",
+            "otakudesu_url": "https://otakudesu.best/anime/zatsu-tabi-journey-sub-indo/"
+          },
+          {
+            "title": "Your Forma",
+            "slug": "your-forma-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/08/Your-Forma-Sub-Indo.jpg",
+            "episode_count": "13",
+            "rating": "6.25",
+            "last_release_date": "05 Agu",
+            "otakudesu_url": "https://otakudesu.best/anime/your-forma-sub-indo/"
+          },
+          {
+            "title": "Nazotoki wa Dinner no Ato de",
+            "slug": "nazotoki-dinner-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/08/Nazotoki-wa-Dinner-no-Ato-de-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "6.48",
+            "last_release_date": "04 Agu",
+            "otakudesu_url": "https://otakudesu.best/anime/nazotoki-dinner-sub-indo/"
+          },
+          {
+            "title": "Ore wa Seikan Kokka no Akutoku Ryoushu!",
+            "slug": "ore-seikan-kokka-akutoku-rousu-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/08/Ore-wa-Seikan-Kokka-no-Akutoku-Ryoushu-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "7.02",
+            "last_release_date": "03 Agu",
+            "otakudesu_url": "https://otakudesu.best/anime/ore-seikan-kokka-akutoku-rousu-sub-indo/"
+          },
+          {
+            "title": "Aharen-san wa Hakarenai Season 2",
+            "slug": "aharen-s2-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/08/Aharen-san-wa-Hakarenai-Season-2-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "7.49",
+            "last_release_date": "01 Agu",
+            "otakudesu_url": "https://otakudesu.best/anime/aharen-s2-sub-indo/"
+          },
+          {
+            "title": "Shoushimin Series Season 2",
+            "slug": "shoushimin-s2-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/07/Shoushimin-Series-Season-2-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "8.06",
+            "last_release_date": "30 Jul",
+            "otakudesu_url": "https://otakudesu.best/anime/shoushimin-s2-sub-indo/"
+          },
+          {
+            "title": "Slime Taoshite 300-nen Season 2",
+            "slug": "slime-taoshite-s2-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/07/Slime-Taoshite-300-nen-Season-2-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "6.69",
+            "last_release_date": "30 Jul",
+            "otakudesu_url": "https://otakudesu.best/anime/slime-taoshite-s2-sub-indo/"
+          },
+          {
+            "title": "Enen no Shouboutai Season 3",
+            "slug": "enen-shouboutai-season-3-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/07/Enen-no-Shouboutai-Season-3-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "7.71",
+            "last_release_date": "27 Jul",
+            "otakudesu_url": "https://otakudesu.best/anime/enen-shouboutai-season-3-sub-indo/"
+          },
+          {
+            "title": "The Beginning After the End",
+            "slug": "saikyou-ousama-nidome-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/06/The-Beginning-After-the-End-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "6.13",
+            "last_release_date": "24 Jul",
+            "otakudesu_url": "https://otakudesu.best/anime/saikyou-ousama-nidome-sub-indo/"
+          },
+          {
+            "title": "Wind Breaker Season 2",
+            "slug": "wind-breaker-s2-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/07/Wind-Breaker-Season-2-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "7.66",
+            "last_release_date": "22 Jul",
+            "otakudesu_url": "https://otakudesu.best/anime/wind-breaker-s2-sub-indo/"
+          },
+          {
+            "title": "Rock wa Lady no Tashinami deshite",
+            "slug": "rock-lady-tashinami-deshite-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/07/Rock-wa-Lady-no-Tashinami-deshite-Sub-Indo.jpg",
+            "episode_count": "13",
+            "rating": "7.92",
+            "last_release_date": "21 Jul",
+            "otakudesu_url": "https://otakudesu.best/anime/rock-lady-tashinami-deshite-sub-indo/"
+          },
+          {
+            "title": "Vigilante: Boku no Hero Academia Illegals",
+            "slug": "vigilante-bnh-academia-illegals-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/07/Vigilante-Boku-no-Hero-Academia-Illegals-Sub-Indo.jpg",
+            "episode_count": "13",
+            "rating": "7.63",
+            "last_release_date": "15 Jul",
+            "otakudesu_url": "https://otakudesu.best/anime/vigilante-bnh-academia-illegals-sub-indo/"
+          },
+          {
+            "title": "Shiunji-ke no Kodomotachi",
+            "slug": "shiunji-kodomotachi-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/07/Shiunji-ke-no-Kodomotachi-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "7.10",
+            "last_release_date": "15 Jul",
+            "otakudesu_url": "https://otakudesu.best/anime/shiunji-kodomotachi-sub-indo/"
+          },
+          {
+            "title": "Sentai Daishikkaku Season 2",
+            "slug": "sentai-daishikaku-s2-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/07/Sentai-Daishikkaku-Season-2-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "7.10",
+            "last_release_date": "14 Jul",
+            "otakudesu_url": "https://otakudesu.best/anime/sentai-daishikaku-s2-sub-indo/"
+          },
+          {
+            "title": "Katainaka no Ossan, Kensei ni Naru",
+            "slug": "katainaka-ossan-kensei-naru-sub-indo",
+            "poster": "https://otakudesu.best/wp-content/uploads/2025/07/Katainaka-no-Ossan-Kensei-ni-Naru-Sub-Indo.jpg",
+            "episode_count": "12",
+            "rating": "7.04",
+            "last_release_date": "04 Jul",
+            "otakudesu_url": "https://otakudesu.best/anime/katainaka-ossan-kensei-naru-sub-indo/"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "Judul": "Anime yang Sedang Tayang",
+    "Apikey": "https://www.sankavollerei.com/anime/ongoing-anime?page=1",
+    "Json": [
+      {
+        "title": "Gintama 3-nen Z-gumi Ginpachi-sensei",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Selasa",
+        "newest_release_date": "25 Nov"
+      },
+      {
+        "title": "Sozai Saishuka no Isekai Ryokouki",
+        "current_episode": "Total 9 Eps",
+        "release_day": "Selasa",
+        "newest_release_date": "25 Nov"
+      },
+      {
+        "title": "Ansatsusha de Aru Ore no Status ga Yuusha yori mo Akiraka ni Tsuyoi no da ga",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Selasa",
+        "newest_release_date": "25 Nov"
+      },
+      {
+        "title": "Mofa Gongzhu de Xiao Fannao",
+        "current_episode": "Total 11 Eps",
+        "release_day": "Senin",
+        "newest_release_date": "24 Nov"
+      },
+      {
+        "title": "Kikaijikake no Marie",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Senin",
+        "newest_release_date": "24 Nov"
+      },
+      {
+        "title": "Alma-chan wa Kazoku ni Naritai",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Minggu",
+        "newest_release_date": "24 Nov"
+      },
+      {
+        "title": "Chichi wa Eiyuu, Haha wa Seirei, Musume no Watashi wa Tenseisha.",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Minggu",
+        "newest_release_date": "23 Nov"
+      },
+      {
+        "title": "One Punch Man Season 3",
+        "current_episode": "Total 7 Eps",
+        "release_day": "Minggu",
+        "newest_release_date": "23 Nov"
+      },
+      {
+        "title": "Gachiakuta",
+        "current_episode": "Total 20 Eps",
+        "release_day": "Minggu",
+        "newest_release_date": "23 Nov"
+      },
+      {
+        "title": "Ao no Orchestra Season 2",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Minggu",
+        "newest_release_date": "23 Nov"
+      },
+      {
+        "title": "Uma Musume: Cinderella Gray Part 2",
+        "current_episode": "Total 6 Eps",
+        "release_day": "Minggu",
+        "newest_release_date": "23 Nov"
+      },
+      {
+        "title": "Shuumatsu Touring",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Minggu",
+        "newest_release_date": "23 Nov"
+      },
+      {
+        "title": "SI-VIS: The Sound of Heroes",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Minggu",
+        "newest_release_date": "23 Nov"
+      },
+      {
+        "title": "Digimon Beatbreak",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Minggu",
+        "newest_release_date": "23 Nov"
+      },
+      {
+        "title": "Kingdom Season 6",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Minggu",
+        "newest_release_date": "23 Nov"
+      },
+      {
+        "title": "Tomodachi no Imouto ga Ore ni dake Uzai",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Minggu",
+        "newest_release_date": "23 Nov"
+      },
+      {
+        "title": "Ranma ½ (2024) Season 2",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Random",
+        "newest_release_date": "23 Nov"
+      },
+      {
+        "title": "Toujima Tanzaburou wa Kamen Rider ni Naritai",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Selasa",
+        "newest_release_date": "23 Nov"
+      },
+      {
+        "title": "Fumetsu no Anata e Season 3",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Minggu",
+        "newest_release_date": "23 Nov"
+      },
+      {
+        "title": "Yasei no Last Boss ga Arawareta!",
+        "current_episode": "Total 9 Eps",
+        "release_day": "Minggu",
+        "newest_release_date": "23 Nov"
+      },
+      {
+        "title": "Nageki no Bourei wa Intai shitai Season 2",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Minggu",
+        "newest_release_date": "23 Nov"
+      },
+      {
+        "title": "Mikata ga Yowasugite Hojo Mahou ni Tesshiteita Kyuutei Mahoushi",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Sabtu",
+        "newest_release_date": "22 Nov"
+      },
+      {
+        "title": "Spy x Family Season 3",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Sabtu",
+        "newest_release_date": "22 Nov"
+      },
+      {
+        "title": "Kekkon Yubiwa Monogatari Season 2",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Sabtu",
+        "newest_release_date": "22 Nov"
+      },
+      {
+        "title": "Boku no Hero Academia Season 8",
+        "current_episode": "Total 8 Eps",
+        "release_day": "Sabtu",
+        "newest_release_date": "22 Nov"
+      }
+    ]
+  },
+  {
+    "Judul": "Daftar Semua Genre",
+    "Apikey": "https://www.sankavollerei.com/anime/genre",
+    "Json": {
+      "status": "success",
+      "creator": "Sanka Vollerei",
+      "data": [
+        {
+          "name": "Action",
+          "slug": "action",
+          "otakudesu_url": "https://otakudesu.best//genres/action/"
+        },
+        {
+          "name": "Adventure",
+          "slug": "adventure",
+          "otakudesu_url": "https://otakudesu.best//genres/adventure/"
+        },
+        {
+          "name": "Comedy",
+          "slug": "comedy",
+          "otakudesu_url": "https://otakudesu.best//genres/comedy/"
+        },
+        {
+          "name": "Demons",
+          "slug": "demons",
+          "otakudesu_url": "https://otakudesu.best//genres/demons/"
+        },
+        {
+          "name": "Drama",
+          "slug": "drama",
+          "otakudesu_url": "https://otakudesu.best//genres/drama/"
+        },
+        {
+          "name": "Ecchi",
+          "slug": "ecchi",
+          "otakudesu_url": "https://otakudesu.best//genres/ecchi/"
+        },
+        {
+          "name": "Fantasy",
+          "slug": "fantasy",
+          "otakudesu_url": "https://otakudesu.best//genres/fantasy/"
+        },
+        {
+          "name": "Game",
+          "slug": "game",
+          "otakudesu_url": "https://otakudesu.best//genres/game/"
+        },
+        {
+          "name": "Harem",
+          "slug": "harem",
+          "otakudesu_url": "https://otakudesu.best//genres/harem/"
+        },
+        {
+          "name": "Historical",
+          "slug": "historical",
+          "otakudesu_url": "https://otakudesu.best//genres/historical/"
+        },
+        {
+          "name": "Horror",
+          "slug": "horror",
+          "otakudesu_url": "https://otakudesu.best//genres/horror/"
+        },
+        {
+          "name": "Josei",
+          "slug": "josei",
+          "otakudesu_url": "https://otakudesu.best//genres/josei/"
+        },
+        {
+          "name": "Magic",
+          "slug": "magic",
+          "otakudesu_url": "https://otakudesu.best//genres/magic/"
+        },
+        {
+          "name": "Martial Arts",
+          "slug": "martial-arts",
+          "otakudesu_url": "https://otakudesu.best//genres/martial-arts/"
+        },
+        {
+          "name": "Mecha",
+          "slug": "mecha",
+          "otakudesu_url": "https://otakudesu.best//genres/mecha/"
+        },
+        {
+          "name": "Military",
+          "slug": "military",
+          "otakudesu_url": "https://otakudesu.best//genres/military/"
+        },
+        {
+          "name": "Music",
+          "slug": "music",
+          "otakudesu_url": "https://otakudesu.best//genres/music/"
+        },
+        {
+          "name": "Mystery",
+          "slug": "mystery",
+          "otakudesu_url": "https://otakudesu.best//genres/mystery/"
+        },
+        {
+          "name": "Psychological",
+          "slug": "psychological",
+          "otakudesu_url": "https://otakudesu.best//genres/psychological/"
+        },
+        {
+          "name": "Parody",
+          "slug": "parody",
+          "otakudesu_url": "https://otakudesu.best//genres/parody/"
+        },
+        {
+          "name": "Police",
+          "slug": "police",
+          "otakudesu_url": "https://otakudesu.best//genres/police/"
+        },
+        {
+          "name": "Romance",
+          "slug": "romance",
+          "otakudesu_url": "https://otakudesu.best//genres/romance/"
+        },
+        {
+          "name": "Samurai",
+          "slug": "samurai",
+          "otakudesu_url": "https://otakudesu.best//genres/samurai/"
+        },
+        {
+          "name": "School",
+          "slug": "school",
+          "otakudesu_url": "https://otakudesu.best//genres/school/"
+        },
+        {
+          "name": "Sci-Fi",
+          "slug": "sci-fi",
+          "otakudesu_url": "https://otakudesu.best//genres/sci-fi/"
+        },
+        {
+          "name": "Seinen",
+          "slug": "seinen",
+          "otakudesu_url": "https://otakudesu.best//genres/seinen/"
+        },
+        {
+          "name": "Shoujo",
+          "slug": "shoujo",
+          "otakudesu_url": "https://otakudesu.best//genres/shoujo/"
+        },
+        {
+          "name": "Shoujo Ai",
+          "slug": "shoujo-ai",
+          "otakudesu_url": "https://otakudesu.best//genres/shoujo-ai/"
+        },
+        {
+          "name": "Shounen",
+          "slug": "shounen",
+          "otakudesu_url": "https://otakudesu.best//genres/shounen/"
+        },
+        {
+          "name": "Slice of Life",
+          "slug": "slice-of-life",
+          "otakudesu_url": "https://otakudesu.best//genres/slice-of-life/"
+        },
+        {
+          "name": "Sports",
+          "slug": "sports",
+          "otakudesu_url": "https://otakudesu.best//genres/sports/"
+        },
+        {
+          "name": "Space",
+          "slug": "space",
+          "otakudesu_url": "https://otakudesu.best//genres/space/"
+        },
+        {
+          "name": "Super Power",
+          "slug": "super-power",
+          "otakudesu_url": "https://otakudesu.best//genres/super-power/"
+        },
+        {
+          "name": "Supernatural",
+          "slug": "supernatural",
+          "otakudesu_url": "https://otakudesu.best//genres/supernatural/"
+        },
+        {
+          "name": "Thriller",
+          "slug": "thriller",
+          "otakudesu_url": "https://otakudesu.best//genres/thriller/"
+        },
+        {
+          "name": "Vampire",
+          "slug": "vampire",
+          "otakudesu_url": "https://otakudesu.best//genres/vampire/"
+        }
+      ]
+    }
+  },
+  {
+    "Judul": "Daftar Anime Berdasarkan Genre",
+    "Apikey": "https://www.sankavollerei.com/anime/genre/action?page=1",
+    "Json": [
+      {
+        "title": "Ansatsusha de Aru Ore no Status ga Yuusha yori mo Akiraka ni Tsuyoi no da ga",
+        "rating": "N/A",
+        "season": "Fall 2025"
+      },
+      {
+        "title": "One Punch Man Season 3",
+        "rating": "7.14",
+        "season": "Fall 2025"
+      },
+      {
+        "title": "Gachiakuta",
+        "rating": "7.78",
+        "season": "Summer 2025"
+      },
+      {
+        "title": "Digimon Beatbreak",
+        "rating": "N/A",
+        "season": "Fall 2025"
+      },
+      {
+        "title": "Kingdom Season 6",
+        "rating": "7.73",
+        "season": "Fall 2025"
+      },
+      {
+        "title": "Ranma ½ (2024) Season 2",
+        "rating": "8.04",
+        "season": "Fall 2025"
+      },
+      {
+        "title": "Toujima Tanzaburou wa Kamen Rider ni Naritai",
+        "rating": "7.67",
+        "season": "Fall 2025"
+      },
+      {
+        "title": "Yasei no Last Boss ga Arawareta!",
+        "rating": "N/A",
+        "season": "Fall 2025"
+      },
+      {
+        "title": "Nageki no Bourei wa Intai shitai Season 2",
+        "rating": "N/A",
+        "season": "Fall 2025"
+      },
+      {
+        "title": "Mikata ga Yowasugite Hojo Mahou ni Tesshiteita Kyuutei Mahoushi",
+        "rating": "N/A",
+        "season": "Fall 2025"
+      },
+      {
+        "title": "Spy x Family Season 3",
+        "rating": "7.64",
+        "season": "Fall 2025"
+      },
+      {
+        "title": "Kekkon Yubiwa Monogatari Season 2",
+        "rating": "N/A",
+        "season": "Fall 2025"
+      },
+      {
+        "title": "Boku no Hero Academia Season 8",
+        "rating": "7.25",
+        "season": "Fall 2025"
+      },
+      {
+        "title": "Sanda",
+        "rating": "7.24",
+        "season": "Fall 2025"
+      },
+      {
+        "title": "Saigo ni Hitotsu dake Onegai shitemo Yoroshii deshou ka",
+        "rating": "7.13",
+        "season": "Fall 2025"
+      }
+    ]
+  },
+  {
+    "Judul": "Detail & Link Nonton per Episode",
+    "Apikey": "https://www.sankavollerei.com/anime/episode/mebsn-episode-1-sub-indo",
+    "Json": "Episode Title: Mushoku no Eiyuu Episode 1 Subtitle Indonesia\nAnime Page: https://otakudesu.best/anime/mushoku-eiyuu-sub-indo/\nDirect Stream URL: https://desustream.info/dstream/ondesu/v5/index.php?id=d2xhVkVhbVRyV0xROXQxcmhja0htQT09\n\nStream Servers:\n*   **360p:** vidhide, filedon, pdrain, mega\n*   **480p:** ondesu, filedon, vidhide, pdrain, mega\n*   **720p:** filedon, ondesuhd, vidhide, pdrain, mega\n\nDownload URLs (MP4):\n*   **360p:** ODFiles, Pdrain, Acefile, GoFile, Mega, KFiles\n*   **480p:** ODFiles, Pdrain, Acefile, GoFile, Mega, KFiles\n*   **720p:** ODFiles, Pdrain, Acefile, GoFile, Mega, KFiles\n\nDownload URLs (MKV):\n*   **480p:** ODFiles, Pdrain, Acefile, GoFile, Mega, KFiles\n*   **720p:** ODFiles, Pdrain, Acefile, GoFile, Mega, KFiles\n*   **1080p:** ODFiles, Pdrain, Acefile, GoFile, Mega, KFiles\n\nNext Episode:\n*   **Slug:** mebsn-episode-2-sub-indo\n*   **URL:** https://otakudesu.best/episode/mebsn-episode-2-sub-indo/"
+  },
+  {
+    "Judul": "Pencarian Anime",
+    "Apikey": "https://www.sankavollerei.com/anime/search/boruto",
+    "Json": "Title: Boruto: Naruto Next Generations Subtitle Indonesia\nStatus: Ongoing\nRating: 6.15\nURL: https://otakudesu.best/anime/borot-sub-indo/"
+  },
+  {
+    "Judul": "Download Batch Anime",
+    "Apikey": "https://www.sankavollerei.com/anime/batch/jshk-s2-batch-sub-indo",
+    "Json": "Title: Jibaku Shounen Hanako-kun Season 2\nJapanese Title: 地縛少年花子くん2\nType: TV\nScore: 7.89\nEpisodes: 12\nDuration: 23 Menit\nStudios: Lerche\nProducers: Square Enix, Studio Hibari, Pony Canyon, TBS, Movic, Half H.P Studio, Crunchyroll, Contents Seed, Gloria\nAired: Jan 12, 2025\nCredit: Ayakashi\nGenres: School, Shounen, Supernatural\n\nDownload URLs:\n\n*   **Jibaku Shounen Hanako-kun Season 2 Batch Subtitle Indonesia**\n    *   **MP4 360p (0.91 GB)**\n        *   OtakuDrive: `https://desustream.com/safelink/link/?id=eXRoOHNUMzlUckNONFNIWDNYRnZEL1dQYjdqUmdzVzl5anBaYnF6bnpIcFZ3bW4xa0JjUW9HeGxEWnZXM2JUaGdwRThzU1dxRDRuSWRaMWM5R1lLUUhOejZhbXRDNXlneXQxZTlYODlkOGNyR0Z5akN5RzEvWG41dFNKSjB0b1JxUmRXeXgyalRjSEJFM0FFdS9pbVFlSkptY0Uva0Z6YUNoWjVXZz09`\n        *   DesuDrive: `https://desustream.com/safelink/link/?id=eXRoOHNUMzlUckNONFNIWDNYRnZEL1dQYjdqUjB0aTRuQUpUYy9menh6RUR6MmVTaVhVRW1BdDJYZUszMTZEcTBvdEJreTZySzU2YldKNVJ4RVFuTTIwS3FvaWtDcHFrM3NwN2tFZFlBTkFXREZuQmRFUDNwR0xHaGpCazZNVVUrRGR0d1FXalE4ZmdkZ1JDamZPdUM0MD0=`\n        *   PDrain: `https://desustream.com/safelink/link/?id=eXRoOHNYVG9UdnVZK3l6V3czeHJDN0tDTHJhUmdKNnBqaHBiY3Bham5RTW0=`\n        *   Mega: `https://desustream.com/safelink/link/?id=eXRoOHNYVG9UdnVGOXpQU2dYWmpSYjJGYkxEUnVONmU5QWRwVllTeXpDY0F4R3lPbkdVUnIzOXpMZUxQdzVXRXByQjF2VFMySnB6SFNPME00VkpTR1I0NThKaWVFcGFiM1E9PQ==`\n        *   AceFile: `https://desustream.com/safelink/link/?id=eXRoOHNYVG9UdnVKOFRIVnhuUjhSTGlETDdQUjNJSGxrM1lLSlAyamhqb2V5bWE5djBJYm9CTlRDOS9iODVhNml1dDJ4U2pOVmNIYUVLbGM0dz09`\n        *   Kraken: `https://desustream.com/safelink/link/?id=eXRoOHNYVG9UdnVENERYWXluWi9BN2VKYy91ZGd0enoxeVpZYStxcDJEa3k2VXlLbW1JTStsaFVBczZxOFpHL2pRPT0=`\n        *   DesuFiles: `https://desustream.com/safelink/link/?id=eXRoOHNUMzlUckNONFNIWDNYRnZEL1dQYjdqUmlkU3YxQ2xVY0tEaWhtb0R6ekNkbkZNR2d3NXZYc3EyL2RHQmpZdHpvRERITmFYQmIrdHVvRWd0RmhRYjM2R1piSldVK2MxVW9ueGZFOXdqRkhyYUVsZXlxbUxWcFRNZTk5SVBwUUZOd0FlR05PbnFUMjlrcy9Tc2JQZFZrZTB6dEd2MEszcDU=`\n    *   **MP4 480p (0.84 GB)**\n        *   OtakuDrive: `https://desustream.com/safelink/link/?id=eXRoOHNUMzlUckNONFNIWDNYRnZEL1dQYjdqUmdzVzl5anBaYnF6bnpIcFZ3bW4xakV3RXZHUjZLTWZRM0xlNHRZTXduaUtVSXNQSmV1SnN3eEJZT1VZSno1V1FNTTJEOU4xb3JINDljcWMzTUhyVUpDT0x1RlhSaHhCOTB0NHdnRjF3elRDallOLzJUazRDa1BpMVh2OUt5TXd3NjNyUERoWjVXZz09`\n        *   DesuDrive: `https://desustream.com/safelink/link/?id=eXRoOHNUMzlUckNONFNIWDNYRnZEL1dQYjdqUjB0aTRuQnRwZUtuTHh4c3B5VHlHN1haWWgzMW9CZHl4eXArNTA2UlJsRVdwSk1EWlhMRjcwM28zR1hFT3pxYkVDS0dPNWNFZHJtVm9FdEFpUDJMekFseXZnbHZhbVFaOTc5VjNuenN6eWlXOWZ2MlFhQVJ3aVBXSUM0MD0=`\n        *   PDrain: `https://desustream.com/safelink/link/?id=eXRoOHNYVG9UdnVZK3l6V3czeHJDN0tDTHJhUmdKNnBqaFo1V0pYMDVSa2c=`\n        *   Mega: `https://desustream.com/safelink/link/?id=eXRoOHNYVG9UdnVGOXpQU2dYWmpSYjJGYkxEUjFOYU56SDE4ZG8reTVBY2VtMHYrNGxZKzVXdCtGK2Z1d1lpQ2hiVnJvUzZjQXB6elIrMWUrRm9PSms0aTRLeUVFWWVWd1E9PQ==`\n        *   AceFile: `https://desustream.com/safelink/link/?id=eXRoOHNYVG9UdnVKOFRIVnhuUjhSTGlETDdQUjNJSGxrM1lLSlAyaWhqb2V5bWE5djBJYm9CTlRDOS9iODVhNml1dDJ4U2pKVWNIYUVLbGM0dz09`\n        *   Kraken: `https://desustream.com/safelink/link/?id=eXRoOHNYVG9UdnVENERYWXluWi9BN2VKYy91ZGd0enoxeVpZYStyRzVoNDkwbTZCN0dnZStsaFVBczZxOFpHL2pRPT0=`\n        *   DesuFiles: `https://desustream.com/safelink/link/?id=eXRoOHNUMzlUckNONFNIWDNYRnZEL1dQYjdqUmlkU3YxQ2xVY0tEaWhtb0R6ekNlblZjd3QybE5JTWkzOHRHSXRQSXhyUnVvQ2FPWVZZNXZ4MjRwSmwwYjM2T2VNYWFqeGRKaG54bHBOUEZYRkYvMExpbjBuUVRPNFR4azY5b2hqRGRKdzJLNFQrZVJURXhzdE9pcFYvWmdpdHNobG5qUE8zcDU=`\n    *   **MP4 720p (1.50 GB)**\n        *   OtakuDrive: `https://desustream.com/safelink/link/?id=eXRoOHNUMzlUckNONFNIWDNYRnZEL1dQYjdqUmdzVzl5anBaYnF6bnpIcFZ3bW4xalJVQTRXbDdQUG5TOUxDcXRKTnRwaUtTS1lENWE3OVYzM1EwUUg0WDZaU3VNNUN6K2N4bnYyUk9NcWNFSjBDbUNYK2MrMmY2NUIxLzBxRU9rZ2RKL1FTemNJZjFhMVZNdnZ1UUJlbGxrZGNIa0dLZUJpQjVXZz09`\n        *   DesuDrive: `https://desustream.com/safelink/link/?id=eXRoOHNUMzlUckNONFNIWDNYRnZEL1dQYjdqUjB0aTRuQzVyV3AzQy96RmEvVXFhbEVJRWh3cHFLOC9YeUlteG1KdzF6Z0NyQ01qZVdMRmE2Vzg1SFdNaTg1RENPS09DN2MxRmdGMWNMZHd1RFYvUlAzT3M4Vi9CbHlCajc5Y1greUJWNngralUvNlRjWEJ3aWQydUM0MD0=`\n        *   PDrain: `https://desustream.com/safelink/link/?id=eXRoOHNYVG9UdnVZK3l6V3czeHJDN0tDTHJhUmdKNnBqaFo1V0pYMDVSa2c=`\n        *   Mega: `https://desustream.com/safelink/link/?id=eXRoOHNYVG9UdnVGOXpQU2dYWmpSYjJGYkxEUmljYTB5UWhrZFl5eTR3TUwyRG1RcWhNODRBeDVXL25EelkzcnJLaGpoQm02THI2U1hJRnh2RVlnTTJzVDNQcVRHTm05Nnc9PQ==`\n        *   AceFile: `https://desustream.com/safelink/link/?id=eXRoOHNYVG9UdnVKOFRIVnhuUjhSTGlETDdQUjNJSGxrM1lLSlAybGhqb2V5bWE5djBJYm9CTlRDOS9iODVhNml1dDJ4U2pKVWNIYUVLbGM0dz09`\n        *   Kraken: `https://desustream.com/safelink/link/?id=eXRoOHNYVG9UdnVENERYWXluWi9BN2VKYy91ZGd0enoxeVpZYStyRzVoNDkwbTZCN0dnZStsaFVBczZxOFpHL2pRPT0=`\n        *   DesuFiles: `https://desustream.com/safelink/link/?id=eXRoOHNUMzlUckNONFNIWDNYRnZEL1dQYjdqUmlkU3YxQ2xVY0tEaWhtb0R6ekNldDNFUWhGQjhYT1RBL2IrR3Q3WndrMFNPRVpDYmRPaHV4bkVZSW5CMDM2YWZGN0s3eE41K2lFRmhOTWNqWmtiYUVIMnBuMWpWZ2lkcHdlWWcrVDh5MkFYRFh0SGxHZ0pnbC91R1V2UmpyTUVodTNENEhYcDU=`"
+  },
+  {
+    "Judul": "Ambil Apikey Stream Server",
+    "Apikey": "https://www.sankavollerei.com/anime/server/187226-0-720p",
+    "Json": {
+      "status": "success",
+      "creator": "Sanka Vollerei",
+      "url": "https://filedon.co/embed/jQxHC5rOu5"
+    }
+  },
+  {
+    "Judul": "All Anime",
+    "Apikey": "https://www.sankavollerei.com/anime/unlimited",
+    "Json": "#\n*   #Compass 2.0: Sentou Setsuri Kaiseki System\n\n**1**\n*   100-man no Inochi no Ue ni Ore wa Tatteiru\n*   100-man no Inochi no Ue ni Ore wa Tatteiru Season 2\n*   11eyes\n*   12-sai.: Chicchana Mune no Tokimeki\n*   16bit Sensation: Another Layer\n\n**2**\n*   2.43: Seiin Koukou Danshi Volley-bu\n*   2.5-jigen no Ririsa\n*   22/7\n\n**3**\n*   3-gatsu no Lion\n*   3-gatsu no Lion Season 2\n*   3D Kanojo: Real Girl\n*   3D Kanojo: Real Girl Season 2\n\n**4**\n*   4-nin wa Sorezore Uso wo Tsuku\n\n**8**\n*   86\n*   86 Season 2\n\n**9**\n*   91 Days\n\n**A**\n*   A-Channel\n*   A-Rank Party wo Ridatsu shita Ore wa\n*   AICO Incarnation\n*   Absolute Duo\n*   ACCA: 13-ku Kansatsu-ka\n*   Accel World\n*   Acchi Kocchi\n*   Acro Trip\n*   Adachi to Shimamura\n*   Aharen-san wa Hakarenai\n*   Aharen-san wa Hakarenai Season 2\n*   Ahiru no Sora\n*   Aho Girl\n*   Air\n*   Ajin\n*   Ajin Season 2\n*   Akagami no Shirayuki-hime\n*   Akagami no Shirayuki-hime Season 2\n*   Akame ga Kill!\n*   Akaneiro ni Somaru Saka\n*   Akanesasu Shoujo\n*   Akatsuki no Yona\n*   AKB0048\n*   AKB0048 Season 2\n*   Akebi-chan no Sailor-fuku\n*   Akiba Maid Sensou\n*   Akiba's Trip The Animation\n*   Akkun to Kanojo\n*   Aku no Hana\n*   Akudama Drive\n*   Akujiki Reijou to Kyouketsu Koushaku On-Going\n*   Akuma no Riddle\n*   Akuyaku Reijou Level 99\n*   Akuyaku Reijou nanode Last Boss wo Kattemimashita\n*   Akuyaku Reijou Tensei Ojisan On-Going\n*   Aldnoah Zero\n*   Aldnoah Zero Season 2\n*   Alma-chan wa Kazoku ni Naritai On-Going\n*   Amaama to Inazuma\n*   Amagami SS\n*   Amagami SS Season 2\n*   Amagami-san Chi no Enmusubi\n*   Amagi Brilliant Park\n*   Amanchu\n*   Amanchu! Season 2\n*   Ame to Kimi to\n*   Ameku Takao no Suiri Karte On-Going\n*   Ange Vierge\n*   Angel Beats\n*   Anima Yell!\n*   Animegataris\n*   Anne Happy\n*   Anne Shirley On-Going\n*   Ano Natsu de Matteru\n*   AnoHana\n*   Another\n*   Another World\n*   Ansatsu Kyoushitsu\n*   Ansatsu Kyoushitsu Season 2\n*   Ansatsusha de Aru Ore no Status ga Yuusha yori mo Akiraka ni Tsuyoi no da ga On-Going\n*   Ao Ashi\n*   Ao Haru Ride\n*   Ao no Exorcist\n*   Ao no Exorcist Season 2\n*   Ao no Exorcist Season 3\n*   Ao no Exorcist Season 5 On-Going\n*   Ao no Exorcist Season 4\n*   Ao no Hako\n*   Ao no Kanata no Four Rhythm\n*   Ao no Orchestra\n*   Ao no Orchestra Season 2 On-Going\n*   Aoi Bungaku Series\n*   Aoi Hana\n*   Aoki Hagane no Arpeggio: Ars Nova\n*   Apocalypse Hotel On-Going\n*   Appare Ranman\n*   Araburu Kisetsu no Otome-domo yo\n*   Arakawa Under the Bridge\n*   Arakawa Under the Bridge Season 2\n*   Arcana Famiglia\n*   Aria The Animation\n*   Arifureta\n*   Arifureta Shokugyou de Sekai Saikyou Season 2\n*   Arifureta Shokugyou de Sekai Saikyou Season 3\n*   Arknights Season 2\n*   Arknights: Reimei Zensou\n*   Arknights Season 3\n*   Around 40 Otoko no Isekai Tsuuhan On-Going\n*   Ars no Kyojuu\n*   Arslan Senki\n*   Arslan Senki Season 2\n*   Arte\n*   Aru Majo ga Shinu Made\n*   Asobi Asobase\n*   Assassins Pride\n*   Assault Lily: Bouquet\n*   Astro Note On-Going\n*   Asu no Yoichi!\n*   Atri: My Dear Moments\n*   Ayakashi Triangle\n*   Azur Lane\n\n**B**\n*   B-gata H-kei\n*   Babylon\n*   Baccano!\n*   Back Arrow\n*   Back Street Girls: Gokudolls\n*   Bad Girl\n*   Baka to Test to Shoukanjuu\n*   Baka to Test to Shoukanjuu Season 2\n*   Bakemonogatari\n*   Baki\n*   Bakuman\n*   Bakuman Season 2\n*   Bakuman Season 3\n*   Ballroom e Youkoso\n*   Banana Fish\n*   BanG Dream!\n*   BanG Dream! Ave Mujica On-Going\n*   BanG Dream! It's MyGO!!!!!\n*   BanG Dream! Season 2\n*   Bang Dream Season 3\n*   Barakamon\n*   Bartender: Kami no Glass\n*   Beastars\n*   Beastars Season 2\n*   Beatless\n*   Beelzebub\n*   Beelzebub-jou no Okinimesu mama\n*   Bem\n*   Ben-To\n*   Benriya Saitou-san, Isekai ni Iku\n*   Berserk: Ougon Jidai-hen - Memorial Edition\n*   Binbougami ga\n*   Birdie Wing: Golf Girls' Story\n*   Birdie Wing: Golf Girls' Story Season 2\n*   Black Bullet\n*   Black Clover\n*   Black Lagoon\n*   Black★★Rock Shooter: Dawn Fall\n*   Black Rock Shooter\n*   Blade & Soul\n*   Bleach: Sennen Kessen-hen Part 2\n*   Bleach: Sennen Kessen-hen Part 3\n*   Bleach: Sennen Kessen-hen\n*   Blend S\n*   Blood Lad\n*   Blood C\n*   Blue Archive the Animation\n*   Blue Lock\n*   Blue Lock Season 2\n*   Blue Period\n*   Bocchi the Rock!\n*   Bofuri\n*   Bofuri Season 2\n*   Boku dake ga Inai Machi\n*   Boku no Hero Academia\n*   Boku no Hero Academia Season 2\n*   Boku no Hero Academia Season 3\n*   Boku no Hero Academia Season 4\n*   Boku no Hero Academia Season 5\n*   Boku no Hero Academia Season 6\n*   Boku no Hero Academia Season 7\n*   Boku no Hero Academia Season 8 On-Going\n*   Boku no Kanojo ga Majimesugiru Sho-bitch na Ken\n*   Boku no Kokoro no Yabai Yatsu\n*   Boku no Kokoro no Yabai Yatsu Season 2\n*   Boku no Tsuma wa Kanjou ga Nai\n*   Boku wa Tomodachi ga Sukunai\n*   Boku wa Tomodachi ga Sukunai Season 2\n*   Bokuhaka\n*   Bokura ga Ita\n*   Bokura no Ameiro Protocol\n*   Bokura wa Minna Kawaisou\n*   Bokutachi no Remake\n*   Bokutachi wa Benkyou ga Dekinai\n*   Bokutachi wa Benkyou ga Dekinai Season 2\n*   Boogiepop wa Warawanai\n*   Boruto On-Going\n*   Botsuraku Yotei no Kizoku dakedo\n*   Bounen no Xamdou\n*   Boushoku no Berserk\n*   BNA\n*   Btooom!\n*   Bucchigire!\n*   Bucchigiri?\n*   Buddy Complex\n*   Buddy Daddies\n*   Bukiyou na Senpai. On-Going\n*   Bungou Stray Dogs\n*   Bungo Stray Dogs Season 2\n*   Bungou Stray Dogs Season 3\n*   Bungou Stray Dogs Season 4\n*   Bungou Stray Dogs Season 5\n*   Bungou to Alchemist: Shinpan no Haguruma\n*   Busamen Gachi Fighter\n*   Busou Shoujo Machiavellianism\n*   Busu ni Hanataba wo. On-Going\n*   Buta no Liver wa Kanetsu Shiro\n*   Bye Bye, Earth\n*   Bye Bye, Earth Season 2\n\n**C**\n*   C3\n*   Caligula\n*   Campione\n*   Canaan\n*   Captain Tsubasa Season 2: Junior Youth-hen On-Going\n*   Carole & Tuesday\n*   Centaur no Nayami\n*   Chain Chronicle\n*   Chainsaw Man\n*   Chanto Suenai Kyuuketsuki-chan On-Going\n*   Charlotte\n*   Cheat Kusushi no Slow Life\n*   Chi.: Chikyuu no Undou ni Tsuite\n*   Chichi wa Eiyuu, Haha wa Seirei, Musume no Watashi wa Tenseisha. On-Going\n*   Chihayafuru\n*   Chihayafuru Season 2\n*   Chihayafuru Season 3\n*   Chio-chan no Tsuugakuro\n*   Chitose-kun wa Ramune Bin no Naka On-Going\n*   Chiyu Mahou no Machigatta Tsukaikata\n*   Chou Kadou Girl 1/6\n*   Choujigen Game Neptune The Animation\n*   Choyoyu\n*   Chuubyou Gekihatsu Boy\n*   Chuunibyou demo Koi ga Shitai\n*   Chuunibyou demo Koi ga Shitai! Season 2\n*   Circlet Princess\n*   Citrus\n*   City The Animation On-Going\n*   Clannad\n*   Clannad Season 2\n*   Class no Daikirai na Joshi to Kekkon suru Koto ni Natta\n*   Claymore\n*   Clevatess\n*   Clockwork Planet\n*   Code Geass: Dakkan no Roze\n*   Code Geass\n*   Code Geass Season 2\n*   Comet Lucifer\n*   Comic Girls\n*   Cool Doji Danshi\n*   Cop Craft\n*   Coppelion\n*   Cross Ange\n*   Cue!\n\n**D**\n*   D_Cide Traumerei the Animation\n*   D-Frag!\n*   Dagashi Kashi\n*   Dagashi Kashi Season 2\n*   Daitoshokan no Hitsujikai\n*   Dakara Boku wa H ga Dekinai\n*   Dance Dance Danseur\n*   Dandadan\n*   Dandadan Season 2\n*   Danganronpa 3: Mirai-hen\n*   Danganronpa 3: Zetsubou-hen\n*   Danganronpa: The Animation\n*   Danjo no Yuujou wa Seiritsu suru?\n*   DanMachi\n*   Danmachi Season 2\n*   Danmachi Season 3\n*   Danmachi Season 4\n*   DanMachi Season 4 Part 2\n*   DanMachi Season 5\n*   Danna ga Nani wo Itteiru ka Wakaranai Ken\n*   Danna ga Nani wo Itteiru ka Wakaranai Ken Season 2\n*   Dansai Bunri no Crime Edge\n*   Danshi Koukousei no Nichijou\n*   Dantalian no Shoka\n*   Dark Gathering\n*   Darker than Black\n*   Darker than Black Season 2\n*   Darling in the FranXX\n*   Darwin's Game\n*   Date A Live\n*   Date A Live Season 2\n*   Date A Live Season 3\n*   Date A Live Season 4\n*   Date A Live Season 5\n*   Dead Mount Death Play\n*   Dead Mount Death Play Part 2\n*   Deadman Wonderland\n*   Deaimon\n*   Death March kara Hajimaru Isekai Kyousoukyoku\n*   Death Note\n*   Death Parade\n*   Deatte 5-byou de Battle\n*   Deca-Dence\n*   Deep Insanity: The Lost Child\n*   Dekiru Neko wa Kyou mo Yuuutsu\n*   DekiSoko\n*   Dekoboko Majo no Oyako Jijou\n*   Delico's Nursery\n*   Demi-chan wa Kataritai\n*   Denki-gai no Honya-san\n*   Denpa Kyoushi\n*   Denpa Onna to Seishun Otoko\n*   Densetsu no Yuusha no Densetsu\n*   Devil May Cry\n*   Devil Survivor 2 The Animation\n*   Devilman Crybaby\n*   Devils Line\n*   Diabolik Lovers\n*   Diabolik Lovers Season 2\n*   Digimon Beatbreak On-Going\n*   Dimension W\n*   Do It Yourself!!\n*   Dog Days\n*   Dolls' Frontline\n*   Domestic na Kanojo\n*   Donten ni Warau\n*   Dorohedoro\n*   Dororo\n*   Dosanko Gal wa Namara Menkoi\n*   Doukyonin wa Hiza, Tokidoki, Atama no Ue.\n*   Douse, Koishite Shimaunda. On-Going\n*   Dr. Stone\n*   Dr. Stone Season 3\n*   Dr. Stone Season 3 Part 2\n*   Dr. Stone Season 4\n*   Dr. Stone Season 4 Part 2 On-Going\n*   Dr. Stone Season 2\n*   Dragon Crisis!\n*   Dragon Quest On-Going\n*   Dragon, Ie wo Kau\n*   Drifters\n*   Dumbbell Nan Kilo Moteru?\n*   Dungeon Meshi\n*   Danmachi Gaiden: Sword Oratoria\n*   Dungeon no Naka no Hito\n*   Durarara!!\n*   Durarara!! Season 4\n*   Durarara!! Season 2\n*   Durarara!! Season 3\n\n**E**\n*   Edens Zero\n*   Edens Zero Season 2\n*   Edomae Elf\n*   Egao no Daika\n*   Egao no Taenai Shokuba desu. On-Going\n*   Eiyuu Kyoushitsu\n*   Eiyuuou, Bu wo Kiwameru Tame Tenseisu\n*   Eizouken ni wa Te wo Dasu na!\n*   Elfen Lied\n*   Endride\n*   Endro~!
+*   Enen no Shouboutai\n*   Enen no Shouboutai Season 2\n*   Enen no Shouboutai Season 3\n*   Engage Kiss\n*   Ergo Proxy\n*   Eromanga-sensei\n*   Escha & Logy no Atelier\n*   Etotama\n\n**F**\n*   Fairy Gone"
+  }
+]
