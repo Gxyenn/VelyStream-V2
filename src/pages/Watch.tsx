@@ -146,78 +146,80 @@ const Watch = ({ onWatch }: WatchProps) => {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-background/50">
-      {/* Header Section */}
-      <div className="container mx-auto px-4 pt-6 pb-2">
-        <div className="mb-4 flex flex-col items-start gap-1 w-full">
-          {animeDetail && (
-            <Button variant="ghost" size="sm" asChild className="h-auto p-0 text-muted-foreground hover:text-primary hover:bg-transparent gap-1 mb-1">
-                <Link to={`/anime/${animeDetail.slug.replace('https:/otakudesu.best/anime/', '').replace('/', '')}`}>
-                    <ArrowLeft className="h-4 w-4" /> Back
-                </Link>
-            </Button>
-          )}
-          <h1 className="w-full text-lg md:text-xl font-bold leading-tight line-clamp-2 break-words">
-            {episode.episode}
-          </h1>
-        </div>
-      </div>
+      {/* Main Content Area */}
+      <div className="w-full max-w-[1600px] px-2 md:px-6">
 
-      {/* Video Player Section */}
-      <div className="w-full max-w-[1600px] px-2 md:px-6 mb-6">
-        <div 
-            className="relative w-full overflow-hidden bg-black shadow-2xl rounded-2xl border border-white/10 touch-none select-none" 
-            style={{ aspectRatio: '16/9', touchAction: 'none' }}
-        >
-          
-          {/* --- WATERMARK (Updated) --- */}
+        {/* Video Player Section */}
+        <div className="w-full mt-6 mb-4">
           <div 
-            className="absolute top-4 left-4 z-30 flex items-center gap-2 pointer-events-none select-none opacity-50 hover:opacity-80 transition-opacity duration-500"
-            style={{ animation: 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}
+              className="relative w-full overflow-hidden bg-black shadow-2xl rounded-2xl border border-white/10 touch-none select-none" 
+              style={{ aspectRatio: '16/9', touchAction: 'none' }}
           >
-            {/* Logo V */}
-            <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-to-br from-primary to-accent shadow-[0_0_10px_rgba(236,72,153,0.5)]">
-              <span className="text-sm font-bold text-primary-foreground">V</span>
-            </div>
-            {/* Teks VelyStream */}
-            <div className="flex flex-col">
-                <span className="text-sm font-extrabold tracking-tight text-white drop-shadow-md leading-none">
-                    Vely<span className="text-primary">Stream</span>
-                </span>
-            </div>
-          </div>
-          {/* --- END WATERMARK --- */}
-
-          {loadingServer && (
-            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-              <div className="flex flex-col items-center gap-3">
-                <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                <p className="text-sm text-muted-foreground animate-pulse">Memuat server...</p>
+            
+            {/* --- WATERMARK (Updated) --- */}
+            <div 
+              className="absolute top-4 left-4 z-30 flex items-center gap-2 pointer-events-none select-none opacity-50 hover:opacity-80 transition-opacity duration-500"
+              style={{ animation: 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}
+            >
+              {/* Logo V */}
+              <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-to-br from-primary to-accent shadow-[0_0_10px_rgba(236,72,153,0.5)]">
+                <span className="text-sm font-bold text-primary-foreground">V</span>
+              </div>
+              {/* Teks VelyStream */}
+              <div className="flex flex-col">
+                  <span className="text-sm font-extrabold tracking-tight text-white drop-shadow-md leading-none">
+                      Vely<span className="text-primary">Stream</span>
+                  </span>
               </div>
             </div>
-          )}
-          
-          {currentStreamUrl ? (
-            <iframe
-              key={currentStreamUrl}
-              src={currentStreamUrl}
-              className="h-full w-full border-0 rounded-2xl"
-              allowFullScreen
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              style={{ touchAction: 'none' }}
-            />
-          ) : !isLoading && (
-            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-white/80 gap-2 bg-zinc-900">
-                <Server className="h-10 w-10 opacity-50 mb-2"/>
-                <p className="text-lg font-medium">Siap Memutar</p>
-                <p className="text-sm text-muted-foreground">Pilih kualitas dan server di bawah untuk memulai.</p>
-            </div>
-          )}
+            {/* --- END WATERMARK --- */}
+
+            {loadingServer && (
+              <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+                <div className="flex flex-col items-center gap-3">
+                  <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                  <p className="text-sm text-muted-foreground animate-pulse">Memuat server...</p>
+                </div>
+              </div>
+            )}
+            
+            {currentStreamUrl ? (
+              <iframe
+                key={currentStreamUrl}
+                src={currentStreamUrl}
+                className="h-full w-full border-0 rounded-2xl"
+                allowFullScreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                style={{ touchAction: 'none' }}
+              />
+            ) : !isLoading && (
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-white/80 gap-2 bg-zinc-900">
+                  <Server className="h-10 w-10 opacity-50 mb-2"/>
+                  <p className="text-lg font-medium">Siap Memutar</p>
+                  <p className="text-sm text-muted-foreground">Pilih kualitas dan server di bawah untuk memulai.</p>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+
+        {/* Header Section (Moved Below Player) */}
+        <div className="w-full mb-6">
+          <div className="flex flex-col items-start gap-1 w-full">
+            {animeDetail && (
+              <Button variant="ghost" size="sm" asChild className="h-auto p-0 text-muted-foreground hover:text-primary hover:bg-transparent gap-1 mb-1">
+                  <Link to={`/anime/${animeDetail.slug.replace('https:/otakudesu.best/anime/', '').replace('/', '')}`}>
+                      <ArrowLeft className="h-4 w-4" /> Back to Anime Detail
+                  </Link>
+              </Button>
+            )}
+            <h1 className="w-full text-lg md:text-xl font-bold leading-tight line-clamp-2 break-words">
+              {episode.episode}
+            </h1>
+          </div>
+        </div>
       
-      {/* Controls & Navigation Section */}
-      <div className="container mx-auto px-4 pb-12 w-full max-w-[1600px]">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 bg-secondary/30 p-3 rounded-xl border border-white/5">
+        {/* Controls & Navigation Section */}
+        <div className="w-full mb-6 flex flex-wrap items-center justify-between gap-3 bg-secondary/30 p-3 rounded-xl border border-white/5">
             <div className="flex items-center gap-2 flex-wrap">
                 <Popover>
                     <PopoverTrigger asChild>
@@ -286,7 +288,7 @@ const Watch = ({ onWatch }: WatchProps) => {
             </div>
         </div>
         
-        <div className="flex items-center justify-between w-full mt-4 gap-2">
+        <div className="w-full flex items-center justify-between mt-4 gap-2 pb-12">
           {episode.has_previous_episode && episode.previous_episode ? (
             <Button variant="secondary" onClick={() => navigate(`/watch/${episode.previous_episode!.slug}`)} className="gap-2 pl-2 hover:bg-primary/20">
               <ChevronLeft className="h-4 w-4" /> Previous
