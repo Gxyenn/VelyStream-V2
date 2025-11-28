@@ -2,6 +2,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api, Anime } from '@/lib/api';
 import { storage } from '@/lib/storage';
+import { cleanSlug } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -38,8 +39,9 @@ const AnimeDetail = () => {
       setIsLoadingRelated(true);
       const baseTitle = anime.title.replace(/ S\d+$/, '').replace(/ Season \d+$/, '');
       api.searchAnime(baseTitle).then(results => {
-        // Filter out the current anime from the related list using its slug for a reliable comparison.
-        const filteredResults = results.filter(item => item.slug !== anime.slug);
+        const filteredResults = results.filter(
+          item => cleanSlug(item.slug) !== cleanSlug(anime.slug)
+        );
         setRelatedAnime(filteredResults);
         setIsLoadingRelated(false);
       });

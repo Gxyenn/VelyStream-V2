@@ -1,4 +1,5 @@
 import { Anime } from './api';
+import { cleanSlug } from './utils';
 
 const MYLIST_KEY = 'velystream_mylist';
 const HISTORY_KEY = 'velystream_history';
@@ -11,23 +12,6 @@ export interface HistoryItem {
   };
   timestamp: number;
 }
-
-// Helper function to ensure slugs are consistent
-const cleanSlug = (slug: string): string => {
-  if (!slug) return '';
-  try {
-    if (slug.startsWith('http')) {
-      const url = new URL(slug);
-      const pathParts = url.pathname.split('/').filter(Boolean);
-      return pathParts[pathParts.length - 1] || '';
-    }
-    return slug;
-  } catch (error) {
-    console.error("Invalid slug format:", slug);
-    return slug;
-  }
-};
-
 
 export const storage = {
   // MyList functions
