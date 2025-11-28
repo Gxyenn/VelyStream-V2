@@ -149,8 +149,19 @@ const Watch = ({ onWatch }: WatchProps) => {
       {/* Main Content Area */}
       <div className="w-full max-w-[1600px] px-2 md:px-6">
 
+        {/* Back Button Section */}
+        <div className="w-full pt-6">
+            {animeDetail && (
+              <Button variant="ghost" size="sm" asChild className="h-auto p-0 text-muted-foreground hover:text-primary hover:bg-transparent gap-1 mb-1">
+                  <Link to={`/anime/${animeDetail.slug.replace('https:/otakudesu.best/anime/', '').replace('/', '')}`}>
+                      <ArrowLeft className="h-4 w-4" /> Back to Anime Detail
+                  </Link>
+              </Button>
+            )}
+        </div>
+
         {/* Video Player Section */}
-        <div className="w-full mt-6 mb-4">
+        <div className="w-full mt-2 mb-4">
           <div 
               className="relative w-full overflow-hidden bg-black shadow-2xl rounded-2xl border border-white/10 touch-none select-none" 
               style={{ aspectRatio: '16/9', touchAction: 'none' }}
@@ -202,20 +213,11 @@ const Watch = ({ onWatch }: WatchProps) => {
           </div>
         </div>
 
-        {/* Header Section (Moved Below Player) */}
+        {/* Header Section (Title Only) */}
         <div className="w-full mb-6">
-          <div className="flex flex-col items-start gap-1 w-full">
-            {animeDetail && (
-              <Button variant="ghost" size="sm" asChild className="h-auto p-0 text-muted-foreground hover:text-primary hover:bg-transparent gap-1 mb-1">
-                  <Link to={`/anime/${animeDetail.slug.replace('https:/otakudesu.best/anime/', '').replace('/', '')}`}>
-                      <ArrowLeft className="h-4 w-4" /> Back to Anime Detail
-                  </Link>
-              </Button>
-            )}
-            <h1 className="w-full text-lg md:text-xl font-bold leading-tight line-clamp-2 break-words">
-              {episode.episode}
-            </h1>
-          </div>
+          <h1 className="w-full text-lg md:text-xl font-bold leading-tight line-clamp-2 break-words">
+            {episode.episode}
+          </h1>
         </div>
       
         {/* Controls & Navigation Section */}
