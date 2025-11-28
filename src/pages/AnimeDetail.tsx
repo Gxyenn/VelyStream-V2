@@ -38,7 +38,8 @@ const AnimeDetail = () => {
       setIsLoadingRelated(true);
       const baseTitle = anime.title.replace(/ S\d+$/, '').replace(/ Season \d+$/, '');
       api.searchAnime(baseTitle).then(results => {
-        const filteredResults = results.filter(item => item.title !== anime.title);
+        // Filter out the current anime from the related list using its slug for a reliable comparison.
+        const filteredResults = results.filter(item => item.slug !== anime.slug);
         setRelatedAnime(filteredResults);
         setIsLoadingRelated(false);
       });
