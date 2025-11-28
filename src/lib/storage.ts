@@ -12,6 +12,23 @@ export interface HistoryItem {
   timestamp: number;
 }
 
+// Helper function to ensure slugs are consistent
+const cleanSlug = (slug: string): string => {
+  if (!slug) return '';
+  try {
+    if (slug.startsWith('http')) {
+      const url = new URL(slug);
+      const pathParts = url.pathname.split('/').filter(Boolean);
+      return pathParts[pathParts.length - 1] || '';
+    }
+    return slug;
+  } catch (error) {
+    console.error("Invalid slug format:", slug);
+    return slug;
+  }
+};
+
+
 export const storage = {
   // MyList functions
   getMyList(): Anime[] {
@@ -21,8 +38,10 @@ export const storage = {
 
   addToMyList(anime: Anime): void {
     const list = this.getMyList();
-    const exists = list.some(item => item.slug === anime.slug);
+    const cleanedSlug = cleanSlug(anime.slug);
+    const exists = list.some(item => cleanSlug(item.slug) === cleanedSlug);
     if (!exists) {
+      // Store the anime with its original slug, but ensure we use cleaned for checks
       list.push(anime);
       localStorage.setItem(MYLIST_KEY, JSON.stringify(list));
       window.dispatchEvent(new Event('storage_changed'));
@@ -31,14 +50,16 @@ export const storage = {
 
   removeFromMyList(slug: string): void {
     let list = this.getMyList();
-    const filtered = list.filter(item => item.slug !== slug);
+    const cleanedSlug = cleanSlug(slug);
+    const filtered = list.filter(item => cleanSlug(item.slug) !== cleanedSlug);
     localStorage.setItem(MYLIST_KEY, JSON.stringify(filtered));
     window.dispatchEvent(new Event('storage_changed'));
   },
 
   isInMyList(slug: string): boolean {
     const list = this.getMyList();
-    return list.some(item => item.slug === slug);
+    const cleanedSlug = cleanSlug(slug);
+    return list.some(item => cleanSlug(item.slug) === cleanedSlug);
   },
 
   // History functions
@@ -60,9 +81,10 @@ export const storage = {
 
   addToHistory(anime: Anime, episode: { title: string; slug: string }): void {
     const history = this.getHistory();
+    const cleanedAnimeSlug = cleanSlug(anime.slug);
     
     // Remove existing entry for same anime
-    const filtered = history.filter(item => item.anime.slug !== anime.slug);
+    const filtered = history.filter(item => cleanSlug(item.anime.slug) !== cleanedAnimeSlug);
     
     // Add new entry at the beginning
     filtered.unshift({
