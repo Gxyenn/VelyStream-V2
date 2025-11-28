@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { WatchDownloadDialog } from '@/components/WatchDownloadDialog';
 import { ChevronLeft, ChevronRight, Download, Loader2, ListVideo, Clapperboard, Server, ArrowLeft } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 import { toast } from "sonner";
@@ -28,7 +29,7 @@ const Watch = ({ onWatch }: WatchProps) => {
   const [selectedServerId, setSelectedServerId] = useState<string | null>(null);
   const [currentStreamUrl, setCurrentStreamUrl] = useState<string>('');
   const [loadingServer, setLoadingServer] = useState(false);
-  const [downloadingQuality, setDownloadingQuality] = useState<string | null>(null);
+  const [isDownloadDialogOpen, setDownloadDialogOpen] = useState(false);
 
   const { data: episode, isLoading, isError } = useQuery({
     queryKey: ['episode', slug],
@@ -110,45 +111,6 @@ const Watch = ({ onWatch }: WatchProps) => {
     }
   };
 
-  const handleDownload = async (serverId: string, quality: string) => {
-    setDownloadingQuality(quality);
-    toast.info(`Mengambil link ${quality}...`);
-
-    try {
-      const url = await api.getServerUrl(serverId);
-      if(!url) throw new Error("URL Kosong");
-
-      try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("CORS/Network Error");
-        
-        const blob = await response.blob();
-        const objectUrl = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = objectUrl;
-        const fileName = `${animeDetail?.title || 'anime'}_${episode?.episode || 'ep'}_${quality}.mp4`;
-        link.download = fileName.replace(/[^a-zA-Z0-9_.-]/g, '_');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(objectUrl);
-        toast.success("Download dimulai!");
-      } catch (err) {
-        console.warn("Auto download blocked, opening tab...", err);
-        window.open(url, '_blank');
-        toast.warning("Membuka di tab baru (Limitasi Google Drive)", {
-            description: "Silakan klik 'Tetap Download' di halaman yang terbuka."
-        });
-      }
-
-    } catch (error) {
-      console.error('Failed to get download link:', error);
-      toast.error("Gagal mengambil link download.");
-    } finally {
-      setDownloadingQuality(null);
-    }
-  };
-
   const EpisodeListComponent = () => (
     <SheetContent side="right">
         <SheetHeader><SheetTitle>All Episodes</SheetTitle></SheetHeader>
@@ -201,31 +163,24 @@ const Watch = ({ onWatch }: WatchProps) => {
       </div>
 
       {/* Video Player Section */}
-      <div className="w-full max-w-[1400px] px-2 md:px-6 mb-6">
+      <div className="w-full max-w-[1600px] px-2 md:px-6 mb-6">
         <div 
             className="relative w-full overflow-hidden bg-black shadow-2xl rounded-2xl border border-white/10 touch-none select-none" 
             style={{ aspectRatio: '16/9', touchAction: 'none' }}
         >
           
           {/* --- WATERMARK (Updated) --- */}
-          {/* 
-              Perubahan: 
-              - top-2 left-2 (Lebih mepet atas kiri)
-              - h-5 w-5 (Logo lebih kecil)
-              - text-xs (Teks lebih kecil)
-              - gap-1.5 (Jarak logo dan teks lebih rapat)
-          */}
           <div 
-            className="absolute top-2 left-2 z-30 flex items-center gap-1.5 pointer-events-none select-none opacity-50 hover:opacity-80 transition-opacity duration-500"
+            className="absolute top-4 left-4 z-30 flex items-center gap-2 pointer-events-none select-none opacity-50 hover:opacity-80 transition-opacity duration-500"
             style={{ animation: 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}
           >
             {/* Logo V */}
-            <div className="flex h-5 w-5 items-center justify-center rounded bg-gradient-to-br from-primary to-accent shadow-[0_0_10px_rgba(236,72,153,0.5)]">
-              <span className="text-[10px] font-bold text-primary-foreground">V</span>
+            <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-to-br from-primary to-accent shadow-[0_0_10px_rgba(236,72,153,0.5)]">
+              <span className="text-sm font-bold text-primary-foreground">V</span>
             </div>
             {/* Teks VelyStream */}
             <div className="flex flex-col">
-                <span className="text-xs font-extrabold tracking-tight text-white drop-shadow-md leading-none">
+                <span className="text-sm font-extrabold tracking-tight text-white drop-shadow-md leading-none">
                     Vely<span className="text-primary">Stream</span>
                 </span>
             </div>
@@ -261,7 +216,7 @@ const Watch = ({ onWatch }: WatchProps) => {
       </div>
       
       {/* Controls & Navigation Section */}
-      <div className="container mx-auto px-4 pb-12 w-full max-w-[1400px]">
+      <div className="container mx-auto px-4 pb-12 w-full max-w-[1600px]">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3 bg-secondary/30 p-3 rounded-xl border border-white/5">
             <div className="flex items-center gap-2 flex-wrap">
                 <Popover>
@@ -319,30 +274,15 @@ const Watch = ({ onWatch }: WatchProps) => {
                         <EpisodeListComponent />
                     </Sheet>
                 )}
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <Button variant="outline" size="sm" className="gap-2 border-white/10 bg-black/20 hover:bg-white/10"><Download className="h-4 w-4"/> Download</Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-48 p-1">
-                        {qualities.map(([quality, servers]) => (
-                            <Button
-                                key={quality}
-                                variant={"ghost"}
-                                size="sm"
-                                className="w-full justify-start gap-2"
-                                onClick={() => handleDownload(servers[0].id, quality)}
-                                disabled={downloadingQuality === quality}
-                            >
-                                {downloadingQuality === quality ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                    <Download className="h-4 w-4" />
-                                )}
-                                {quality}
-                            </Button>
-                        ))}
-                    </PopoverContent>
-                </Popover>
+                <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="gap-2 border-white/10 bg-black/20 hover:bg-white/10"
+                    onClick={() => setDownloadDialogOpen(true)}
+                    disabled={!animeDetail?.batch}
+                >
+                    <Download className="h-4 w-4"/> Download
+                </Button>
             </div>
         </div>
         
@@ -373,6 +313,15 @@ const Watch = ({ onWatch }: WatchProps) => {
           )}
         </div>
       </div>
+      
+      {animeDetail?.batch && (
+        <WatchDownloadDialog
+            isOpen={isDownloadDialogOpen}
+            onClose={() => setDownloadDialogOpen(false)}
+            batchSlug={animeDetail.batch.slug}
+            animeTitle={animeDetail.title}
+        />
+      )}
     </div>
   );
 };
