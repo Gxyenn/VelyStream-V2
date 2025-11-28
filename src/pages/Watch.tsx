@@ -278,15 +278,16 @@ const Watch = ({ onWatch }: WatchProps) => {
                         <EpisodeListComponent />
                     </Sheet>
                 )}
-                <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="gap-2 border-white/10 bg-black/20 hover:bg-white/10"
-                    onClick={() => setDownloadDialogOpen(true)}
-                    disabled={!animeDetail?.batch}
-                >
-                    <Download className="h-4 w-4"/> Download
-                </Button>
+                {animeDetail?.batch && (
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="gap-2 border-white/10 bg-black/20 hover:bg-white/10"
+                        onClick={() => setDownloadDialogOpen(true)}
+                    >
+                        <Download className="h-4 w-4"/> Download
+                    </Button>
+                )}
             </div>
         </div>
         
