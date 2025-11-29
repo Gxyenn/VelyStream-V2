@@ -18,59 +18,73 @@ const AnimeDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [isInList, setIsInList] = useState(false);
-  
-  // State untuk Dialog Download Batch (Baru)
   const [isBatchDialogOpen, setBatchDialogOpen] = useState(false);
-
   const [relatedAnime, setRelatedAnime] = useState<Anime[]>([]);
   const [isLoadingRelated, setIsLoadingRelated] = useState(true);
 
+  // Utility to handle inconsistent slugs (e.g. with trailing slashes)
+  const cleanSlug = (s: string | undefined) => {
+    if (!s) return '';
+    return s.endsWith('/') ? s.slice(0, -1) : s;
+  };
+
+  const cleanedSlug = cleanSlug(slug);
+
   const { data: anime, isLoading } = useQuery({
-    queryKey: ['anime', slug],
-    queryFn: () => api.getAnimeDetail(slug!),
-    enabled: !!slug,
+    queryKey: ['anime', cleanedSlug],
+    queryFn: () => api.getAnimeDetail(cleanedSlug!),
+    enabled: !!cleanedSlug,
   });
 
+  // --- Robust "My List" and "Related Anime" Logic ---
+
+  // Effect for handling all "My List" status changes
   useEffect(() => {
     const checkMyListStatus = () => {
-      if (slug) {
-        setIsInList(storage.isInMyList(slug));
+      if (cleanedSlug) {
+        setIsInList(storage.isInMyList(cleanedSlug));
       }
     };
 
-    checkMyListStatus(); // Initial check
+    checkMyListStatus(); // Initial check on mount or when slug changes
     window.scrollTo(0, 0);
 
+    // Listen for external changes (e.g., from other tabs or components)
     window.addEventListener('storage_changed', checkMyListStatus);
 
     return () => {
       window.removeEventListener('storage_changed', checkMyListStatus);
     };
-  }, [slug]);
+  }, [cleanedSlug]);
 
+  // Effect for fetching related anime
   useEffect(() => {
     if (anime) {
       setIsLoadingRelated(true);
       const baseTitle = anime.title.replace(/ S\d+$/, '').replace(/ Season \d+$/, '');
       api.searchAnime(baseTitle).then(results => {
-        const filteredResults = results.filter(item => item.slug !== anime.slug);
+        // Ensure we are comparing cleaned slugs for perfect filtering
+        const currentSlug = cleanSlug(anime.slug);
+        const filteredResults = results.filter(item => cleanSlug(item.slug) !== currentSlug);
         setRelatedAnime(filteredResults);
         setIsLoadingRelated(false);
       });
     }
   }, [anime]);
 
+  // Stateless toggle function to prevent race conditions
   const handleToggleList = () => {
     if (!anime) return;
 
-    const currentlyInList = storage.isInMyList(anime.slug);
+    const currentSlug = cleanSlug(anime.slug);
+    const currentlyInList = storage.isInMyList(currentSlug);
     
     if (currentlyInList) {
-      storage.removeFromMyList(anime.slug);
+      storage.removeFromMyList(currentSlug);
     } else {
       const animeForList = {
         title: anime.title,
-        slug: anime.slug,
+        slug: currentSlug, // Use the cleaned slug
         poster: anime.poster,
         rating: anime.rating,
         otakudesu_url: anime.episode_lists[0]?.otakudesu_url || '',
@@ -78,7 +92,7 @@ const AnimeDetail = () => {
       };
       storage.addToMyList(animeForList);
     }
-    // Update state for immediate UI feedback
+    // Set state directly for immediate UI feedback
     setIsInList(!currentlyInList);
   };
 
@@ -223,7 +237,7 @@ const AnimeDetail = () => {
           ) : relatedAnime.length > 0 ? (
             <AnimeListHorizontal animes={relatedAnime} size="small" />
           ) : (
-            <p className="text-muted-foreground">Tidak ada Anime Terkait.</p>
+            <p className="text-muted-foreground">Tidak Ada Daftar Anime Terkait di anime ini.</p>
           )}
         </section>
       </div>

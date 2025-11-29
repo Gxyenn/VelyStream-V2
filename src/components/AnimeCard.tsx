@@ -81,8 +81,8 @@ export const AnimeCard = ({ anime, className, episodeSlug, size = 'normal' }: An
 
       <div className="flex flex-1 flex-col p-2">
         <h3 className={cn(
-          "mb-2 line-clamp-2 flex-grow font-semibold leading-tight",
-          size === 'small' ? 'text-xs line-clamp-1' : 'text-sm'
+          "mb-2 font-semibold leading-tight",
+          size === 'small' ? 'text-xs h-8' : 'text-sm h-10'
         )}>
           {anime.title}
         </h3>
