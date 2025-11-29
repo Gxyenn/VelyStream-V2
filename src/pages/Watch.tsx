@@ -101,7 +101,7 @@ const Watch = ({ onWatch }: WatchProps) => {
   });
 
   const qualities = useMemo(() => {
-    if (!episode) return [];
+    if (!episode || !episode.stream_servers) return [];
     const qualityMap = new Map<string, StreamServer['servers']>();
     episode.stream_servers.forEach(group => {
       group.servers.forEach(server => {
