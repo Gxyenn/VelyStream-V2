@@ -1,16 +1,73 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { api, StreamServer } from '@/lib/api';
+import { api, StreamServer, BatchDetail, BatchQuality } from '@/lib/api';
 import { storage } from '@/lib/storage';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { WatchDownloadDialog } from '@/components/WatchDownloadDialog';
-import { ChevronLeft, ChevronRight, Download, Loader2, ListVideo, Clapperboard, Server, ArrowLeft } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { ChevronLeft, ChevronRight, Download, Loader2, ListVideo, Clapperboard, Server, ArrowLeft, ExternalLink } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 import { toast } from "sonner";
+
+// Helper component for Batch Downloads within the dialog
+const BatchDownloadContent = ({ batchSlug, animeTitle }: { batchSlug: string, animeTitle: string }) => {
+  const { data: batchDetail, isLoading } = useQuery<BatchDetail>({
+    queryKey: ["batchDetail", batchSlug],
+    queryFn: () => api.getBatchDetail(batchSlug),
+    enabled: !!batchSlug,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4 py-4">
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-12 w-full" />
+      </div>
+    );
+  }
+
+  if (!batchDetail || !batchDetail.downloadUrl?.formats) {
+    return (
+      <p className="text-center text-muted-foreground py-4">
+        Tidak ada link download batch ditemukan.
+      </p>
+    );
+  }
+
+  return (
+    <Accordion type="single" collapsible className="w-full">
+      {batchDetail.downloadUrl.formats.map((quality: BatchQuality) => (
+        <AccordionItem value={quality.title} key={quality.title}>
+          <AccordionTrigger>
+            <div className="flex w-full items-center justify-between pr-4">
+              <span className="font-semibold">{quality.title}</span>
+              <span className="text-sm text-muted-foreground">{quality.size}</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="flex flex-col gap-2 pt-2">
+              {quality.urls.map((link) => (
+                <Button key={link.url} variant="ghost" className="justify-between" asChild>
+                  <a href={link.url} target="_blank" rel="noopener noreferrer">
+                    <span>{link.title}</span>
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </Button>
+              ))}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  );
+};
+
 
 interface WatchProps {
   onWatch?: () => void;
@@ -30,6 +87,7 @@ const Watch = ({ onWatch }: WatchProps) => {
   const [currentStreamUrl, setCurrentStreamUrl] = useState<string>('');
   const [loadingServer, setLoadingServer] = useState(false);
   const [isDownloadDialogOpen, setDownloadDialogOpen] = useState(false);
+  const [downloadingServerId, setDownloadingServerId] = useState<string | null>(null);
 
   const { data: episode, isLoading, isError } = useQuery({
     queryKey: ['episode', slug],
@@ -106,8 +164,34 @@ const Watch = ({ onWatch }: WatchProps) => {
       setCurrentStreamUrl(url);
     } catch (error) {
       console.error('Failed to load server:', error);
+      toast.error("Gagal memuat server streaming.");
     } finally {
       setLoadingServer(false);
+    }
+  };
+
+  const handleDownload = async (serverId: string) => {
+    setDownloadingServerId(serverId);
+    toast.info("Mempersiapkan unduhan...", { id: "download-toast" });
+    try {
+      const url = await api.getServerUrl(serverId);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${animeDetail?.title} - ${episode?.episode}.mp4`);
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success("Unduhan telah dimulai.", { id: "download-toast" });
+
+    } catch (error) {
+      console.error('Failed to get download link:', error);
+      toast.error("Gagal memulai unduhan.", { id: "download-toast" });
+    } finally {
+      setDownloadingServerId(null);
     }
   };
 
@@ -146,10 +230,8 @@ const Watch = ({ onWatch }: WatchProps) => {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-background/50">
-      {/* Main Content Area */}
       <div className="w-full max-w-[1600px] px-2 md:px-6">
 
-        {/* Back Button Section */}
         <div className="w-full pt-6">
             {animeDetail && (
               <Button variant="ghost" size="sm" asChild className="h-auto p-0 text-muted-foreground hover:text-primary hover:bg-transparent gap-1 mb-1">
@@ -160,30 +242,24 @@ const Watch = ({ onWatch }: WatchProps) => {
             )}
         </div>
 
-        {/* Video Player Section */}
         <div className="w-full mt-2 mb-4">
           <div 
               className="relative w-full overflow-hidden bg-black shadow-2xl rounded-2xl border border-white/10 touch-none select-none" 
               style={{ aspectRatio: '16/9', touchAction: 'none' }}
           >
-            
-            {/* --- WATERMARK (Updated) --- */}
             <div 
               className="absolute top-4 left-4 z-30 flex items-center gap-2 pointer-events-none select-none opacity-50 hover:opacity-80 transition-opacity duration-500"
               style={{ animation: 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}
             >
-              {/* Logo V */}
               <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-to-br from-primary to-accent shadow-[0_0_10px_rgba(236,72,153,0.5)]">
                 <span className="text-sm font-bold text-primary-foreground">V</span>
               </div>
-              {/* Teks VelyStream */}
               <div className="flex flex-col">
                   <span className="text-sm font-extrabold tracking-tight text-white drop-shadow-md leading-none">
                       Vely<span className="text-primary">Stream</span>
                   </span>
               </div>
             </div>
-            {/* --- END WATERMARK --- */}
 
             {loadingServer && (
               <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/80 backdrop-blur-sm">
@@ -213,14 +289,12 @@ const Watch = ({ onWatch }: WatchProps) => {
           </div>
         </div>
 
-        {/* Header Section (Title Only) */}
         <div className="w-full mb-6">
           <h1 className="w-full text-lg md:text-xl font-bold leading-tight line-clamp-2 break-words">
             {episode.episode}
           </h1>
         </div>
       
-        {/* Controls & Navigation Section */}
         <div className="w-full mb-6 flex flex-wrap items-center justify-between gap-3 bg-secondary/30 p-3 rounded-xl border border-white/5">
             <div className="flex items-center gap-2 flex-wrap">
                 <Popover>
@@ -278,16 +352,14 @@ const Watch = ({ onWatch }: WatchProps) => {
                         <EpisodeListComponent />
                     </Sheet>
                 )}
-                {animeDetail?.batch && (
-                    <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="gap-2 border-white/10 bg-black/20 hover:bg-white/10"
-                        onClick={() => setDownloadDialogOpen(true)}
-                    >
-                        <Download className="h-4 w-4"/> Download
-                    </Button>
-                )}
+                <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="gap-2 border-white/10 bg-black/20 hover:bg-white/10"
+                    onClick={() => setDownloadDialogOpen(true)}
+                >
+                    <Download className="h-4 w-4"/> Download
+                </Button>
             </div>
         </div>
         
@@ -296,37 +368,77 @@ const Watch = ({ onWatch }: WatchProps) => {
             <Button variant="secondary" onClick={() => navigate(`/watch/${episode.previous_episode!.slug}`)} className="gap-2 pl-2 hover:bg-primary/20">
               <ChevronLeft className="h-4 w-4" /> Previous
             </Button>
-          ) : (
-             <div />
-          )}
+          ) : ( <div /> )}
           
           {episode.has_next_episode && episode.next_episode ? (
             <Button variant="default" onClick={() => navigate(`/watch/${episode.next_episode!.slug}`)} className="gap-2 pr-2 shadow-glow-primary">
               Next <ChevronRight className="h-4 w-4" />
             </Button>
-          ) : (
-             animeDetail && (
-                <Sheet>
-                    <SheetTrigger asChild>
-                         <Button variant="outline" className="gap-2">
-                            Show All Episodes <ListVideo className="h-4 w-4"/>
-                        </Button>
-                    </SheetTrigger>
-                    <EpisodeListComponent />
-                </Sheet>
-             )
-          )}
+          ) : ( <div /> )}
         </div>
       </div>
       
-      {animeDetail?.batch && (
-        <WatchDownloadDialog
-            isOpen={isDownloadDialogOpen}
-            onClose={() => setDownloadDialogOpen(false)}
-            batchSlug={animeDetail.batch.slug}
-            animeTitle={animeDetail.title}
-        />
-      )}
+      <Dialog open={isDownloadDialogOpen} onOpenChange={setDownloadDialogOpen}>
+        <DialogContent className="sm:max-w-[625px]">
+          <DialogHeader>
+            <DialogTitle>Download: {animeDetail?.title}</DialogTitle>
+            <DialogDescription>
+              Pilih tab untuk mengunduh per-episode atau seluruh episode sekaligus (batch).
+            </DialogDescription>
+          </DialogHeader>
+          <Tabs defaultValue="episode" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="episode">Per-Episode</TabsTrigger>
+              <TabsTrigger value="batch" disabled={!animeDetail?.batch}>Batch</TabsTrigger>
+            </TabsList>
+            <TabsContent value="episode">
+              <ScrollArea className="max-h-[50vh] pr-4">
+                <div className="py-4">
+                  <Accordion type="single" collapsible className="w-full">
+                    {qualities.map(([quality, servers]) => (
+                      <AccordionItem value={quality} key={quality}>
+                        <AccordionTrigger>{quality}</AccordionTrigger>
+                        <AccordionContent>
+                          <div className="flex flex-col gap-2 pt-2">
+                            {servers.map(server => (
+                              <Button
+                                key={server.id}
+                                variant="ghost"
+                                className="justify-between"
+                                disabled={downloadingServerId === server.id}
+                                onClick={() => handleDownload(server.id)}
+                              >
+                                <span>{server.name}</span>
+                                {downloadingServerId === server.id ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Download className="h-4 w-4" />
+                                )}
+                              </Button>
+                            ))}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </div>
+              </ScrollArea>
+            </TabsContent>
+            <TabsContent value="batch">
+              {animeDetail?.batch && (
+                <ScrollArea className="max-h-[50vh] pr-4">
+                  <div className="py-4">
+                    <BatchDownloadContent batchSlug={animeDetail.batch.slug} animeTitle={animeDetail.title} />
+                  </div>
+                </ScrollArea>
+              )}
+            </TabsContent>
+          </Tabs>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDownloadDialogOpen(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
