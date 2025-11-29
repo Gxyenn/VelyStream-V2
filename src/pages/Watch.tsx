@@ -366,7 +366,7 @@ const Watch = ({ onWatch }: WatchProps) => {
               <ScrollArea className="max-h-[50vh] pr-4">
                 <div className="py-4">
                   <Accordion type="multiple" className="w-full">
-                    {episode?.download_urls.map((format: EpisodeDownloadFormat) => (
+                    {(episode?.download_urls || []).map((format: EpisodeDownloadFormat) => (
                       <AccordionItem value={format.format} key={format.format}>
                         <AccordionTrigger className="text-lg font-semibold">{format.format}</AccordionTrigger>
                         <AccordionContent>
