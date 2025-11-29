@@ -1,5 +1,4 @@
 import { Anime } from './api';
-import { cleanSlug } from './utils';
 
 const MYLIST_KEY = 'velystream_mylist';
 const HISTORY_KEY = 'velystream_history';
@@ -22,10 +21,8 @@ export const storage = {
 
   addToMyList(anime: Anime): void {
     const list = this.getMyList();
-    const cleanedSlug = cleanSlug(anime.slug);
-    const exists = list.some(item => cleanSlug(item.slug) === cleanedSlug);
+    const exists = list.some(item => item.slug === anime.slug);
     if (!exists) {
-      // Store the anime with its original slug, but ensure we use cleaned for checks
       list.push(anime);
       localStorage.setItem(MYLIST_KEY, JSON.stringify(list));
       window.dispatchEvent(new Event('storage_changed'));
@@ -34,16 +31,14 @@ export const storage = {
 
   removeFromMyList(slug: string): void {
     let list = this.getMyList();
-    const cleanedSlug = cleanSlug(slug);
-    const filtered = list.filter(item => cleanSlug(item.slug) !== cleanedSlug);
+    const filtered = list.filter(item => item.slug !== slug);
     localStorage.setItem(MYLIST_KEY, JSON.stringify(filtered));
     window.dispatchEvent(new Event('storage_changed'));
   },
 
   isInMyList(slug: string): boolean {
     const list = this.getMyList();
-    const cleanedSlug = cleanSlug(slug);
-    return list.some(item => cleanSlug(item.slug) === cleanedSlug);
+    return list.some(item => item.slug === slug);
   },
 
   // History functions
@@ -65,10 +60,9 @@ export const storage = {
 
   addToHistory(anime: Anime, episode: { title: string; slug: string }): void {
     const history = this.getHistory();
-    const cleanedAnimeSlug = cleanSlug(anime.slug);
     
     // Remove existing entry for same anime
-    const filtered = history.filter(item => cleanSlug(item.anime.slug) !== cleanedAnimeSlug);
+    const filtered = history.filter(item => item.anime.slug !== anime.slug);
     
     // Add new entry at the beginning
     filtered.unshift({

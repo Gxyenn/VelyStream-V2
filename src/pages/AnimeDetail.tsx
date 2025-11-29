@@ -2,7 +2,6 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api, Anime } from '@/lib/api';
 import { storage } from '@/lib/storage';
-import { cleanSlug } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,13 +9,22 @@ import { AnimeCard } from '@/components/AnimeCard';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { AnimeListHorizontal } from '@/components/AnimeListHorizontal';
-import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo, ChevronLeft } from 'lucide-react';
+import { DownloadDialog } from '@/components/DownloadDialog';
+// Import Batch Dialog Baru
+import { BatchDownloadDialog } from '@/components/BatchDownloadDialog';
+import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo, Download, ChevronLeft, Archive } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const AnimeDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [isInList, setIsInList] = useState(false);
+  
+  // State untuk Dialog Download Biasa (Per Episode)
+  const [isDownloadDialogOpen, setDownloadDialogOpen] = useState(false);
+  
+  // State untuk Dialog Download Batch (Baru)
+  const [isBatchDialogOpen, setBatchDialogOpen] = useState(false);
 
   const [relatedAnime, setRelatedAnime] = useState<Anime[]>([]);
   const [isLoadingRelated, setIsLoadingRelated] = useState(true);
@@ -39,9 +47,7 @@ const AnimeDetail = () => {
       setIsLoadingRelated(true);
       const baseTitle = anime.title.replace(/ S\d+$/, '').replace(/ Season \d+$/, '');
       api.searchAnime(baseTitle).then(results => {
-        const filteredResults = results.filter(
-          item => cleanSlug(item.slug) !== cleanSlug(anime.slug)
-        );
+        const filteredResults = results.filter(item => item.title !== anime.title);
         setRelatedAnime(filteredResults);
         setIsLoadingRelated(false);
       });
@@ -96,20 +102,20 @@ const AnimeDetail = () => {
 
         <div className="container relative mx-auto px-4 py-12">
           <div className="grid gap-8 md:grid-cols-[300px_1fr]">
-            {/* Poster and Back Button */}
-            <div className="relative mx-auto w-full max-w-sm">
-               <Button
-                variant="outline"
-                onClick={() => navigate(-1)}
-                className="absolute top-4 left-4 z-10 h-10 w-10 p-0"
-              >
-                <ChevronLeft className="h-6 w-6" />
-              </Button>
+            {/* Poster */}
+            <div className="mx-auto w-full max-w-sm">
               <img src={anime.poster} alt={anime.title} className="w-full rounded-xl border border-border shadow-2xl" />
             </div>
 
             {/* Info */}
             <div className="flex flex-col justify-center">
+              <Button
+                variant="link"
+                onClick={() => navigate(-1)}
+                className="mb-2 h-auto p-0 text-muted-foreground hover:text-primary"
+              >
+                <ChevronLeft className="h-4 w-4" /> Back
+              </Button>
               <h1 className="mb-2 text-4xl font-bold">{anime.title}</h1>
               {anime.japanese_title && <p className="mb-4 text-lg text-muted-foreground">{anime.japanese_title}</p>}
 
@@ -136,6 +142,7 @@ const AnimeDetail = () => {
 
               {/* Actions Section */}
               <div className="flex w-full flex-col gap-3">
+                {/* Top Row */}
                 <div className="grid grid-cols-2 gap-3">
                   {anime.episode_lists.length > 0 && (
                     <Button asChild size="lg" className="gap-2">
@@ -148,28 +155,45 @@ const AnimeDetail = () => {
                   </Button>
                 </div>
 
-                {anime.episode_lists.length > 0 && (
-                    <Sheet>
-                        <SheetTrigger asChild>
-                            <Button variant="secondary" size="lg" className="w-full gap-2">
-                                <ListVideo className="h-5 w-5"/> All Episodes
-                            </Button>
-                        </SheetTrigger>
-                        <SheetContent side="bottom" className="h-[60%]">
-                            <SheetHeader>
-                                <SheetTitle>Episodes: {anime.title}</SheetTitle>
-                            </SheetHeader>
-                            <ScrollArea className="h-full pr-4">
-                                <div className="grid grid-cols-2 gap-3 py-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                                {anime.episode_lists.map((episode) => (
-                                    <Button asChild key={episode.slug} variant="outline">
-                                    <Link to={`/watch/${episode.slug}`}>Episode {episode.episode_number}</Link>
-                                    </Button>
-                                ))}
-                                </div>
-                            </ScrollArea>
-                        </SheetContent>
-                    </Sheet>
+                {/* Middle Row - Episodes & Single Download */}
+                <div className="grid grid-cols-2 gap-3">
+                  {anime.episode_lists.length > 0 && (
+                      <Sheet>
+                          <SheetTrigger asChild>
+                              <Button variant="secondary" size="lg" className="w-full gap-2">
+                                  <ListVideo className="h-5 w-5"/> All Episodes
+                              </Button>
+                          </SheetTrigger>
+                          <SheetContent side="bottom" className="h-[60%]">
+                              <SheetHeader>
+                                  <SheetTitle>Episodes: {anime.title}</SheetTitle>
+                              </SheetHeader>
+                              <ScrollArea className="h-full pr-4">
+                                  <div className="grid grid-cols-2 gap-3 py-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                                  {anime.episode_lists.map((episode) => (
+                                      <Button asChild key={episode.slug} variant="outline">
+                                      <Link to={`/watch/${episode.slug}`}>Episode {episode.episode_number}</Link>
+                                      </Button>
+                                  ))}
+                                  </div>
+                              </ScrollArea>
+                          </SheetContent>
+                      </Sheet>
+                  )}
+                  <Button size="lg" variant="outline" className="gap-2" onClick={() => setDownloadDialogOpen(true)}>
+                    <Download className="h-5 w-5" /> Download Eps
+                  </Button>
+                </div>
+
+                {/* Bottom Row - Batch Download (Hanya jika batch tersedia) */}
+                {anime.batch && (
+                    <Button 
+                        size="lg" 
+                        className="w-full gap-2 bg-accent hover:bg-accent/90 text-white"
+                        onClick={() => setBatchDialogOpen(true)}
+                    >
+                        <Archive className="h-5 w-5" /> Download Batch (Full)
+                    </Button>
                 )}
               </div>
 
@@ -199,6 +223,25 @@ const AnimeDetail = () => {
           )}
         </section>
       </div>
+
+      {/* Dialogs */}
+      {anime && (
+        <DownloadDialog
+          isOpen={isDownloadDialogOpen}
+          onClose={() => setDownloadDialogOpen(false)}
+          episodes={anime.episode_lists}
+          animeTitle={anime.title}
+        />
+      )}
+
+      {anime.batch && (
+        <BatchDownloadDialog 
+            isOpen={isBatchDialogOpen}
+            onClose={() => setBatchDialogOpen(false)}
+            batchSlug={anime.batch.slug}
+            animeTitle={anime.title}
+        />
+      )}
     </div>
   );
 };
