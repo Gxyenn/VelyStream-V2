@@ -9,19 +9,15 @@ import { AnimeCard } from '@/components/AnimeCard';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { AnimeListHorizontal } from '@/components/AnimeListHorizontal';
-import { DownloadDialog } from '@/components/DownloadDialog';
 // Import Batch Dialog Baru
 import { BatchDownloadDialog } from '@/components/BatchDownloadDialog';
-import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo, Download, ChevronLeft, Archive } from 'lucide-react';
+import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo, ChevronLeft, Archive } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const AnimeDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [isInList, setIsInList] = useState(false);
-  
-  // State untuk Dialog Download Biasa (Per Episode)
-  const [isDownloadDialogOpen, setDownloadDialogOpen] = useState(false);
   
   // State untuk Dialog Download Batch (Baru)
   const [isBatchDialogOpen, setBatchDialogOpen] = useState(false);
@@ -36,10 +32,22 @@ const AnimeDetail = () => {
   });
 
   useEffect(() => {
-    if (slug) {
-      setIsInList(storage.isInMyList(slug));
-    }
+    const checkMyListStatus = () => {
+      if (slug) {
+        setIsInList(storage.isInMyList(slug));
+      }
+    };
+
+    // Initial check
+    checkMyListStatus();
     window.scrollTo(0, 0);
+
+    // Listen for changes
+    window.addEventListener('storage_changed', checkMyListStatus);
+
+    return () => {
+      window.removeEventListener('storage_changed', checkMyListStatus);
+    };
   }, [slug]);
 
   useEffect(() => {
@@ -101,6 +109,13 @@ const AnimeDetail = () => {
         </div>
 
         <div className="container relative mx-auto px-4 py-12">
+          <Button
+            variant="ghost"
+            onClick={() => navigate(-1)}
+            className="absolute top-4 left-4 z-10 h-auto p-2 text-white hover:bg-white/20 hover:text-white"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </Button>
           <div className="grid gap-8 md:grid-cols-[300px_1fr]">
             {/* Poster */}
             <div className="mx-auto w-full max-w-sm">
@@ -109,13 +124,6 @@ const AnimeDetail = () => {
 
             {/* Info */}
             <div className="flex flex-col justify-center">
-              <Button
-                variant="link"
-                onClick={() => navigate(-1)}
-                className="mb-2 h-auto p-0 text-muted-foreground hover:text-primary"
-              >
-                <ChevronLeft className="h-4 w-4" /> Back
-              </Button>
               <h1 className="mb-2 text-4xl font-bold">{anime.title}</h1>
               {anime.japanese_title && <p className="mb-4 text-lg text-muted-foreground">{anime.japanese_title}</p>}
 
@@ -155,35 +163,30 @@ const AnimeDetail = () => {
                   </Button>
                 </div>
 
-                {/* Middle Row - Episodes & Single Download */}
-                <div className="grid grid-cols-2 gap-3">
-                  {anime.episode_lists.length > 0 && (
-                      <Sheet>
-                          <SheetTrigger asChild>
-                              <Button variant="secondary" size="lg" className="w-full gap-2">
-                                  <ListVideo className="h-5 w-5"/> All Episodes
-                              </Button>
-                          </SheetTrigger>
-                          <SheetContent side="bottom" className="h-[60%]">
-                              <SheetHeader>
-                                  <SheetTitle>Episodes: {anime.title}</SheetTitle>
-                              </SheetHeader>
-                              <ScrollArea className="h-full pr-4">
-                                  <div className="grid grid-cols-2 gap-3 py-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                                  {anime.episode_lists.map((episode) => (
-                                      <Button asChild key={episode.slug} variant="outline">
-                                      <Link to={`/watch/${episode.slug}`}>Episode {episode.episode_number}</Link>
-                                      </Button>
-                                  ))}
-                                  </div>
-                              </ScrollArea>
-                          </SheetContent>
-                      </Sheet>
-                  )}
-                  <Button size="lg" variant="outline" className="gap-2" onClick={() => setDownloadDialogOpen(true)}>
-                    <Download className="h-5 w-5" /> Download Eps
-                  </Button>
-                </div>
+                {/* Middle Row - Episodes */}
+                {anime.episode_lists.length > 0 && (
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <Button variant="secondary" size="lg" className="w-full gap-2">
+                                <ListVideo className="h-5 w-5"/> All Episodes
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="bottom" className="h-[60%]">
+                            <SheetHeader>
+                                <SheetTitle>Episodes: {anime.title}</SheetTitle>
+                            </SheetHeader>
+                            <ScrollArea className="h-full pr-4">
+                                <div className="grid grid-cols-2 gap-3 py-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                                {anime.episode_lists.map((episode) => (
+                                    <Button asChild key={episode.slug} variant="outline">
+                                    <Link to={`/watch/${episode.slug}`}>Episode {episode.episode_number}</Link>
+                                    </Button>
+                                ))}
+                                </div>
+                            </ScrollArea>
+                        </SheetContent>
+                    </Sheet>
+                )}
 
                 {/* Bottom Row - Batch Download (Hanya jika batch tersedia) */}
                 {anime.batch && (
@@ -219,21 +222,12 @@ const AnimeDetail = () => {
           ) : relatedAnime.length > 0 ? (
             <AnimeListHorizontal animes={relatedAnime} size="small" />
           ) : (
-            <p className="text-muted-foreground">Tidak ada anime terkait ditemukan.</p>
+            <p className="text-muted-foreground">Tidak ada Anime Terkait.</p>
           )}
         </section>
       </div>
 
       {/* Dialogs */}
-      {anime && (
-        <DownloadDialog
-          isOpen={isDownloadDialogOpen}
-          onClose={() => setDownloadDialogOpen(false)}
-          episodes={anime.episode_lists}
-          animeTitle={anime.title}
-        />
-      )}
-
       {anime.batch && (
         <BatchDownloadDialog 
             isOpen={isBatchDialogOpen}

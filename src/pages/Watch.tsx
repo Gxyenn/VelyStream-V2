@@ -6,10 +6,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ChevronLeft, ChevronRight, Download, Loader2, ListVideo, Clapperboard, Server, ArrowLeft } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, Loader2, ListVideo, Clapperboard, Server, ArrowLeft, ExternalLink } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
-import { toast } from "sonner";
 
 interface WatchProps {
   onWatch?: () => void;
@@ -28,7 +28,7 @@ const Watch = ({ onWatch }: WatchProps) => {
   const [selectedServerId, setSelectedServerId] = useState<string | null>(null);
   const [currentStreamUrl, setCurrentStreamUrl] = useState<string>('');
   const [loadingServer, setLoadingServer] = useState(false);
-  const [downloadingQuality, setDownloadingQuality] = useState<string | null>(null);
+  const [isDownloadSheetOpen, setDownloadSheetOpen] = useState(false);
 
   const { data: episode, isLoading, isError } = useQuery({
     queryKey: ['episode', slug],
@@ -110,45 +110,6 @@ const Watch = ({ onWatch }: WatchProps) => {
     }
   };
 
-  const handleDownload = async (serverId: string, quality: string) => {
-    setDownloadingQuality(quality);
-    toast.info(`Mengambil link ${quality}...`);
-
-    try {
-      const url = await api.getServerUrl(serverId);
-      if(!url) throw new Error("URL Kosong");
-
-      try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("CORS/Network Error");
-        
-        const blob = await response.blob();
-        const objectUrl = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = objectUrl;
-        const fileName = `${animeDetail?.title || 'anime'}_${episode?.episode || 'ep'}_${quality}.mp4`;
-        link.download = fileName.replace(/[^a-zA-Z0-9_.-]/g, '_');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(objectUrl);
-        toast.success("Download dimulai!");
-      } catch (err) {
-        console.warn("Auto download blocked, opening tab...", err);
-        window.open(url, '_blank');
-        toast.warning("Membuka di tab baru (Limitasi Google Drive)", {
-            description: "Silakan klik 'Tetap Download' di halaman yang terbuka."
-        });
-      }
-
-    } catch (error) {
-      console.error('Failed to get download link:', error);
-      toast.error("Gagal mengambil link download.");
-    } finally {
-      setDownloadingQuality(null);
-    }
-  };
-
   const EpisodeListComponent = () => (
     <SheetContent side="right">
         <SheetHeader><SheetTitle>All Episodes</SheetTitle></SheetHeader>
@@ -161,6 +122,49 @@ const Watch = ({ onWatch }: WatchProps) => {
                 ))}
             </div>
         </ScrollArea>
+    </SheetContent>
+  );
+
+  const DownloadSheetComponent = () => (
+    <SheetContent side="right" className="w-[320px] sm:w-[400px]">
+      <SheetHeader>
+        <SheetTitle>Download Episode</SheetTitle>
+      </SheetHeader>
+      <ScrollArea className="h-[calc(100%-4rem)] pr-4 py-4">
+        {episode?.download_urls && Object.keys(episode.download_urls).length > 0 ? (
+          <Accordion type="multiple" className="w-full">
+            {Object.entries(episode.download_urls).map(([format, resolutions]) => (
+              <AccordionItem value={format} key={format}>
+                <AccordionTrigger className="text-lg font-semibold">{format.toUpperCase()}</AccordionTrigger>
+                <AccordionContent>
+                  <Accordion type="multiple" className="w-full">
+                    {resolutions.map((res) => (
+                      <AccordionItem value={`${format}-${res.resolution}`} key={`${format}-${res.resolution}`}>
+                        <AccordionTrigger>{res.resolution}</AccordionTrigger>
+                        <AccordionContent className="flex flex-col gap-2 pt-2">
+                          {res.urls.map((provider) => (
+                            <Button
+                              key={provider.provider}
+                              variant="ghost"
+                              className="w-full justify-start gap-2"
+                              onClick={() => window.open(provider.url, '_blank')}
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                              {provider.provider}
+                            </Button>
+                          ))}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        ) : (
+          <p className="text-muted-foreground">Download links not available.</p>
+        )}
+      </ScrollArea>
     </SheetContent>
   );
 
@@ -185,47 +189,35 @@ const Watch = ({ onWatch }: WatchProps) => {
   return (
     <div className="min-h-screen flex flex-col items-center bg-background/50">
       {/* Header Section */}
-      <div className="container mx-auto px-4 pt-6 pb-2">
-        <div className="mb-4 flex flex-col items-start gap-1 w-full">
+      <div className="container mx-auto px-4 pt-6 pb-2 w-full">
+        <div className="flex items-start w-full">
           {animeDetail && (
-            <Button variant="ghost" size="sm" asChild className="h-auto p-0 text-muted-foreground hover:text-primary hover:bg-transparent gap-1 mb-1">
-                <Link to={`/anime/${animeDetail.slug.replace('https:/otakudesu.best/anime/', '').replace('/', '')}`}>
-                    <ArrowLeft className="h-4 w-4" /> Back
-                </Link>
+            <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="h-auto p-0 text-muted-foreground hover:text-primary hover:bg-transparent gap-1 mb-1">
+                <ArrowLeft className="h-4 w-4" /> Back
             </Button>
           )}
-          <h1 className="w-full text-lg md:text-xl font-bold leading-tight line-clamp-2 break-words">
-            {episode.episode}
-          </h1>
         </div>
       </div>
 
       {/* Video Player Section */}
-      <div className="w-full max-w-[1400px] px-2 md:px-6 mb-6">
+      <div className="w-full px-2 md:px-6 mb-4">
         <div 
             className="relative w-full overflow-hidden bg-black shadow-2xl rounded-2xl border border-white/10 touch-none select-none" 
             style={{ aspectRatio: '16/9', touchAction: 'none' }}
         >
           
           {/* --- WATERMARK (Updated) --- */}
-          {/* 
-              Perubahan: 
-              - top-2 left-2 (Lebih mepet atas kiri)
-              - h-5 w-5 (Logo lebih kecil)
-              - text-xs (Teks lebih kecil)
-              - gap-1.5 (Jarak logo dan teks lebih rapat)
-          */}
           <div 
-            className="absolute top-2 left-2 z-30 flex items-center gap-1.5 pointer-events-none select-none opacity-50 hover:opacity-80 transition-opacity duration-500"
+            className="absolute top-4 left-4 z-30 flex items-center gap-1.5 pointer-events-none select-none opacity-50 hover:opacity-80 transition-opacity duration-500"
             style={{ animation: 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}
           >
             {/* Logo V */}
-            <div className="flex h-5 w-5 items-center justify-center rounded bg-gradient-to-br from-primary to-accent shadow-[0_0_10px_rgba(236,72,153,0.5)]">
-              <span className="text-[10px] font-bold text-primary-foreground">V</span>
+            <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-to-br from-primary to-accent shadow-[0_0_10px_rgba(236,72,153,0.5)]">
+              <span className="text-sm font-bold text-primary-foreground">V</span>
             </div>
             {/* Teks VelyStream */}
             <div className="flex flex-col">
-                <span className="text-xs font-extrabold tracking-tight text-white drop-shadow-md leading-none">
+                <span className="text-sm font-extrabold tracking-tight text-white drop-shadow-md leading-none">
                     Vely<span className="text-primary">Stream</span>
                 </span>
             </div>
@@ -259,9 +251,16 @@ const Watch = ({ onWatch }: WatchProps) => {
           )}
         </div>
       </div>
+
+      {/* Title Section */}
+      <div className="container mx-auto px-4 w-full mb-6">
+        <h1 className="w-full text-xl md:text-2xl font-bold leading-tight line-clamp-2 break-words">
+          {episode.episode}
+        </h1>
+      </div>
       
       {/* Controls & Navigation Section */}
-      <div className="container mx-auto px-4 pb-12 w-full max-w-[1400px]">
+      <div className="container mx-auto px-4 pb-12 w-full">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3 bg-secondary/30 p-3 rounded-xl border border-white/5">
             <div className="flex items-center gap-2 flex-wrap">
                 <Popover>
@@ -319,30 +318,12 @@ const Watch = ({ onWatch }: WatchProps) => {
                         <EpisodeListComponent />
                     </Sheet>
                 )}
-                <Popover>
-                    <PopoverTrigger asChild>
+                <Sheet open={isDownloadSheetOpen} onOpenChange={setDownloadSheetOpen}>
+                    <SheetTrigger asChild>
                         <Button variant="outline" size="sm" className="gap-2 border-white/10 bg-black/20 hover:bg-white/10"><Download className="h-4 w-4"/> Download</Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-48 p-1">
-                        {qualities.map(([quality, servers]) => (
-                            <Button
-                                key={quality}
-                                variant={"ghost"}
-                                size="sm"
-                                className="w-full justify-start gap-2"
-                                onClick={() => handleDownload(servers[0].id, quality)}
-                                disabled={downloadingQuality === quality}
-                            >
-                                {downloadingQuality === quality ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                    <Download className="h-4 w-4" />
-                                )}
-                                {quality}
-                            </Button>
-                        ))}
-                    </PopoverContent>
-                </Popover>
+                    </SheetTrigger>
+                    <DownloadSheetComponent />
+                </Sheet>
             </div>
         </div>
         
