@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { WatchDownloadDialog } from '@/components/WatchDownloadDialog';
 import { ChevronLeft, ChevronRight, Download, Loader2, ListVideo, Clapperboard, Server, ArrowLeft } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 import { toast } from "sonner";
@@ -29,7 +28,7 @@ const Watch = ({ onWatch }: WatchProps) => {
   const [selectedServerId, setSelectedServerId] = useState<string | null>(null);
   const [currentStreamUrl, setCurrentStreamUrl] = useState<string>('');
   const [loadingServer, setLoadingServer] = useState(false);
-  const [isDownloadDialogOpen, setDownloadDialogOpen] = useState(false);
+  const [downloadingQuality, setDownloadingQuality] = useState<string | null>(null);
 
   const { data: episode, isLoading, isError } = useQuery({
     queryKey: ['episode', slug],
@@ -111,6 +110,45 @@ const Watch = ({ onWatch }: WatchProps) => {
     }
   };
 
+  const handleDownload = async (serverId: string, quality: string) => {
+    setDownloadingQuality(quality);
+    toast.info(`Mengambil link ${quality}...`);
+
+    try {
+      const url = await api.getServerUrl(serverId);
+      if(!url) throw new Error("URL Kosong");
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("CORS/Network Error");
+        
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = objectUrl;
+        const fileName = `${animeDetail?.title || 'anime'}_${episode?.episode || 'ep'}_${quality}.mp4`;
+        link.download = fileName.replace(/[^a-zA-Z0-9_.-]/g, '_');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(objectUrl);
+        toast.success("Download dimulai!");
+      } catch (err) {
+        console.warn("Auto download blocked, opening tab...", err);
+        window.open(url, '_blank');
+        toast.warning("Membuka di tab baru (Limitasi Google Drive)", {
+            description: "Silakan klik 'Tetap Download' di halaman yang terbuka."
+        });
+      }
+
+    } catch (error) {
+      console.error('Failed to get download link:', error);
+      toast.error("Gagal mengambil link download.");
+    } finally {
+      setDownloadingQuality(null);
+    }
+  };
+
   const EpisodeListComponent = () => (
     <SheetContent side="right">
         <SheetHeader><SheetTitle>All Episodes</SheetTitle></SheetHeader>
@@ -146,82 +184,85 @@ const Watch = ({ onWatch }: WatchProps) => {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-background/50">
-      {/* Main Content Area */}
-      <div className="w-full max-w-[1600px] px-2 md:px-6">
-
-        {/* Back Button Section */}
-        <div className="w-full pt-6">
-            {animeDetail && (
-              <Button variant="ghost" size="sm" asChild className="h-auto p-0 text-muted-foreground hover:text-primary hover:bg-transparent gap-1 mb-1">
-                  <Link to={`/anime/${animeDetail.slug.replace('https:/otakudesu.best/anime/', '').replace('/', '')}`}>
-                      <ArrowLeft className="h-4 w-4" /> Back to Anime Detail
-                  </Link>
-              </Button>
-            )}
-        </div>
-
-        {/* Video Player Section */}
-        <div className="w-full mt-2 mb-4">
-          <div 
-              className="relative w-full overflow-hidden bg-black shadow-2xl rounded-2xl border border-white/10 touch-none select-none" 
-              style={{ aspectRatio: '16/9', touchAction: 'none' }}
-          >
-            
-            {/* --- WATERMARK (Updated) --- */}
-            <div 
-              className="absolute top-4 left-4 z-30 flex items-center gap-2 pointer-events-none select-none opacity-50 hover:opacity-80 transition-opacity duration-500"
-              style={{ animation: 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}
-            >
-              {/* Logo V */}
-              <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-to-br from-primary to-accent shadow-[0_0_10px_rgba(236,72,153,0.5)]">
-                <span className="text-sm font-bold text-primary-foreground">V</span>
-              </div>
-              {/* Teks VelyStream */}
-              <div className="flex flex-col">
-                  <span className="text-sm font-extrabold tracking-tight text-white drop-shadow-md leading-none">
-                      Vely<span className="text-primary">Stream</span>
-                  </span>
-              </div>
-            </div>
-            {/* --- END WATERMARK --- */}
-
-            {loadingServer && (
-              <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-                <div className="flex flex-col items-center gap-3">
-                  <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                  <p className="text-sm text-muted-foreground animate-pulse">Memuat server...</p>
-                </div>
-              </div>
-            )}
-            
-            {currentStreamUrl ? (
-              <iframe
-                key={currentStreamUrl}
-                src={currentStreamUrl}
-                className="h-full w-full border-0 rounded-2xl"
-                allowFullScreen
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                style={{ touchAction: 'none' }}
-              />
-            ) : !isLoading && (
-              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-white/80 gap-2 bg-zinc-900">
-                  <Server className="h-10 w-10 opacity-50 mb-2"/>
-                  <p className="text-lg font-medium">Siap Memutar</p>
-                  <p className="text-sm text-muted-foreground">Pilih kualitas dan server di bawah untuk memulai.</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Header Section (Title Only) */}
-        <div className="w-full mb-6">
+      {/* Header Section */}
+      <div className="container mx-auto px-4 pt-6 pb-2">
+        <div className="mb-4 flex flex-col items-start gap-1 w-full">
+          {animeDetail && (
+            <Button variant="ghost" size="sm" asChild className="h-auto p-0 text-muted-foreground hover:text-primary hover:bg-transparent gap-1 mb-1">
+                <Link to={`/anime/${animeDetail.slug.replace('https:/otakudesu.best/anime/', '').replace('/', '')}`}>
+                    <ArrowLeft className="h-4 w-4" /> Back
+                </Link>
+            </Button>
+          )}
           <h1 className="w-full text-lg md:text-xl font-bold leading-tight line-clamp-2 break-words">
             {episode.episode}
           </h1>
         </div>
+      </div>
+
+      {/* Video Player Section */}
+      <div className="w-full max-w-[1400px] px-2 md:px-6 mb-6">
+        <div 
+            className="relative w-full overflow-hidden bg-black shadow-2xl rounded-2xl border border-white/10 touch-none select-none" 
+            style={{ aspectRatio: '16/9', touchAction: 'none' }}
+        >
+          
+          {/* --- WATERMARK (Updated) --- */}
+          {/* 
+              Perubahan: 
+              - top-2 left-2 (Lebih mepet atas kiri)
+              - h-5 w-5 (Logo lebih kecil)
+              - text-xs (Teks lebih kecil)
+              - gap-1.5 (Jarak logo dan teks lebih rapat)
+          */}
+          <div 
+            className="absolute top-2 left-2 z-30 flex items-center gap-1.5 pointer-events-none select-none opacity-50 hover:opacity-80 transition-opacity duration-500"
+            style={{ animation: 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}
+          >
+            {/* Logo V */}
+            <div className="flex h-5 w-5 items-center justify-center rounded bg-gradient-to-br from-primary to-accent shadow-[0_0_10px_rgba(236,72,153,0.5)]">
+              <span className="text-[10px] font-bold text-primary-foreground">V</span>
+            </div>
+            {/* Teks VelyStream */}
+            <div className="flex flex-col">
+                <span className="text-xs font-extrabold tracking-tight text-white drop-shadow-md leading-none">
+                    Vely<span className="text-primary">Stream</span>
+                </span>
+            </div>
+          </div>
+          {/* --- END WATERMARK --- */}
+
+          {loadingServer && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+              <div className="flex flex-col items-center gap-3">
+                <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                <p className="text-sm text-muted-foreground animate-pulse">Memuat server...</p>
+              </div>
+            </div>
+          )}
+          
+          {currentStreamUrl ? (
+            <iframe
+              key={currentStreamUrl}
+              src={currentStreamUrl}
+              className="h-full w-full border-0 rounded-2xl"
+              allowFullScreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              style={{ touchAction: 'none' }}
+            />
+          ) : !isLoading && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-white/80 gap-2 bg-zinc-900">
+                <Server className="h-10 w-10 opacity-50 mb-2"/>
+                <p className="text-lg font-medium">Siap Memutar</p>
+                <p className="text-sm text-muted-foreground">Pilih kualitas dan server di bawah untuk memulai.</p>
+            </div>
+          )}
+        </div>
+      </div>
       
-        {/* Controls & Navigation Section */}
-        <div className="w-full mb-6 flex flex-wrap items-center justify-between gap-3 bg-secondary/30 p-3 rounded-xl border border-white/5">
+      {/* Controls & Navigation Section */}
+      <div className="container mx-auto px-4 pb-12 w-full max-w-[1400px]">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 bg-secondary/30 p-3 rounded-xl border border-white/5">
             <div className="flex items-center gap-2 flex-wrap">
                 <Popover>
                     <PopoverTrigger asChild>
@@ -278,20 +319,34 @@ const Watch = ({ onWatch }: WatchProps) => {
                         <EpisodeListComponent />
                     </Sheet>
                 )}
-                {animeDetail?.batch && (
-                    <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="gap-2 border-white/10 bg-black/20 hover:bg-white/10"
-                        onClick={() => setDownloadDialogOpen(true)}
-                    >
-                        <Download className="h-4 w-4"/> Download
-                    </Button>
-                )}
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button variant="outline" size="sm" className="gap-2 border-white/10 bg-black/20 hover:bg-white/10"><Download className="h-4 w-4"/> Download</Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-48 p-1">
+                        {qualities.map(([quality, servers]) => (
+                            <Button
+                                key={quality}
+                                variant={"ghost"}
+                                size="sm"
+                                className="w-full justify-start gap-2"
+                                onClick={() => handleDownload(servers[0].id, quality)}
+                                disabled={downloadingQuality === quality}
+                            >
+                                {downloadingQuality === quality ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <Download className="h-4 w-4" />
+                                )}
+                                {quality}
+                            </Button>
+                        ))}
+                    </PopoverContent>
+                </Popover>
             </div>
         </div>
         
-        <div className="w-full flex items-center justify-between mt-4 gap-2 pb-12">
+        <div className="flex items-center justify-between w-full mt-4 gap-2">
           {episode.has_previous_episode && episode.previous_episode ? (
             <Button variant="secondary" onClick={() => navigate(`/watch/${episode.previous_episode!.slug}`)} className="gap-2 pl-2 hover:bg-primary/20">
               <ChevronLeft className="h-4 w-4" /> Previous
@@ -318,15 +373,6 @@ const Watch = ({ onWatch }: WatchProps) => {
           )}
         </div>
       </div>
-      
-      {animeDetail?.batch && (
-        <WatchDownloadDialog
-            isOpen={isDownloadDialogOpen}
-            onClose={() => setDownloadDialogOpen(false)}
-            batchSlug={animeDetail.batch.slug}
-            animeTitle={animeDetail.title}
-        />
-      )}
     </div>
   );
 };
