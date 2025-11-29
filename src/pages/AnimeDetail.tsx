@@ -38,11 +38,9 @@ const AnimeDetail = () => {
       }
     };
 
-    // Initial check
-    checkMyListStatus();
+    checkMyListStatus(); // Initial check
     window.scrollTo(0, 0);
 
-    // Listen for changes
     window.addEventListener('storage_changed', checkMyListStatus);
 
     return () => {
@@ -55,7 +53,7 @@ const AnimeDetail = () => {
       setIsLoadingRelated(true);
       const baseTitle = anime.title.replace(/ S\d+$/, '').replace(/ Season \d+$/, '');
       api.searchAnime(baseTitle).then(results => {
-        const filteredResults = results.filter(item => item.title !== anime.title);
+        const filteredResults = results.filter(item => item.slug !== anime.slug);
         setRelatedAnime(filteredResults);
         setIsLoadingRelated(false);
       });
@@ -64,8 +62,10 @@ const AnimeDetail = () => {
 
   const handleToggleList = () => {
     if (!anime) return;
+
+    const currentlyInList = storage.isInMyList(anime.slug);
     
-    if (isInList) {
+    if (currentlyInList) {
       storage.removeFromMyList(anime.slug);
     } else {
       const animeForList = {
@@ -78,7 +78,8 @@ const AnimeDetail = () => {
       };
       storage.addToMyList(animeForList);
     }
-    setIsInList(!isInList);
+    // Update state for immediate UI feedback
+    setIsInList(!currentlyInList);
   };
 
   if (isLoading) {

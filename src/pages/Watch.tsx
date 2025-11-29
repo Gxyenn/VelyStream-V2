@@ -261,7 +261,7 @@ const Watch = ({ onWatch }: WatchProps) => {
       
       {/* Controls & Navigation Section */}
       <div className="container mx-auto px-4 pb-12 w-full">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 bg-secondary/30 p-3 rounded-xl border border-white/5">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-2 bg-secondary/20 p-2 rounded-xl border border-white/5">
             <div className="flex items-center gap-2 flex-wrap">
                 <Popover>
                     <PopoverTrigger asChild>
