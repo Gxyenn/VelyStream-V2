@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { api, StreamServer, BatchDetail, BatchQuality } from '@/lib/api';
+import { api, StreamServer, BatchDetail, BatchQuality, EpisodeDownloadFormat, EpisodeDownloadQuality } from '@/lib/api';
 import { storage } from '@/lib/storage';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
@@ -87,7 +87,6 @@ const Watch = ({ onWatch }: WatchProps) => {
   const [currentStreamUrl, setCurrentStreamUrl] = useState<string>('');
   const [loadingServer, setLoadingServer] = useState(false);
   const [isDownloadDialogOpen, setDownloadDialogOpen] = useState(false);
-  const [downloadingServerId, setDownloadingServerId] = useState<string | null>(null);
 
   const { data: episode, isLoading, isError } = useQuery({
     queryKey: ['episode', slug],
@@ -170,31 +169,6 @@ const Watch = ({ onWatch }: WatchProps) => {
     }
   };
 
-  const handleDownload = async (serverId: string) => {
-    setDownloadingServerId(serverId);
-    toast.info("Mempersiapkan unduhan...", { id: "download-toast" });
-    try {
-      const url = await api.getServerUrl(serverId);
-      
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `${animeDetail?.title} - ${episode?.episode}.mp4`);
-      link.setAttribute('target', '_blank');
-      link.setAttribute('rel', 'noopener noreferrer');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      toast.success("Unduhan telah dimulai.", { id: "download-toast" });
-
-    } catch (error) {
-      console.error('Failed to get download link:', error);
-      toast.error("Gagal memulai unduhan.", { id: "download-toast" });
-    } finally {
-      setDownloadingServerId(null);
-    }
-  };
-
   const EpisodeListComponent = () => (
     <SheetContent side="right">
         <SheetHeader><SheetTitle>All Episodes</SheetTitle></SheetHeader>
@@ -233,13 +207,9 @@ const Watch = ({ onWatch }: WatchProps) => {
       <div className="w-full max-w-[1600px] px-2 md:px-6">
 
         <div className="w-full pt-6">
-            {animeDetail && (
-              <Button variant="ghost" size="sm" asChild className="h-auto p-0 text-muted-foreground hover:text-primary hover:bg-transparent gap-1 mb-1">
-                  <Link to={`/anime/${animeDetail.slug.replace('https:/otakudesu.best/anime/', '').replace('/', '')}`}>
-                      <ArrowLeft className="h-4 w-4" /> Back to Anime Detail
-                  </Link>
-              </Button>
-            )}
+            <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="h-auto p-0 text-muted-foreground hover:text-primary hover:bg-transparent gap-1 mb-1">
+                <ArrowLeft className="h-4 w-4" /> Go Back
+            </Button>
         </div>
 
         <div className="w-full mt-2 mb-4">
@@ -248,7 +218,7 @@ const Watch = ({ onWatch }: WatchProps) => {
               style={{ aspectRatio: '16/9', touchAction: 'none' }}
           >
             <div 
-              className="absolute top-4 left-4 z-30 flex items-center gap-2 pointer-events-none select-none opacity-50 hover:opacity-80 transition-opacity duration-500"
+              className="absolute top-2 left-2 z-30 flex items-center gap-2 pointer-events-none select-none opacity-50 hover:opacity-80 transition-opacity duration-500 transform scale-90"
               style={{ animation: 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}
             >
               <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-to-br from-primary to-accent shadow-[0_0_10px_rgba(236,72,153,0.5)]">
@@ -357,6 +327,7 @@ const Watch = ({ onWatch }: WatchProps) => {
                     size="sm" 
                     className="gap-2 border-white/10 bg-black/20 hover:bg-white/10"
                     onClick={() => setDownloadDialogOpen(true)}
+                    disabled={!episode?.download_urls || episode.download_urls.length === 0}
                 >
                     <Download className="h-4 w-4"/> Download
                 </Button>
@@ -394,29 +365,30 @@ const Watch = ({ onWatch }: WatchProps) => {
             <TabsContent value="episode">
               <ScrollArea className="max-h-[50vh] pr-4">
                 <div className="py-4">
-                  <Accordion type="single" collapsible className="w-full">
-                    {qualities.map(([quality, servers]) => (
-                      <AccordionItem value={quality} key={quality}>
-                        <AccordionTrigger>{quality}</AccordionTrigger>
+                  <Accordion type="multiple" className="w-full">
+                    {episode?.download_urls.map((format: EpisodeDownloadFormat) => (
+                      <AccordionItem value={format.format} key={format.format}>
+                        <AccordionTrigger className="text-lg font-semibold">{format.format}</AccordionTrigger>
                         <AccordionContent>
-                          <div className="flex flex-col gap-2 pt-2">
-                            {servers.map(server => (
-                              <Button
-                                key={server.id}
-                                variant="ghost"
-                                className="justify-between"
-                                disabled={downloadingServerId === server.id}
-                                onClick={() => handleDownload(server.id)}
-                              >
-                                <span>{server.name}</span>
-                                {downloadingServerId === server.id ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <Download className="h-4 w-4" />
-                                )}
-                              </Button>
+                          <Accordion type="single" collapsible className="w-full">
+                            {format.qualities.map((quality: EpisodeDownloadQuality) => (
+                              <AccordionItem value={quality.quality} key={quality.quality}>
+                                <AccordionTrigger>{quality.quality}</AccordionTrigger>
+                                <AccordionContent>
+                                  <div className="flex flex-col gap-2 pt-2">
+                                    {quality.urls.map(link => (
+                                      <Button key={link.url} variant="ghost" className="justify-between" asChild>
+                                        <a href={link.url} target="_blank" rel="noopener noreferrer" download>
+                                          <span>{link.provider}</span>
+                                          <ExternalLink className="h-4 w-4" />
+                                        </a>
+                                      </Button>
+                                    ))}
+                                  </div>
+                                </AccordionContent>
+                              </AccordionItem>
                             ))}
-                          </div>
+                          </Accordion>
                         </AccordionContent>
                       </AccordionItem>
                     ))}
