@@ -70,22 +70,6 @@ export interface EpisodeDetail {
   previous_episode: { slug: string; otakudesu_url: string } | null;
   stream_url: string;
   stream_servers: StreamServer[];
-  download_urls: EpisodeDownloadFormat[];
-}
-
-export interface EpisodeDownloadUrl {
-  provider: string;
-  url: string;
-}
-
-export interface EpisodeDownloadQuality {
-  quality: string;
-  urls: EpisodeDownloadUrl[];
-}
-
-export interface EpisodeDownloadFormat {
-  format: string; // "MP4" atau "MKV"
-  qualities: EpisodeDownloadQuality[];
 }
 
 export interface StreamServer {

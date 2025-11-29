@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { EpisodeDownloadDialog } from '@/components/EpisodeDownloadDialog';
+import { WatchDownloadDialog } from '@/components/WatchDownloadDialog';
 import { ChevronLeft, ChevronRight, Download, Loader2, ListVideo, Clapperboard, Server, ArrowLeft } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 import { toast } from "sonner";
@@ -29,8 +29,7 @@ const Watch = ({ onWatch }: WatchProps) => {
   const [selectedServerId, setSelectedServerId] = useState<string | null>(null);
   const [currentStreamUrl, setCurrentStreamUrl] = useState<string>('');
   const [loadingServer, setLoadingServer] = useState(false);
-  const [isBatchDownloadDialogOpen, setBatchDownloadDialogOpen] = useState(false);
-  const [isEpisodeDownloadDialogOpen, setEpisodeDownloadDialogOpen] = useState(false);
+  const [isDownloadDialogOpen, setDownloadDialogOpen] = useState(false);
 
   const { data: episode, isLoading, isError } = useQuery({
     queryKey: ['episode', slug],
@@ -268,14 +267,6 @@ const Watch = ({ onWatch }: WatchProps) => {
                         ))}
                     </PopoverContent>
                 </Popover>
-                <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="gap-2 border-white/10 bg-black/20 hover:bg-white/10"
-                    onClick={() => setEpisodeDownloadDialogOpen(true)}
-                >
-                    <Download className="h-4 w-4"/> Download Episode
-                </Button>
             </div>
             
             <div className="flex items-center gap-2">
@@ -292,9 +283,9 @@ const Watch = ({ onWatch }: WatchProps) => {
                         variant="outline" 
                         size="sm" 
                         className="gap-2 border-white/10 bg-black/20 hover:bg-white/10"
-                        onClick={() => setBatchDownloadDialogOpen(true)}
+                        onClick={() => setDownloadDialogOpen(true)}
                     >
-                        <Download className="h-4 w-4"/> Download Batch
+                        <Download className="h-4 w-4"/> Download
                     </Button>
                 )}
             </div>
@@ -330,19 +321,10 @@ const Watch = ({ onWatch }: WatchProps) => {
       
       {animeDetail?.batch && (
         <WatchDownloadDialog
-            isOpen={isBatchDownloadDialogOpen}
-            onClose={() => setBatchDownloadDialogOpen(false)}
+            isOpen={isDownloadDialogOpen}
+            onClose={() => setDownloadDialogOpen(false)}
             batchSlug={animeDetail.batch.slug}
             animeTitle={animeDetail.title}
-        />
-      )}
-
-      {slug && (
-        <EpisodeDownloadDialog
-          isOpen={isEpisodeDownloadDialogOpen}
-          onClose={() => setEpisodeDownloadDialogOpen(false)}
-          episodeSlug={slug}
-          episodeTitle={episode.episode}
         />
       )}
     </div>
