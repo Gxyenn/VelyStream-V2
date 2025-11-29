@@ -15,7 +15,7 @@ export function WelcomeDialog() {
   const [countdown, setCountdown] = useState(10); // Diubah menjadi 15 detik
 
   useEffect(() => {
-    const alreadyShown = localStorage.getItem(WELCOME_DIALOG_SHOWN_KEY);
+    const alreadyShown = sessionStorage.getItem(WELCOME_DIALOG_SHOWN_KEY);
     if (!alreadyShown) {
       setIsOpen(true);
     }
@@ -28,7 +28,7 @@ export function WelcomeDialog() {
         return () => clearTimeout(timer);
       } else {
         setIsOpen(false);
-        localStorage.setItem(WELCOME_DIALOG_SHOWN_KEY, "true");
+        sessionStorage.setItem(WELCOME_DIALOG_SHOWN_KEY, "true");
       }
     }
   }, [isOpen, countdown]);
