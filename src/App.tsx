@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { DonationDialog } from "@/components/DonationDialog";
 import { WelcomeDialog } from "@/components/WelcomeDialog";
@@ -25,15 +25,8 @@ const queryClient = new QueryClient();
 const WATCH_COUNT_KEY = "vely_stream_watch_count";
 const DONATION_DIALOG_SHOWN_KEY = "vely_stream_donation_shown";
 
-const App = () => {
-  const [isDonationDialogOpen, setDonationDialogOpen] = useState(false);
-
-  useEffect(() => {
-    AOS.init({
-      duration: 800,
-      once: true,
-    });
-  }, []);
+const PageRoutes = ({ setDonationDialogOpen }: { setDonationDialogOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
+  const location = useLocation();
 
   const triggerDonationDialog = () => {
     const alreadyShown = sessionStorage.getItem(DONATION_DIALOG_SHOWN_KEY);
@@ -48,6 +41,37 @@ const App = () => {
   };
 
   return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/search" element={<Search />} />
+      <Route path="/genres" element={<Genres />} />
+      <Route path="/genre/:slug" element={<GenreDetail />} />
+      <Route path="/all-anime" element={<AllAnime />} />
+      <Route path="/schedule" element={<Schedule />} />
+      <Route path="/mylist" element={<MyList />} />
+      <Route path="/history" element={<History />} />
+      <Route path="/anime/:slug" element={<AnimeDetail key={location.pathname} />} />
+      <Route path="/watch/:slug" element={<Watch onWatch={() => {
+        const count = parseInt(localStorage.getItem(WATCH_COUNT_KEY) || "0") + 1;
+        localStorage.setItem(WATCH_COUNT_KEY, count.toString());
+        triggerDonationDialog();
+      }} />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
+
+const App = () => {
+  const [isDonationDialogOpen, setDonationDialogOpen] = useState(false);
+
+  useEffect(() => {
+    AOS.init({
+      duration: 800,
+      once: true,
+    });
+  }, []);
+
+  return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
@@ -60,23 +84,7 @@ const App = () => {
               onClose={() => setDonationDialogOpen(false)}
             />
             <Navbar />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/genres" element={<Genres />} />
-              <Route path="/genre/:slug" element={<GenreDetail />} />
-              <Route path="/all-anime" element={<AllAnime />} />
-              <Route path="/schedule" element={<Schedule />} />
-              <Route path="/mylist" element={<MyList />} />
-              <Route path="/history" element={<History />} />
-              <Route path="/anime/:slug" element={<AnimeDetail />} />
-              <Route path="/watch/:slug" element={<Watch onWatch={() => {
-                const count = parseInt(localStorage.getItem(WATCH_COUNT_KEY) || "0") + 1;
-                localStorage.setItem(WATCH_COUNT_KEY, count.toString());
-                triggerDonationDialog();
-              }} />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <PageRoutes setDonationDialogOpen={setDonationDialogOpen} />
           </div>
         </BrowserRouter>
       </TooltipProvider>

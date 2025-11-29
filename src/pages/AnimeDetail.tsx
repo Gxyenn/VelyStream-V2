@@ -65,7 +65,7 @@ const AnimeDetail = () => {
       api.searchAnime(baseTitle).then(results => {
         // Ensure we are comparing cleaned slugs for perfect filtering
         const currentSlug = cleanSlug(anime.slug);
-        const filteredResults = results.filter(item => cleanSlug(item.slug) !== currentSlug);
+        const filteredResults = results.filter(item => cleanSlug(item.slug) !== currentSlug && item.title !== anime.title);
         setRelatedAnime(filteredResults);
         setIsLoadingRelated(false);
       });
@@ -235,7 +235,7 @@ const AnimeDetail = () => {
           {isLoadingRelated ? (
             <p className="text-muted-foreground">Mencari anime terkait...</p>
           ) : relatedAnime.length > 0 ? (
-            <AnimeListHorizontal animes={relatedAnime} size="small" />
+            <AnimeListHorizontal animes={relatedAnime} size="small" wrapTitle={true} />
           ) : (
             <p className="text-muted-foreground">Tidak Ada Daftar Anime Terkait di anime ini.</p>
           )}
