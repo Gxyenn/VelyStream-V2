@@ -16,6 +16,9 @@ export const AnimeCard = ({ anime, className, episodeSlug, size = 'normal', wrap
     return null;
   }
 
+  // Log the entire anime object for debugging purposes
+  console.log('[AnimeCard Debug]', anime);
+
   const finalSlug = cleanSlug(anime.slug);
   const destination = episodeSlug ? `/watch/${episodeSlug}` : `/anime/${finalSlug}`;
   

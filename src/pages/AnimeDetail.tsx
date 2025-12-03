@@ -36,7 +36,9 @@ const AnimeDetail = () => {
   useEffect(() => {
     const checkMyListStatus = () => {
       if (cleanedSlug) {
-        setIsInList(storage.isInMyList(cleanedSlug));
+        const inList = storage.isInMyList(cleanedSlug);
+        console.log(`[MyList Debug] Checking for slug: '${cleanedSlug}'. Is in list?`, inList);
+        setIsInList(inList);
       }
     };
 
@@ -62,11 +64,14 @@ const AnimeDetail = () => {
         .replace(/ Part \d+.*$/i, '')
         .replace(/ Cour \d+.*$/i, '')
         .trim();
-        
+      
+      console.log(`[RelatedAnime Debug] Searching for base title: '${baseTitle}'`);
       api.searchAnime(baseTitle).then(results => {
+        console.log('[RelatedAnime Debug] Raw API results:', results);
         // Ensure we are comparing cleaned slugs for perfect filtering
         const currentSlug = cleanSlug(anime.slug);
         const filteredResults = results.filter(item => cleanSlug(item.slug) !== currentSlug);
+        console.log('[RelatedAnime Debug] Filtered results:', filteredResults);
         setRelatedAnime(filteredResults);
         setIsLoadingRelated(false);
       });
@@ -81,6 +86,7 @@ const AnimeDetail = () => {
     const currentlyInList = storage.isInMyList(currentSlug);
     
     if (currentlyInList) {
+      console.log(`[MyList Debug] Removing slug: '${currentSlug}'`);
       storage.removeFromMyList(currentSlug);
     } else {
       const animeForList = {
@@ -91,6 +97,7 @@ const AnimeDetail = () => {
         otakudesu_url: anime.episode_lists[0]?.otakudesu_url || '',
         episode_count: anime.episode_count,
       };
+      console.log('[MyList Debug] Adding to list:', animeForList);
       storage.addToMyList(animeForList);
     }
     // Set state directly for immediate UI feedback
