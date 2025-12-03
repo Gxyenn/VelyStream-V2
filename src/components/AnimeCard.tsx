@@ -22,24 +22,20 @@ export const AnimeCard = ({ anime, className, episodeSlug, size = 'normal', wrap
   const getDisplayEpisode = () => {
     // For completed anime, show total episodes.
     if (anime.status === 'Tamat') {
+      let count = null;
       if (anime.episode_count && !['?', '??', '0', 'N/A'].includes(anime.episode_count.trim())) {
-        return `${anime.episode_count} Eps`;
+        count = anime.episode_count;
+      } else if (anime.current_episode && anime.current_episode.toLowerCase().startsWith('total')) {
+        count = anime.current_episode.replace(/\D/g, ''); // Extract numbers
       }
-      // Fallback for completed anime if episode_count is weird but current_episode has total
-      if (anime.current_episode && anime.current_episode.toLowerCase().startsWith('total')) {
-        const count = anime.current_episode.replace(/\D/g, ''); // Extract numbers
-        if (count) return `${count} Eps`;
-      }
-      return null; // No tag if no reliable count
+      
+      return count ? `Total ${count} Episode` : null;
     }
 
     // For ongoing anime, show the latest episode.
     if (anime.current_episode && !anime.current_episode.toLowerCase().startsWith('total')) {
-      // The API might return "Episode 12" or just "12"
-      const episodeString = anime.current_episode.toLowerCase().startsWith('episode')
-        ? anime.current_episode
-        : `Episode ${anime.current_episode}`;
-      return `${episodeString} Terbaru`;
+      const num = anime.current_episode.replace(/\D/g, ''); // Extract numbers
+      return num ? `Episode Terbaru ${num}` : null;
     }
     
     return null;
@@ -87,10 +83,12 @@ export const AnimeCard = ({ anime, className, episodeSlug, size = 'normal', wrap
 
       <div className="flex flex-1 flex-col p-2">
         <h3 className={cn(
-          "mb-2 font-semibold leading-tight",
-          wrapTitle 
-            ? (size === 'small' ? 'text-xs' : 'text-sm')
-            : (size === 'small' ? 'text-xs line-clamp-1 flex-grow' : 'text-sm line-clamp-2 flex-grow')
+          "font-semibold leading-tight",
+          // If wrapping is enabled, give a fixed height and center content to ensure consistency
+          wrapTitle
+            ? `flex items-center ${size === 'small' ? 'text-xs h-8' : 'text-sm h-10'}`
+            // Otherwise, clamp the lines
+            : `mb-2 ${size === 'small' ? 'text-xs line-clamp-1 flex-grow' : 'text-sm line-clamp-2 flex-grow'}`
         )}>
           {anime.title}
         </h3>
