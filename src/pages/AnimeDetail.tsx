@@ -10,7 +10,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { AnimeListHorizontal } from '@/components/AnimeListHorizontal';
 
-import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo, ChevronLeft, Archive } from 'lucide-react';
+import { cleanSlug } from '@/lib/utils';
+import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo, ChevronLeft } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const AnimeDetail = () => {
@@ -20,12 +21,6 @@ const AnimeDetail = () => {
 
   const [relatedAnime, setRelatedAnime] = useState<Anime[]>([]);
   const [isLoadingRelated, setIsLoadingRelated] = useState(true);
-
-  // Utility to handle inconsistent slugs (e.g. with trailing slashes)
-  const cleanSlug = (s: string | undefined) => {
-    if (!s) return '';
-    return s.endsWith('/') ? s.slice(0, -1) : s;
-  };
 
   const cleanedSlug = cleanSlug(slug);
 
@@ -60,7 +55,14 @@ const AnimeDetail = () => {
   useEffect(() => {
     if (anime) {
       setIsLoadingRelated(true);
-      const baseTitle = anime.title.replace(/ S\d+$/, '').replace(/ Season \d+$/, '');
+      // Improved regex to find a base title for searching related anime
+      const baseTitle = anime.title
+        .replace(/ S\d+.*$/i, '')
+        .replace(/ Season \d+.*$/i, '')
+        .replace(/ Part \d+.*$/i, '')
+        .replace(/ Cour \d+.*$/i, '')
+        .trim();
+        
       api.searchAnime(baseTitle).then(results => {
         // Ensure we are comparing cleaned slugs for perfect filtering
         const currentSlug = cleanSlug(anime.slug);

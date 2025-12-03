@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Star, Calendar, Play } from 'lucide-react';
 import { Anime } from '@/lib/api';
-import { cn } from '@/lib/utils';
+import { cn, cleanSlug } from '@/lib/utils';
 
 interface AnimeCardProps {
   anime: Anime;
@@ -16,38 +16,25 @@ export const AnimeCard = ({ anime, className, episodeSlug, size = 'normal', wrap
     return null;
   }
 
-  // Defensively clean up the slug, in case the API returns a full URL
-  const cleanSlug = (slug: string) => {
-    try {
-      // If it's a full URL, take the last part
-      if (slug.startsWith('http')) {
-        const url = new URL(slug);
-        // Split pathname and filter out empty strings from trailing slashes
-        const pathParts = url.pathname.split('/').filter(Boolean);
-        return pathParts[pathParts.length - 1];
-      }
-      // Otherwise, assume it's a clean slug
-      return slug;
-    } catch (error) {
-      console.error("Invalid slug format:", slug);
-      return slug; // fallback to original slug
-    }
-  };
-
   const finalSlug = cleanSlug(anime.slug);
   const destination = episodeSlug ? `/watch/${episodeSlug}` : `/anime/${finalSlug}`;
   
   const getDisplayEpisode = () => {
     // For completed anime, show total episodes.
     if (anime.status === 'Tamat') {
-      if (anime.episode_count && anime.episode_count.trim() !== '?' && anime.episode_count.trim() !== '??') {
+      if (anime.episode_count && !['?', '??', '0', 'N/A'].includes(anime.episode_count.trim())) {
         return `${anime.episode_count} Eps`;
       }
-      return null; // Don't show anything if episode count is unknown
+      // Fallback for completed anime if episode_count is weird but current_episode has total
+      if (anime.current_episode && anime.current_episode.toLowerCase().startsWith('total')) {
+        const count = anime.current_episode.replace(/\D/g, ''); // Extract numbers
+        if (count) return `${count} Eps`;
+      }
+      return null; // No tag if no reliable count
     }
 
     // For ongoing anime, show the latest episode.
-    if (anime.current_episode) {
+    if (anime.current_episode && !anime.current_episode.toLowerCase().startsWith('total')) {
       // The API might return "Episode 12" or just "12"
       const episodeString = anime.current_episode.toLowerCase().startsWith('episode')
         ? anime.current_episode
