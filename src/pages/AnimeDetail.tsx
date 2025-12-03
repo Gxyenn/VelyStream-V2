@@ -9,8 +9,7 @@ import { AnimeCard } from '@/components/AnimeCard';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { AnimeListHorizontal } from '@/components/AnimeListHorizontal';
-// Import Batch Dialog Baru
-import { BatchDownloadDialog } from '@/components/BatchDownloadDialog';
+
 import { Star, Calendar, Clock, Film, Bookmark, BookmarkCheck, Play, ListVideo, ChevronLeft, Archive } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -18,7 +17,7 @@ const AnimeDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [isInList, setIsInList] = useState(false);
-  const [isBatchDialogOpen, setBatchDialogOpen] = useState(false);
+
   const [relatedAnime, setRelatedAnime] = useState<Anime[]>([]);
   const [isLoadingRelated, setIsLoadingRelated] = useState(true);
 
@@ -65,7 +64,7 @@ const AnimeDetail = () => {
       api.searchAnime(baseTitle).then(results => {
         // Ensure we are comparing cleaned slugs for perfect filtering
         const currentSlug = cleanSlug(anime.slug);
-        const filteredResults = results.filter(item => cleanSlug(item.slug) !== currentSlug && item.title !== anime.title);
+        const filteredResults = results.filter(item => cleanSlug(item.slug) !== currentSlug);
         setRelatedAnime(filteredResults);
         setIsLoadingRelated(false);
       });
@@ -203,16 +202,7 @@ const AnimeDetail = () => {
                     </Sheet>
                 )}
 
-                {/* Bottom Row - Batch Download (Hanya jika batch tersedia) */}
-                {anime.batch && (
-                    <Button 
-                        size="lg" 
-                        className="w-full gap-2 bg-accent hover:bg-accent/90 text-white"
-                        onClick={() => setBatchDialogOpen(true)}
-                    >
-                        <Archive className="h-5 w-5" /> Download Batch (Full)
-                    </Button>
-                )}
+
               </div>
 
             </div>
@@ -242,15 +232,7 @@ const AnimeDetail = () => {
         </section>
       </div>
 
-      {/* Dialogs */}
-      {anime.batch && (
-        <BatchDownloadDialog 
-            isOpen={isBatchDialogOpen}
-            onClose={() => setBatchDialogOpen(false)}
-            batchSlug={anime.batch.slug}
-            animeTitle={anime.title}
-        />
-      )}
+
     </div>
   );
 };

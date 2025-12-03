@@ -37,9 +37,27 @@ export const AnimeCard = ({ anime, className, episodeSlug, size = 'normal', wrap
   const finalSlug = cleanSlug(anime.slug);
   const destination = episodeSlug ? `/watch/${episodeSlug}` : `/anime/${finalSlug}`;
   
-  const displayEpisode = anime.current_episode?.startsWith("Total ") 
-    ? anime.current_episode.replace("Episode ") + " Terbaru" 
-    : (anime.current_episode || (anime.episode_count ? `${anime.episode_count}` : null));
+  const getDisplayEpisode = () => {
+    // For completed anime, show total episodes.
+    if (anime.status === 'Tamat') {
+      if (anime.episode_count && anime.episode_count.trim() !== '?' && anime.episode_count.trim() !== '??') {
+        return `${anime.episode_count} Eps`;
+      }
+      return null; // Don't show anything if episode count is unknown
+    }
+
+    // For ongoing anime, show the latest episode.
+    if (anime.current_episode) {
+      // The API might return "Episode 12" or just "12"
+      const episodeString = anime.current_episode.toLowerCase().startsWith('episode')
+        ? anime.current_episode
+        : `Episode ${anime.current_episode}`;
+      return `${episodeString} Terbaru`;
+    }
+    
+    return null;
+  };
+  const displayEpisode = getDisplayEpisode();
 
 
   return (
@@ -84,7 +102,7 @@ export const AnimeCard = ({ anime, className, episodeSlug, size = 'normal', wrap
         <h3 className={cn(
           "mb-2 font-semibold leading-tight",
           wrapTitle 
-            ? (size === 'small' ? 'text-xs h-8' : 'text-sm h-10')
+            ? (size === 'small' ? 'text-xs' : 'text-sm')
             : (size === 'small' ? 'text-xs line-clamp-1 flex-grow' : 'text-sm line-clamp-2 flex-grow')
         )}>
           {anime.title}
