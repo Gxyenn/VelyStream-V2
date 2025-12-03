@@ -15,6 +15,10 @@ export const AnimeCard = ({ anime, className, episodeSlug, size = 'normal', wrap
   if (!anime) {
     return null;
   }
+  // Log the entire anime object for debugging purposes
+  if (anime.title.includes('Solo Leveling')) {
+    console.log('[AnimeCard Debug]', anime);
+  }
 
   // Defensively clean up the slug, in case the API returns a full URL
   const cleanSlug = (slug: string) => {

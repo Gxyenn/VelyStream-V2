@@ -16,7 +16,9 @@ export const storage = {
   // MyList functions
   getMyList(): Anime[] {
     const data = localStorage.getItem(MYLIST_KEY);
-    return data ? JSON.parse(data) : [];
+    const list = data ? JSON.parse(data) : [];
+    console.log('[Storage Debug] getMyList:', list);
+    return list;
   },
 
   addToMyList(anime: Anime): void {
@@ -24,21 +26,27 @@ export const storage = {
     const exists = list.some(item => item.slug === anime.slug);
     if (!exists) {
       list.push(anime);
+      console.log(`[Storage Debug] addToMyList: Adding '${anime.slug}'. New list:`, list);
       localStorage.setItem(MYLIST_KEY, JSON.stringify(list));
       window.dispatchEvent(new Event('storage_changed'));
+    } else {
+      console.log(`[Storage Debug] addToMyList: Slug '${anime.slug}' already exists.`);
     }
   },
 
   removeFromMyList(slug: string): void {
     let list = this.getMyList();
     const filtered = list.filter(item => item.slug !== slug);
+    console.log(`[Storage Debug] removeFromMyList: Removing '${slug}'. New list:`, filtered);
     localStorage.setItem(MYLIST_KEY, JSON.stringify(filtered));
     window.dispatchEvent(new Event('storage_changed'));
   },
 
   isInMyList(slug: string): boolean {
     const list = this.getMyList();
-    return list.some(item => item.slug === slug);
+    const inList = list.some(item => item.slug === slug);
+    console.log(`[Storage Debug] isInMyList: Checking for '${slug}'. Is in list?`, inList);
+    return inList;
   },
 
   // History functions
