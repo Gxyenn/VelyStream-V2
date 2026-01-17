@@ -37,7 +37,7 @@ const Home = () => {
   const { data: completeData, isLoading: isLoadingComplete } = useQuery({
     queryKey: ['complete_home'],
     queryFn: () => api.getCompleteAnime(1),
-    enabled: !searchTerm, // Disable when searching
+    enabled: !searchTerm && !isLoadingOngoing, // Disable when searching or ongoing is still loading
   });
 
   const ongoingAnimes = React.useMemo(() => 

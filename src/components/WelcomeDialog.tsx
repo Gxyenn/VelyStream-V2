@@ -12,7 +12,7 @@ const WELCOME_DIALOG_SHOWN_KEY = "VelyStreamWelcome";
 
 export function WelcomeDialog() {
   const [isOpen, setIsOpen] = useState(false);
-  const [countdown, setCountdown] = useState(10); // Diubah menjadi 15 detik
+  const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
     const alreadyShown = sessionStorage.getItem(WELCOME_DIALOG_SHOWN_KEY);
